@@ -226,7 +226,7 @@
     //    return hash;
     //}
 
-    var params = parseQuery(true);//save in local storage instead?
+    //var params = parseQuery(true);//save in local storage instead?
 
     //TODO: Put wrappers around ajax so we can do things like error handling, busy indicator (tokens?)
     $.when($.get('api/v1/combined'), docReady)
@@ -234,7 +234,7 @@
         var data = combined[0];
 
         //TODO: Escape non-printable character?
-        data.Delimiter = params['delimiter'] || data.Delimiter || delimiter;
+        //data.Delimiter = params['delimiter'] || data.Delimiter || delimiter;
         data.ob_Delimiter = ko.observable(data.Delimiter);
         data.ob_Entries = ko.observableArray(data.Entries);
         data.ob_EntryTree = ko.computed(function () {
