@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -12,6 +13,17 @@ namespace TacklR.CacheManager
     {
         private static IList<string> ResourceNames { get; set; }
         private static Assembly Assembly { get; set; }
+
+        private static DateTime? s_BuildTime { get; set; }
+        internal static DateTime BuildTime
+        {
+            get
+            {
+                if (!s_BuildTime.HasValue)
+                    s_BuildTime = DateTime.Parse(Properties.Resources.BuildTime, CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind);
+                return s_BuildTime.Value;
+            }
+        }
 
         static Resources()
         {

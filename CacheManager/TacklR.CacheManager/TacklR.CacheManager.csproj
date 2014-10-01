@@ -67,6 +67,11 @@
     <Compile Include="HttpHandlers\ResourceHandler.cs" />
     <Compile Include="Interfaces\ICache.cs" />
     <Compile Include="Models\ApiModels.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
     <Compile Include="Resources.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -191,6 +196,10 @@
     </Content>
     <Content Include="Scripts\stringTemplateEngine.js" />
     <Content Include="TODO.txt" />
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <EmbeddedResource Include="Views\Manager\Index.min.html">
       <DependentUpon>Index.html</DependentUpon>
     </EmbeddedResource>
@@ -261,6 +270,10 @@
     </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PreBuildEvent>powershell -ExecutionPolicy Bypass -File "$(SolutionDir)SetBuildTime.ps1" $(SolutionDir)
+</PreBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

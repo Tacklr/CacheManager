@@ -16,14 +16,14 @@ namespace TacklR.CacheManager.HttpHandlers
 
         static MimeType()
         {
-            ExtensionMap.Add("css", MimeType.Css); 
-            ExtensionMap.Add("eot", MimeType.Eot);
-            ExtensionMap.Add("js", MimeType.Js);
-            ExtensionMap.Add("json", MimeType.Json);
-            ExtensionMap.Add("otf", MimeType.Otf);
-            ExtensionMap.Add("svg", MimeType.Svg);
-            ExtensionMap.Add("ttf", MimeType.Ttf);
-            ExtensionMap.Add("woff", MimeType.Woff);
+            ExtensionMap.Add(".css", MimeType.Css); 
+            ExtensionMap.Add(".eot", MimeType.Eot);
+            ExtensionMap.Add(".js", MimeType.Js);
+            ExtensionMap.Add(".json", MimeType.Json);
+            ExtensionMap.Add(".otf", MimeType.Otf);
+            ExtensionMap.Add(".svg", MimeType.Svg);
+            ExtensionMap.Add(".ttf", MimeType.Ttf);
+            ExtensionMap.Add(".woff", MimeType.Woff);
         }
 
         internal static bool TryFromExtension(string extension, out string mimeType)
@@ -80,6 +80,11 @@ namespace TacklR.CacheManager.HttpHandlers
                 throw new Exception();//how can I get back to the 404 handler?
 
             context.Response.Clear();
+
+            context.Response.Cache.SetCacheability(HttpCacheability.Public);
+            context.Response.Cache.SetMaxAge(TimeSpan.FromMinutes(1));
+            context.Response.Cache.SetLastModified(Resources.BuildTime);
+
             context.Response.ContentType = ContentType;
             context.Response.BinaryWrite(Resources.GetResourceBytes(Name));
             context.Response.End();
@@ -87,7 +92,7 @@ namespace TacklR.CacheManager.HttpHandlers
 
         internal IHttpHandler Resource(string name, string contentType = null)
         {
-            if (String.IsNullOrEmpty(contentType) && MimeType.TryFromExtension(Path.GetExtension(name), out contentType))
+            if (String.IsNullOrEmpty(contentType) && !MimeType.TryFromExtension(Path.GetExtension(name), out contentType))
                 contentType = MimeType.Default;
 
             ContentType = contentType;
