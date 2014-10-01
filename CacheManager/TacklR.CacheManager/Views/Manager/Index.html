@@ -7,28 +7,26 @@
             <div class="panel-body">
 
                 <!--explicit rows?-->
-                <form role="form">
-                    <div class="form-group">
-                        <div class="input-group">
-                            <span class="input-group-addon cursor-default">Delimiter</span>
-                            <input type="text" class="form-control" id="Delimiter" name="Delimiter" placeholder="Delimiter" data-bind="value: Delimiter"><!--data-binding="Delimiter"--><!-- maxlength="1"-->
-                            <span class="input-group-btn">
-                                <button class="btn btn-default" type="button" data-bind="click: CM.SetDelimiter">Set</button>
-                            </span>
-                        </div>
+                <div class="form-group">
+                    <div class="input-group">
+                        <span class="input-group-addon cursor-default">Delimiter</span>
+                        <input type="text" class="form-control" id="Delimiter" name="Delimiter" placeholder="Delimiter" data-bind="value: Delimiter, event: { keyup: CM.EnterDelimiter }"><!--data-binding="Delimiter"--><!-- maxlength="1"-->
+                        <span class="input-group-btn">
+                            <button class="btn btn-default" type="button" data-bind="click: CM.SetDelimiter">Set</button>
+                        </span>
                     </div>
-                    <div class="checkbox">
-                        <label class="checkbox-inline no-indent">
-                            <input type="checkbox" id="ConfirmDeleteKey" name="ConfirmDeleteKey" data-bind="checked: ConfirmDeleteKey"> Confirm delete key
-                        </label>
-                        <label class="checkbox-inline no-indent">
-                            <input type="checkbox" id="ConfirmDeletePrefix" name="ConfirmDeletePrefix" data-bind="checked: ConfirmDeletePrefix"> Confirm delete prefix
-                        </label>
-                        <label class="checkbox-inline no-indent">
-                            <input type="checkbox" id="ExpandSingleBranches" name="ExpandSingleBranches" data-bind="checked: ExpandSingleBranches"> Expand single branches
-                        </label>
-                    </div>
-                </form>
+                </div>
+                <div class="checkbox">
+                    <label class="checkbox-inline no-indent">
+                        <input type="checkbox" id="ConfirmDeleteKey" name="ConfirmDeleteKey" data-bind="checked: ConfirmDeleteKey"> Confirm delete key
+                    </label>
+                    <label class="checkbox-inline no-indent">
+                        <input type="checkbox" id="ConfirmDeletePrefix" name="ConfirmDeletePrefix" data-bind="checked: ConfirmDeletePrefix"> Confirm delete prefix
+                    </label>
+                    <label class="checkbox-inline no-indent">
+                        <input type="checkbox" id="ExpandSingleBranches" name="ExpandSingleBranches" data-bind="checked: ExpandSingleBranches"> Expand single branches
+                    </label>
+                </div>
 
             </div>
         </div>

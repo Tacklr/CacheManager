@@ -104,6 +104,13 @@
         cacheData.ob_Delimiter(data.Delimiter);
     };
 
+    CM.EnterDelimiter = function (data, e) {
+        if (e.which === 13) {
+            cacheData.ob_Delimiter(data.Delimiter);
+        }
+        return true;
+    };
+
     CM.DeleteNode = function (key, op_prefix) {
         op_prefix = op_prefix || false;
 
