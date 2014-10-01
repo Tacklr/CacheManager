@@ -98,9 +98,10 @@
         //});
     };
 
-    CM.SetDelimiter = function () {
+    CM.SetDelimiter = function (data) {
         //delimiter will already be set via two way input binding, this would also be caused by a refresh (use same button text?)
         //trigger re-draw of tree
+        cacheData.ob_Delimiter(data.Delimiter);
     };
 
     CM.DeleteNode = function (key, op_prefix) {
@@ -226,7 +227,8 @@
         var data = combined[0];
 
         //TODO: Escape non-printable character?
-        data.Delimiter = delimiter = params['delimiter'] || data.Delimiter || delimiter;
+        data.Delimiter = params['delimiter'] || data.Delimiter || delimiter;
+        data.ob_Delimiter = ko.observable(data.Delimiter);
         data.ob_Entries = ko.observableArray(data.Entries);
         data.ob_EntryTree = ko.computed(function () {
             //Can we template directly off the array somehow instead of building our tree here?
@@ -240,14 +242,14 @@
             //Build our tree, any advantage to doing it server side?
             $.each(data.ob_Entries(), function (i, cache) {
                 var key = cache.Key;
-                var keyParts = key.split(data.Delimiter).reverse();
+                var keyParts = key.split(data.ob_Delimiter()).reverse();
                 var current = CacheRoot;
                 var currentKey = [];
                 while (keyParts.length > 1) {
                     var keyPart = keyParts.pop();
                     currentKey.push(keyPart);
                     if (current.Children[keyPart] === undefined)
-                        current.Children[keyPart] = new CacheNode(currentKey.join(data.Delimiter) + data.Delimiter, keyPart, 'item-' + id_i++);//need to get the subkey up to this point
+                        current.Children[keyPart] = new CacheNode(currentKey.join(data.ob_Delimiter()) + data.ob_Delimiter(), keyPart, 'item-' + id_i++);//need to get the subkey up to this point
                     current = current.Children[keyPart];
                 }
                 current.Values.push(new CacheValue(key, keyParts.pop(), 'item-' + id_i++));//TODO: Prevent duplicates
