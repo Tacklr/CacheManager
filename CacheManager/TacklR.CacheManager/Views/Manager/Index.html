@@ -16,9 +16,6 @@
                                 <button class="btn btn-default" type="button" data-bind="click: CM.SetDelimiter">Set</button>
                             </span>
                         </div>
-                        <!--<label for="Delimiter">Delimiter</label>
-                        <input type="text" maxlength="1" class="form-control" id="Delimiter" name="Delimiter" placeholder="Delimiter">-->
-                        <!--data-binding="Delimiter"-->
                     </div>
                     <div class="checkbox">
                         <label class="checkbox-inline no-indent">
@@ -31,9 +28,7 @@
                             <input type="checkbox" id="ExpandSingleBranches" name="ExpandSingleBranches" data-bind="checked: ExpandSingleBranches"> Expand single branches
                         </label>
                     </div>
-                    <!--<button type="button" class="btn btn-default">Save</button>--><!--auto-save? local storage?-->
                 </form>
-
 
             </div>
         </div>
@@ -58,8 +53,7 @@
                 </tr>
                 <tr>
                     <th class="col-fit text-right">Cache Entries</th>
-                    <!--<td data-bind="text: Count"></td>-->
-                    <td data-bind="text: ob_Entries().length"></td><!--show difference between reported/counted?-->
+                    <td data-bind="text: ob_Entries().length"></td><!--show difference between reported/counted (Count)?-->
                 </tr>
             </table>
         </div>
@@ -73,8 +67,7 @@
                 <button type="button" class="btn btn-sm btn-default btn-panel-heading" data-bind="click: CM.Refresh"><span class="fa fa-lg fa-refresh"></span> Refresh</button>
             </div>
             <div class="panel-body">
-                <div class="css-treeview no-wrap" id="cache-tree" data-bind="template: { name: 'tree-template', data: ob_EntryTree(), afterRender: CM.ClearRefreshSpinner }"></div><!--TODO: Show "none" indicator if there are no cache items-->
-                <!--content-loading type spinner for refresh? fa-refresh -->
+                <div class="css-treeview no-wrap" data-bind="template: { name: 'tree-template', data: ob_EntryTree(), afterRender: CM.ClearRefreshSpinner }"></div><!--TODO: Show "none" indicator if there are no cache items-->
                 <div class="refresh-loading hidden"></div>
             </div>
         </div>

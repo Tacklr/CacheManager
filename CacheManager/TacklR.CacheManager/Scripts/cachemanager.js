@@ -54,19 +54,22 @@
                 return node.Key.indexOf(key) === 0;
             return node.Key === key;
         };
-    }
+    };
 
     //var CacheRoot = {
     //    Children: {},
     //    Values: []
     //};
 
-    CM.Sort = function (array, op_sorter)
-    {
+    CM.CopyrightYear = function () {
+        return new Date().getUTCFullYear();
+    };
+
+    CM.Sort = function (array, op_sorter) {
         if ($.isFunction(op_sorter))
             return array.sort(op_sorter);
         return array.sort();
-    }
+    };
 
     CM.Refresh = function () {
         $('.refresh-loading').removeClass('hidden');
@@ -93,7 +96,7 @@
         //$.wait(100).then(function () {
         //    document.location = './';
         //});
-    }
+    };
 
     CM.SetDelimiter = function () {
         //delimiter will already be set via two way input binding, this would also be caused by a refresh (use same button text?)
@@ -140,7 +143,7 @@
         }
 
         return properties;
-    }
+    };
 
     var parseQuery = function (op_lowercase) {
         op_lowercase = op_lowercase || false;

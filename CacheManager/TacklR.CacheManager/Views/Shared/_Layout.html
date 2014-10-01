@@ -1,34 +1,37 @@
 ﻿<!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>CacheManager</title>
-        <base href="/CacheManager.axd/" /><!-- can't hard code, need to pass in somehow -->
-        <link rel="stylesheet" href="./bundles/combined.min.css">
-    </head>
-    <body>
-        <div class="navbar navbar-default navbar-static-top">
-            <div class="container">
-                <div class="navbar-header">
-                    <!--<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                    </button>-->
-                    <a class="navbar-brand" href="./">CacheManager</a>
-                </div>
-                <!--<div class="navbar-collapse collapse">
-                    <ul class="nav navbar-nav">
-                        <li><a href="./">Home</a></li>
-                    </ul>
-                </div>-->
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CacheManager</title>
+    <base href="/CacheManager.axd/" /><!-- can't hard code, need to pass in somehow -->
+    <link rel="stylesheet" href="./bundles/combined.min.css">
+</head>
+<body>
+    <div class="navbar navbar-default navbar-static-top">
+        <div class="container">
+            <div class="navbar-header">
+                <!--<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>-->
+                <a class="navbar-brand" href="./">CacheManager</a>
             </div>
+            <!--<div class="navbar-collapse collapse">
+                <ul class="nav navbar-nav">
+                    <li><a href="./">Home</a></li>
+                </ul>
+            </div>-->
         </div>
-        <div class="container body-content">
-            {0}<!--@RenderBody()-->
-        </div>
-        <span id="fork-me"><a href="#https://github.com/<repo>" target="_blank">Fork me on GitHub</a></span>
-        <script src="./bundles/combined.min.js"></script>
-    </body>
+    </div>
+    <div class="container body-content">
+        {0}<!--@RenderBody()-->
+    </div>
+    <div id="copyright">
+        <p>Copyright &copy; <span data-bind="text: CM.CopyrightYear()">2014</span> TacklR</p>
+    </div>
+    <span id="fork-me"><a href="#https://github.com/<repo>" target="_blank">Fork me on GitHub</a></span>
+    <script src="./bundles/combined.min.js"></script>
+</body>
 </html>
