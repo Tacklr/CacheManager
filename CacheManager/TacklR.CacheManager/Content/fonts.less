@@ -1,0 +1,33 @@
+@fonts: "fonts/";
+
+//TODO: Get rid of font faces we don't need.
+.font-face(@local-name, @local-file, @woff-name, @font-weight, @font-style: normal) {
+    font-family: 'Open Sans';
+    font-style: @font-style;
+    font-weight: @font-weight;
+    src: local('@{local-name}'), local('@{local-file}'), url('@{fonts}@{woff-name}') format('woff');
+}
+
+@font-face {
+    .font-face('Open Sans Light', 'OpenSans-Light', 'OpenSans-Light.woff', 300);
+}
+
+@font-face {
+    .font-face('Open Sans', 'OpenSans', 'OpenSans.woff', 400);
+}
+
+@font-face {
+    .font-face('Open Sans Semibold', 'OpenSans-Semibold', 'OpenSans-Semibold.woff', 600);
+}
+
+@font-face {
+    .font-face('Open Sans Bold', 'OpenSans-Bold', 'OpenSans-Bold.woff', 700);
+}
+
+@font-face {
+    .font-face('Open Sans Extrabold', 'OpenSans-Extrabold', 'OpenSans-Extrabold.woff', 800);
+}
+
+@font-face {
+    .font-face('Open Sans Italic', 'OpenSans-Italic', 'OpenSans-Italic.woff', 400, italic);
+}

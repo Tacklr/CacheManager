@@ -1,0 +1,80 @@
+﻿Security
+    Headers
+    Tokens
+    More auth options?
+
+Data handling
+    Look at how it deals with lots of data
+        May need more 'real-time' loading/processing of data on expansion
+            Not sure how we could do this with the current tree structure handling
+    Better handling of serialization
+        We don't want to fail when one object fails, just report "unserializable" or something.
+            Specify serializable types?
+    what about empties , e.g. blah//blah
+    or keys that end with the delimiter?
+
+Save settings to local storage?
+Add more cache info to front end
+Output cache clearing (can't find a way to list, has to be an input app relative url)
+Other cache handlers?
+Better routing/data binding on request start (don't like parts of CacheManagerViewFactory)
+
+Pre-minify javascript?
+Build subset fonts for icons, we don't need all of them
+Build subset for jquery? bootstrap js?
+
+Wrap ajax calls like in alerts/tacklr
+Handle errors (messages) on client side (toastr?)
+
+
+
+Old notes:
+
+prefixes clear children
+    e.g. Sites/ById
+    specify sperator (e.g \x04, or ., or /)
+
+get all cache key names
+    split on seperator
+        tree higherarchy
+
+item
+    full key?
+    System Type Name
+    on demand (expansion) attempt to json serialize (optional xml serialize?)
+        show simple type values (as is)?
+
+each row
+    clear button
+        on higher level rows clears everything below
+
+cache dependency items?
+    expand?
+    file dependency
+    sql dependency
+
+Export all (button at each level) (serialize)
+    export everything at that level and below
+
+
+Look at
+    HttpCache
+    ApplicationCache
+
+    through an abstract layer? (ICache)
+
+Look at Glimpse functionality for 'interesting' things https://www.nuget.org/packages/glimpse
+
+
+
+System.Web.Caching.OutputCache.Providers. ??? access to output cache?
+Can we use razor without it being a dependency? e.g. compile the views into classes? I'm not really liking t4
+
+build our tree structor on the client side? then we can change the delimiter without calling the server again
+
+
+
+
+
+
+

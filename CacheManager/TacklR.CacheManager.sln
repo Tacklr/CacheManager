@@ -1,0 +1,33 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.30723.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TacklR.CacheManager", "TacklR.CacheManager\TacklR.CacheManager.csproj", "{556EA313-2417-4E5E-86C6-601369C3881A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestMvc", "TestMvc\TestMvc.csproj", "{0F1C6ED0-F48E-4197-ADC5-16DE5D104C9D}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{194390FC-B5F6-4D2A-AB61-7EA3A27F679B}"
+	ProjectSection(SolutionItems) = preProject
+		WebEssentials-Settings.json = WebEssentials-Settings.json
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{556EA313-2417-4E5E-86C6-601369C3881A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{556EA313-2417-4E5E-86C6-601369C3881A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{556EA313-2417-4E5E-86C6-601369C3881A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{556EA313-2417-4E5E-86C6-601369C3881A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0F1C6ED0-F48E-4197-ADC5-16DE5D104C9D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0F1C6ED0-F48E-4197-ADC5-16DE5D104C9D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0F1C6ED0-F48E-4197-ADC5-16DE5D104C9D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0F1C6ED0-F48E-4197-ADC5-16DE5D104C9D}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

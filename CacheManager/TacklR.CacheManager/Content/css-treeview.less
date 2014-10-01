@@ -1,0 +1,159 @@
+﻿/*!
+ * CSS3 Treeview. No JavaScript
+ * @version 1.0
+ * @author Martin Ivanov
+ * @url developer's website: http://wemakesites.net/
+ * @url developer's twitter: https://twitter.com/#!/wemakesitesnet
+ * @url developer's blog http://acidmartin.wordpress.com/
+ **/
+/*
+ * This solution works with all modern browsers and Internet Explorer 9+. 
+ * If you are interested in purchasing a JavaScript enabler for IE8 
+ * for the CSS3 Treeview, please, check this link:
+ * http://experiments.wemakesites.net/miscellaneous/acidjs-css3-treeview/
+ **/
+
+//TODO: Clean all of this up.
+.css-treeview
+{
+    font-family: 'Open Sans', Arial, Helvetica, sans-serif;
+    //font-size: 13px;
+    font-size: 16px;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+.css-treeview label {
+    margin: 0;
+}
+
+.css-treeview ul,
+.css-treeview li
+{
+    padding: 0;
+    margin: 0;
+    //margin: 4px 0;
+    list-style: none;
+}
+
+.highlight {
+    background-color: #dadada;
+}
+
+.css-treeview input
+{
+    position: absolute;
+    display: none;
+    //opacity: 0;
+}
+
+.css-treeview a
+{
+    color: #00f;
+    text-decoration: none;
+}
+
+.css-treeview a:hover
+{
+    text-decoration: underline;
+}
+
+//.css-treeview input + label + ul
+.css-treeview input + label ~ ul
+{
+    //margin: 0 0 0 22px
+    margin: 0 0 0 28px;
+}
+
+.css-treeview input ~ ul
+{
+    display: none;
+}
+
+.css-treeview label,
+.css-treeview label::before
+{
+    cursor: pointer;
+}
+
+.css-treeview input:disabled + label
+{
+    cursor: not-allowed;//why doesn't this affect the area of the checkbox?
+    opacity: .6;
+}
+
+.css-treeview input:checked:not(:disabled) ~ ul
+{
+    display: block;
+}
+
+.css-treeview label::before
+{
+    //background: url("icons.png") no-repeat;
+    //font-family: 'Glyphicons Halflings';
+    font-family: 'FontAwesome';
+}
+
+.css-treeview label,
+.css-treeview a,
+.css-treeview label::before
+{
+    display: inline-block;
+    height: 16px;
+    line-height: 16px;
+    vertical-align: middle;
+}
+
+/*.css-treeview label
+{
+    //width: 100%;
+    //background-position: 18px 0;
+    &:hover {
+        background-color: #dadada;
+    }
+}*/
+
+.css-treeview label::before
+{
+    //content: "";
+    width: 16px;
+    //margin: 0 22px 0 0;
+    vertical-align: middle;
+    //background-position: 0 -32px;
+    //content: '\e117';//glyphicons
+    //content: '\f07b';//font-awesome folder
+    font-weight: normal;
+    content: '\f114';//font-awesome folder-o
+    margin-right: 4px;
+}
+
+.css-treeview input:checked + label::before
+{
+    //background-position: 0 -16px;
+    //content: '\e118';//glyphicons
+    //content: '\f07c';//font-awesome folder-open
+    font-weight: normal;
+    content: '\f115';//font-awesome folder-open-o
+}
+
+/* webkit adjacent element selector bugfix */
+@media screen and (-webkit-min-device-pixel-ratio:0)
+{
+    .css-treeview 
+    {
+        -webkit-animation: webkit-adjacent-element-selector-bugfix infinite 1s;
+    }
+            
+    @-webkit-keyframes webkit-adjacent-element-selector-bugfix 
+    {
+        from 
+        { 
+            padding: 0;
+        } 
+        to 
+        { 
+            padding: 0;
+        }
+    }
+}

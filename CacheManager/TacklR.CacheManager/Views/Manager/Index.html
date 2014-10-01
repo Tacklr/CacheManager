@@ -1,0 +1,103 @@
+﻿<div class="row">
+    <div class="col-sm-6">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title"><span class="fa fa-lg fa-gears"></span> Settings</h3>
+            </div>
+            <div class="panel-body">
+
+                <!--explicit rows?-->
+                <form role="form">
+                    <div class="form-group">
+                        <div class="input-group">
+                            <span class="input-group-addon cursor-default">Delimiter</span>
+                            <input type="text" class="form-control" id="Delimiter" name="Delimiter" placeholder="Delimiter" data-bind="value: Delimiter"><!--data-binding="Delimiter"--><!-- maxlength="1"-->
+                            <span class="input-group-btn">
+                                <button class="btn btn-default" type="button" data-bind="click: CM.SetDelimiter">Set</button>
+                            </span>
+                        </div>
+                        <!--<label for="Delimiter">Delimiter</label>
+                        <input type="text" maxlength="1" class="form-control" id="Delimiter" name="Delimiter" placeholder="Delimiter">-->
+                        <!--data-binding="Delimiter"-->
+                    </div>
+                    <div class="checkbox">
+                        <label class="checkbox-inline no-indent">
+                            <input type="checkbox" id="ConfirmDeleteKey" name="ConfirmDeleteKey" data-bind="checked: ConfirmDeleteKey"> Confirm delete key
+                        </label>
+                        <label class="checkbox-inline no-indent">
+                            <input type="checkbox" id="ConfirmDeletePrefix" name="ConfirmDeletePrefix" data-bind="checked: ConfirmDeletePrefix"> Confirm delete prefix
+                        </label>
+                        <label class="checkbox-inline no-indent">
+                            <input type="checkbox" id="ExpandSingleBranches" name="ExpandSingleBranches" data-bind="checked: ExpandSingleBranches"> Expand single branches
+                        </label>
+                    </div>
+                    <!--<button type="button" class="btn btn-default">Save</button>--><!--auto-save? local storage?-->
+                </form>
+
+
+            </div>
+        </div>
+    </div>
+    <div class="col-xs-12 col-sm-offset-2 col-sm-4 col-md-offset-3 col-md-3">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title"><span class="fa fa-lg fa-bar-chart"></span> Cache Stats</h3>
+            </div>
+            <table class="table table-bordered table-condensed" id="stats-table">
+                <tr>
+                    <th class="col-fit text-right">Server Name</th>
+                    <td data-bind="text: ServerName"></td>
+                </tr>
+                <tr>
+                    <th class="col-fit text-right">Free Memory</th>
+                    <td data-bind="text: FreeMemory"></td>
+                </tr>
+                <tr>
+                    <th class="col-fit text-right">App Path</th>
+                    <td data-bind="text: AppPath"></td><!-- What if this is long? -->
+                </tr>
+                <tr>
+                    <th class="col-fit text-right">Cache Entries</th>
+                    <!--<td data-bind="text: Count"></td>-->
+                    <td data-bind="text: ob_Entries().length"></td><!--show difference between reported/counted?-->
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-xs-12 panel-expand">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title"><span class="fa fa-lg fa-sitemap"></span> Cache Detail</h3>
+                <button type="button" class="btn btn-sm btn-default btn-panel-heading" data-bind="click: CM.Refresh"><span class="fa fa-lg fa-refresh"></span> Refresh</button>
+            </div>
+            <div class="panel-body">
+                <div class="css-treeview no-wrap" id="cache-tree" data-bind="template: { name: 'tree-template', data: ob_EntryTree(), afterRender: CM.ClearRefreshSpinner }"></div><!--TODO: Show "none" indicator if there are no cache items-->
+                <!--content-loading type spinner for refresh? fa-refresh -->
+                <div class="refresh-loading hidden"></div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="content-loading"></div>
+
+<!--can we make this a string? why doesn't knockout strip out the comments from the rendered markup?-->
+<script type="text/html" id="tree-template">
+    <ul>
+        <!-- ko foreach: CM.Sort(CM.ObjectAsArray($data.Children), CM.SortCacheKey) --><!--eww-->
+        <li>
+            <button type="button" class="btn btn-xs btn-link text-bold" data-bind="click: CM.DeleteNode(Key, true)" style="margin-right: 4px;"><span class="fa fa-lg fa-trash-o"></span></button>
+            <input type="checkbox" class="expand" data-bind="checked: ob_Checked, attr: { id: Id }, click: CM.BranchExpand" />
+            <label data-bind="attr: { for: Id }"><span data-bind="text: Text"></span> <span class="delimiter" data-bind="text: $root.Delimiter"></span></label>
+            <!-- ko template: { name: 'tree-template', data: $data } --><!-- /ko -->
+        </li>
+        <!-- /ko -->
+        <!-- ko foreach: CM.Sort($data.Values, CM.SortCacheKey) --><!--eww-->
+        <li>
+            <button type="button" class="btn btn-xs btn-link" style="margin-right: 4px;" data-bind="click: CM.DeleteNode(Key)"><span class="fa fa-lg fa-trash-o"></span></button>
+            <span data-bind="text: Text"></span>
+        </li>
+        <!-- /ko -->
+    </ul>
+</script>

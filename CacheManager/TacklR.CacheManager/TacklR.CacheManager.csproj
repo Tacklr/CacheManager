@@ -1,0 +1,270 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{556EA313-2417-4E5E-86C6-601369C3881A}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>TacklR.CacheManager</RootNamespace>
+    <AssemblyName>TacklR.CacheManager</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Newtonsoft.Json.6.0.5\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.WebPages, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="CacheManagerViewFactory.cs" />
+    <Compile Include="Caches\ApplicationCacheShim.cs" />
+    <Compile Include="Caches\HttpCacheShim.cs" />
+    <Compile Include="Configuration.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Controllers\ApiController.cs" />
+    <Compile Include="Helpers.cs" />
+    <Compile Include="HttpHandlers\PageHandler.cs">
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controllers\ErrorController.cs">
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controllers\ManagerController.cs">
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="HttpHandlers\DataHandler.cs" />
+    <Compile Include="HttpHandlers\ResourceHandler.cs" />
+    <Compile Include="Interfaces\ICache.cs" />
+    <Compile Include="Models\ApiModels.cs" />
+    <Compile Include="Resources.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <None Include="Bundles\combined.js.bundle" />
+    <None Include="Content\bootstrap.less" />
+    <None Include="Content\bootstrap\alerts.less" />
+    <None Include="Content\bootstrap\badges.less" />
+    <None Include="Content\bootstrap\bootstrap.less" />
+    <None Include="Content\bootstrap\breadcrumbs.less" />
+    <None Include="Content\bootstrap\button-groups.less" />
+    <None Include="Content\bootstrap\buttons.less" />
+    <None Include="Content\bootstrap\carousel.less" />
+    <None Include="Content\bootstrap\close.less" />
+    <None Include="Content\bootstrap\code.less" />
+    <None Include="Content\bootstrap\component-animations.less" />
+    <None Include="Content\bootstrap\dropdowns.less" />
+    <None Include="Content\bootstrap\forms.less" />
+    <None Include="Content\bootstrap\glyphicons.less" />
+    <None Include="Content\bootstrap\grid.less" />
+    <None Include="Content\bootstrap\input-groups.less" />
+    <None Include="Content\bootstrap\jumbotron.less" />
+    <None Include="Content\bootstrap\labels.less" />
+    <None Include="Content\bootstrap\list-group.less" />
+    <None Include="Content\bootstrap\media.less" />
+    <None Include="Content\bootstrap\mixins.less" />
+    <None Include="Content\bootstrap\mixins\alerts.less" />
+    <None Include="Content\bootstrap\mixins\background-variant.less" />
+    <None Include="Content\bootstrap\mixins\border-radius.less" />
+    <None Include="Content\bootstrap\mixins\buttons.less" />
+    <None Include="Content\bootstrap\mixins\center-block.less" />
+    <None Include="Content\bootstrap\mixins\clearfix.less" />
+    <None Include="Content\bootstrap\mixins\forms.less" />
+    <None Include="Content\bootstrap\mixins\gradients.less" />
+    <None Include="Content\bootstrap\mixins\grid-framework.less" />
+    <None Include="Content\bootstrap\mixins\grid.less" />
+    <None Include="Content\bootstrap\mixins\hide-text.less" />
+    <None Include="Content\bootstrap\mixins\image.less" />
+    <None Include="Content\bootstrap\mixins\labels.less" />
+    <None Include="Content\bootstrap\mixins\list-group.less" />
+    <None Include="Content\bootstrap\mixins\nav-divider.less" />
+    <None Include="Content\bootstrap\mixins\nav-vertical-align.less" />
+    <None Include="Content\bootstrap\mixins\opacity.less" />
+    <None Include="Content\bootstrap\mixins\pagination.less" />
+    <None Include="Content\bootstrap\mixins\panels.less" />
+    <None Include="Content\bootstrap\mixins\progress-bar.less" />
+    <None Include="Content\bootstrap\mixins\reset-filter.less" />
+    <None Include="Content\bootstrap\mixins\resize.less" />
+    <None Include="Content\bootstrap\mixins\responsive-visibility.less" />
+    <None Include="Content\bootstrap\mixins\size.less" />
+    <None Include="Content\bootstrap\mixins\tab-focus.less" />
+    <None Include="Content\bootstrap\mixins\table-row.less" />
+    <None Include="Content\bootstrap\mixins\text-emphasis.less" />
+    <None Include="Content\bootstrap\mixins\text-overflow.less" />
+    <None Include="Content\bootstrap\mixins\vendor-prefixes.less" />
+    <None Include="Content\bootstrap\modals.less" />
+    <None Include="Content\bootstrap\navbar.less" />
+    <None Include="Content\bootstrap\navs.less" />
+    <None Include="Content\bootstrap\normalize.less" />
+    <None Include="Content\bootstrap\pager.less" />
+    <None Include="Content\bootstrap\pagination.less" />
+    <None Include="Content\bootstrap\panels.less" />
+    <None Include="Content\bootstrap\popovers.less" />
+    <None Include="Content\bootstrap\print.less" />
+    <None Include="Content\bootstrap\progress-bars.less" />
+    <None Include="Content\bootstrap\responsive-embed.less" />
+    <None Include="Content\bootstrap\responsive-utilities.less" />
+    <None Include="Content\bootstrap\scaffolding.less" />
+    <None Include="Content\bootstrap\tables.less" />
+    <None Include="Content\bootstrap\theme.less" />
+    <None Include="Content\bootstrap\thumbnails.less" />
+    <None Include="Content\bootstrap\tooltip.less" />
+    <None Include="Content\bootstrap\type.less" />
+    <None Include="Content\bootstrap\utilities.less" />
+    <None Include="Content\bootstrap\variables.less" />
+    <None Include="Content\bootstrap\wells.less" />
+    <None Include="Content\cachemanager.less" />
+    <EmbeddedResource Include="Content\fonts\OpenSans-Bold.woff" />
+    <EmbeddedResource Include="Content\fonts\OpenSans-Extrabold.woff" />
+    <EmbeddedResource Include="Content\fonts\OpenSans-Italic.woff" />
+    <EmbeddedResource Include="Content\fonts\OpenSans-Light.woff" />
+    <EmbeddedResource Include="Content\fonts\OpenSans-Semibold.woff" />
+    <EmbeddedResource Include="Content\fonts\OpenSans.woff" />
+    <None Include="Content\fonts.less" />
+    <None Include="Content\font-awesome\bordered-pulled.less" />
+    <None Include="Content\font-awesome\core.less" />
+    <None Include="Content\font-awesome\extras.less" />
+    <None Include="Content\font-awesome\fixed-width.less" />
+    <None Include="Content\font-awesome.less" />
+    <None Include="Content\font-awesome\icons.less" />
+    <None Include="Content\font-awesome\larger.less" />
+    <None Include="Content\font-awesome\list.less" />
+    <None Include="Content\font-awesome\mixins.less" />
+    <None Include="Content\font-awesome\path.less" />
+    <None Include="Content\font-awesome\rotated-flipped.less" />
+    <None Include="Content\font-awesome\spinning.less" />
+    <None Include="Content\font-awesome\stacked.less" />
+    <None Include="Content\font-awesome\variables.less" />
+    <EmbeddedResource Include="Content\fonts\fontawesome-webfont.eot" />
+    <EmbeddedResource Include="Content\fonts\fontawesome-webfont.ttf" />
+    <EmbeddedResource Include="Content\fonts\fontawesome-webfont.woff" />
+    <None Include="Bundles\combined.css.bundle" />
+    <None Include="Content\theme.less" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Views\Shared\_Layout.html" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Views\Shared\Error404.html" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Views\Shared\Error403.html" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Bundles\combined.js">
+      <DependentUpon>combined.js.bundle</DependentUpon>
+    </Content>
+    <Content Include="TODO.txt" />
+    <EmbeddedResource Include="Views\Manager\Index.min.html">
+      <DependentUpon>Index.html</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\Shared\Error403.min.html">
+      <DependentUpon>Error403.html</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\Shared\Error404.min.html">
+      <DependentUpon>Error404.html</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\Shared\Error500.min.html">
+      <DependentUpon>Error500.html</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\Shared\_Layout.min.html">
+      <DependentUpon>_Layout.html</DependentUpon>
+    </EmbeddedResource>
+    <None Include="Scripts\jquery-2.1.1.js" />
+    <None Include="Scripts\bootstrap.js" />
+    <None Include="Content\fonts.css">
+      <DependentUpon>fonts.less</DependentUpon>
+    </None>
+    <None Include="Content\fonts.min.css">
+      <DependentUpon>fonts.css</DependentUpon>
+    </None>
+    <EmbeddedResource Include="Bundles\combined.min.js">
+      <DependentUpon>combined.js</DependentUpon>
+    </EmbeddedResource>
+    <None Include="Scripts\knockout-3.2.0.js" />
+    <Content Include="Bundles\combined.css">
+      <DependentUpon>combined.css.bundle</DependentUpon>
+    </Content>
+    <EmbeddedResource Include="Bundles\combined.min.css">
+      <DependentUpon>combined.css</DependentUpon>
+    </EmbeddedResource>
+    <None Include="Content\bootstrap.css">
+      <DependentUpon>bootstrap.less</DependentUpon>
+    </None>
+    <None Include="Views\Shared\Error500.html" />
+    <None Include="Views\Manager\Index.html" />
+    <None Include="Scripts\cachemanager.js" />
+    <None Include="Content\bootstrap.min.css">
+      <DependentUpon>bootstrap.css</DependentUpon>
+    </None>
+    <None Include="Content\css-treeview.less" />
+    <None Include="Content\cachemanager.css">
+      <DependentUpon>cachemanager.less</DependentUpon>
+    </None>
+    <None Include="Content\cachemanager.min.css">
+      <DependentUpon>cachemanager.css</DependentUpon>
+    </None>
+    <None Include="Content\css-treeview.css">
+      <DependentUpon>css-treeview.less</DependentUpon>
+    </None>
+    <None Include="Content\css-treeview.min.css">
+      <DependentUpon>css-treeview.css</DependentUpon>
+    </None>
+    <None Include="Content\font-awesome.css">
+      <DependentUpon>font-awesome.less</DependentUpon>
+    </None>
+    <None Include="Content\font-awesome.min.css">
+      <DependentUpon>font-awesome.css</DependentUpon>
+    </None>
+    <EmbeddedResource Include="Content\fonts\fontawesome-webfont.svg" />
+    <None Include="Content\theme.css">
+      <DependentUpon>theme.less</DependentUpon>
+    </None>
+    <None Include="Content\theme.min.css">
+      <DependentUpon>theme.css</DependentUpon>
+    </None>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

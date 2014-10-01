@@ -1,5 +1,9 @@
 #Project Specific
-CacheManager/packages/
+*/packages/
+**/bundles/*.min.js
+**/bundles/*.js
+*.min.map
+*.min.html
 *.min.css
 *.css
 
