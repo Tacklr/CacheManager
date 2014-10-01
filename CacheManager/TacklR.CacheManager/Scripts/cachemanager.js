@@ -242,7 +242,7 @@
             //Build our tree, any advantage to doing it server side?
             $.each(data.ob_Entries(), function (i, cache) {
                 var key = cache.Key;
-                var keyParts = key.split(data.ob_Delimiter()).reverse();
+                var keyParts = key.split(data.ob_Delimiter() || null).reverse();
                 var current = CacheRoot;
                 var currentKey = [];
                 while (keyParts.length > 1) {
