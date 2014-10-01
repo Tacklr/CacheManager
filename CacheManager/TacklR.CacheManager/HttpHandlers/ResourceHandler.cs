@@ -73,6 +73,7 @@ namespace TacklR.CacheManager.HttpHandlers
 
         private string ContentType { get; set; }
         private string Name { get; set; }
+        private TimeSpan MaxAge { get; set; }
 
         public void ProcessRequest(HttpContext context)
         {
@@ -82,20 +83,21 @@ namespace TacklR.CacheManager.HttpHandlers
             context.Response.Clear();
 
             context.Response.Cache.SetCacheability(HttpCacheability.Public);
-            context.Response.Cache.SetMaxAge(TimeSpan.FromMinutes(1));
             context.Response.Cache.SetLastModified(Resources.BuildTime);
+            context.Response.Cache.SetMaxAge(MaxAge);
 
             context.Response.ContentType = ContentType;
             context.Response.BinaryWrite(Resources.GetResourceBytes(Name));
             context.Response.End();
         }
 
-        internal IHttpHandler Resource(string name, string contentType = null)
+        internal IHttpHandler Resource(string name, string contentType = null, TimeSpan? maxAge = null)
         {
             if (String.IsNullOrEmpty(contentType) && !MimeType.TryFromExtension(Path.GetExtension(name), out contentType))
                 contentType = MimeType.Default;
 
             ContentType = contentType;
+            MaxAge = maxAge ?? TimeSpan.FromMinutes(1);//TODO: Better default max-age
             Name = name;
             return this;
         }

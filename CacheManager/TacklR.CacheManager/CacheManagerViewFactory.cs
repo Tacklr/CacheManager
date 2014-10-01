@@ -15,7 +15,6 @@ namespace TacklR.CacheManager
         {
             Controller = controller;
             Action = action;
-            //Parameters = parameters.ToList();//default?
             Parameters = parameters.ToDictionary(p => p.Item1, p => p.Item2);
         }
 
@@ -29,7 +28,6 @@ namespace TacklR.CacheManager
 
         internal Type Controller { get; set; }
         internal string Action { get; set; }
-        //internal IList<object> Parameters { get; set; }
         internal IDictionary<string, object> Parameters { get; set; }
     }
 
