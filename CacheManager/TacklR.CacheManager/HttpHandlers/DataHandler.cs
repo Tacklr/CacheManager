@@ -48,6 +48,9 @@ namespace TacklR.CacheManager.HttpHandlers
         public void ProcessRequest(HttpContext context)
         {
             context.Response.Clear();
+
+            context.Response.Headers.Override(Helpers.SecurityHeaders);
+
             context.Response.StatusCode = (int)Status;
             context.Response.ContentType = "application/json";
             context.Response.Write(Content);

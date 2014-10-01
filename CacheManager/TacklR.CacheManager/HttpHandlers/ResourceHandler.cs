@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -86,6 +87,8 @@ namespace TacklR.CacheManager.HttpHandlers
             context.Response.Cache.SetLastModified(Resources.BuildTime);
             context.Response.Cache.SetMaxAge(MaxAge);
 
+            context.Response.Headers.Override(Helpers.SecurityHeaders);
+            
             context.Response.ContentType = ContentType;
             context.Response.BinaryWrite(Resources.GetResourceBytes(Name));
             context.Response.End();
