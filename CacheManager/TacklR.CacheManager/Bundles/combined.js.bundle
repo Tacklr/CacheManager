@@ -14,6 +14,7 @@
     <file>/Scripts/jquery-2.1.1.js</file>
     <file>/Scripts/bootstrap.js</file>
     <file>/Scripts/knockout-3.2.0.js</file>
+    <file>/Scripts/stringTemplateEngine.js</file>
     <file>/Scripts/cachemanager.js</file>
   </files>
 </bundle>

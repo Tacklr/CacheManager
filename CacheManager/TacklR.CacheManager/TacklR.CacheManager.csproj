@@ -189,6 +189,7 @@
     <Content Include="Bundles\combined.js">
       <DependentUpon>combined.js.bundle</DependentUpon>
     </Content>
+    <Content Include="Scripts\stringTemplateEngine.js" />
     <Content Include="TODO.txt" />
     <EmbeddedResource Include="Views\Manager\Index.min.html">
       <DependentUpon>Index.html</DependentUpon>

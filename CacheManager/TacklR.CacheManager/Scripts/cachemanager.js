@@ -6,6 +6,9 @@
 //or keys that end with the delimiter?
 //Keep open state on data change/reload?
 //TODO: Put wrappers around ajax so we can do things like error handling, busy indicator (tokens?)
+/*!
+ * Copyright 2014 Tacklr
+ */
 ; (function (base, $, undefined) {
     //#region Initalize
 
@@ -14,6 +17,25 @@
 
     var docReady = $.Deferred();
     $(docReady.resolve);
+
+    ko.templates['tree-template'] = [
+        '<ul>',
+            '<!-- ko foreach: CM.Sort(CM.ObjectAsArray($data.Children), CM.SortCacheKey) -->',//eww
+            '<li>',
+                '<button type="button" class="btn btn-xs btn-link text-bold" data-bind="click: CM.DeleteNode(Key, true)" style="margin-right: 4px;"><span class="fa fa-lg fa-trash-o"></span></button>',
+                '<input type="checkbox" class="expand" data-bind="checked: ob_Checked, attr: { id: Id }, click: CM.BranchExpand" />',
+                '<label data-bind="attr: { for: Id }"><span data-bind="text: Text"></span> <span class="delimiter" data-bind="text: $root.Delimiter"></span></label>',
+                '<!-- ko template: { name: \'tree-template\', data: $data } --><!-- /ko -->',
+            '</li>',
+            '<!-- /ko -->',
+            '<!-- ko foreach: CM.Sort($data.Values, CM.SortCacheKey) -->',//eww
+            '<li>',
+                '<button type="button" class="btn btn-xs btn-link" style="margin-right: 4px;" data-bind="click: CM.DeleteNode(Key)"><span class="fa fa-lg fa-trash-o"></span></button>',
+                '<span data-bind="text: Text"></span>',
+            '</li>',
+            '<!-- /ko -->',
+        '</ul>'
+    ].join('');
 
     $.when($.get('api/v1/combined'), docReady)
     .done(function (combined) {
@@ -63,6 +85,13 @@
 
     //#endregion Initalize
 
+    //#region Properties
+
+    var cacheData = {};
+    var delimiter = '/';//because we are using it later, we must always have one. Apparenly we can even have null keys, so use \x00 if we don't want a delimiter? I don't know if a c# key can contain a null.
+
+    //#endregion Properties
+
     //#region Classes
 
     var CacheNode = function (key, text, id) {
@@ -81,13 +110,6 @@
     };
 
     //#endregion Classes
-
-    //#region Properties
-
-    var cacheData = {};
-    var delimiter = '/';//because we are using it later, we must always have one. Apparenly we can even have null keys, so use \x00 if we don't want a delimiter? I don't know if a c# key can contain a null.
-
-    //#endregion Properties
 
     //#region Public Methods
 

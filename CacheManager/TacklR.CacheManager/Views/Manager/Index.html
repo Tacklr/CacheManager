@@ -72,23 +72,3 @@
     </div>
 </div>
 <div class="content-loading"></div>
-
-<!--can we make this a string? why doesn't knockout strip out the comments from the rendered markup?-->
-<script type="text/html" id="tree-template">
-    <ul>
-        <!-- ko foreach: CM.Sort(CM.ObjectAsArray($data.Children), CM.SortCacheKey) --><!--eww-->
-        <li>
-            <button type="button" class="btn btn-xs btn-link text-bold" data-bind="click: CM.DeleteNode(Key, true)" style="margin-right: 4px;"><span class="fa fa-lg fa-trash-o"></span></button>
-            <input type="checkbox" class="expand" data-bind="checked: ob_Checked, attr: { id: Id }, click: CM.BranchExpand" />
-            <label data-bind="attr: { for: Id }"><span data-bind="text: Text"></span> <span class="delimiter" data-bind="text: $root.Delimiter"></span></label>
-            <!-- ko template: { name: 'tree-template', data: $data } --><!-- /ko -->
-        </li>
-        <!-- /ko -->
-        <!-- ko foreach: CM.Sort($data.Values, CM.SortCacheKey) --><!--eww-->
-        <li>
-            <button type="button" class="btn btn-xs btn-link" style="margin-right: 4px;" data-bind="click: CM.DeleteNode(Key)"><span class="fa fa-lg fa-trash-o"></span></button>
-            <span data-bind="text: Text"></span>
-        </li>
-        <!-- /ko -->
-    </ul>
-</script>
