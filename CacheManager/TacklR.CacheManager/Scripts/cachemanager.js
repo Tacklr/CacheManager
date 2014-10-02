@@ -17,6 +17,8 @@
     var docReady = $.Deferred();
     $(docReady.resolve);
 
+    window.HERP = checkedState = {};
+
     $.when($.get('api/v1/combined'), docReady)
     .done(function (combined) {
         //var params = parseQuery(true);//save in local storage instead?
@@ -40,12 +42,19 @@
                 var key = cache.Key;
                 var keyParts = key.split(data.ob_Delimiter() || null).reverse();
                 var current = CacheRoot;
-                var currentKey = [];
+                var currentKeyParts = [];
                 while (keyParts.length > 1) {
                     var keyPart = keyParts.pop();
-                    currentKey.push(keyPart);
-                    if (current.Children[keyPart] === undefined)
-                        current.Children[keyPart] = new CacheNode(currentKey.join(data.ob_Delimiter()) + data.ob_Delimiter(), keyPart, 'item-' + id_i++);//need to get the subkey up to this point
+                    currentKeyParts.push(keyPart);
+                    if (current.Children[keyPart] === undefined) {
+                        var currentKey = currentKeyParts.join(data.ob_Delimiter()) + data.ob_Delimiter();
+
+                        //Can this be done more cleanly?
+                        if (checkedState[currentKey] === undefined)
+                            checkedState[currentKey] = ko.observable(false);
+
+                        current.Children[keyPart] = new CacheNode(currentKey, keyPart, 'item-' + id_i++);//need to get the subkey up to this point
+                    }
                     current = current.Children[keyPart];
                 }
                 current.Values.push(new CacheValue(key, keyParts.pop(), cache.Type, 'item-' + id_i++));//TODO: Prevent duplicates
@@ -56,6 +65,8 @@
 
         ko.applyBindings(data);//Tree parts lose open state on delete, need to save the state somehow.
         cacheData = data;
+
+        window.DERP = data;
 
         //Clear loading indiciator
         $('.content-loading').fadeOut(function () {
@@ -119,13 +130,21 @@
 
     //#region Classes
 
-    var CacheNode = function (key, text, id) {
+    var CacheNode = function (key, text, id) {//, ob_checked
         this.Key = key;
         this.Text = text;
         this.Children = {};//Nodes
         this.Values = [];//Values
         this.Id = id;
-        this.ob_Checked = ko.observable(false);
+        this.ob_Checked = checkedState[key]//ko.observable(false);
+        //this.ob_Checked = ko.computed({
+        //    read: function () {
+        //        return ob_checked();
+        //    },
+        //    write: function (value) {
+        //        ob_checked(value);
+        //    }
+        //});
     };
 
     var CacheValue = function (key, text, type, id) {
