@@ -6,6 +6,7 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web;
+using TacklR.CacheManager.Models.Api;
 
 namespace TacklR.CacheManager.HttpHandlers
 {
@@ -40,8 +41,17 @@ namespace TacklR.CacheManager.HttpHandlers
 
         public IHttpHandler Json(object data, HttpStatusCode status = HttpStatusCode.OK)//serializer option? xml?
         {
-            Content = JsonConvert.SerializeObject(data);
-            Status = status;
+            try
+            {
+                Content = JsonConvert.SerializeObject(data);
+                Status = status;
+            }
+            catch (Exception ex)
+            {
+                //log?
+                Content = JsonConvert.SerializeObject(new JsonErrorViewModel { Success = false, Message = ex.Message });//better message?
+                Status = HttpStatusCode.BadRequest;
+            }
             return this;
         }
 

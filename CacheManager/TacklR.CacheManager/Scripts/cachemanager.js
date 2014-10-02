@@ -48,7 +48,7 @@
                         current.Children[keyPart] = new CacheNode(currentKey.join(data.ob_Delimiter()) + data.ob_Delimiter(), keyPart, 'item-' + id_i++);//need to get the subkey up to this point
                     current = current.Children[keyPart];
                 }
-                current.Values.push(new CacheValue(key, keyParts.pop(), 'item-' + id_i++));//TODO: Prevent duplicates
+                current.Values.push(new CacheValue(key, keyParts.pop(), cache.Type, 'item-' + id_i++));//TODO: Prevent duplicates
             });
 
             return CacheRoot;
@@ -95,7 +95,7 @@
             '<li>',
                 '<button type="button" title="Delete Key" class="btn btn-xs btn-link" data-bind="click: CM.DeleteNode(Key)"><span class="fa fa-lg fa-trash-o"></span></button>',
                 '<button type="button" title="Serialize Key" class="btn btn-xs btn-link" data-bind="click: CM.SerializeNode(Key)"><span class="fa fa-lg fa-code"></span></button>',
-                '<span data-bind="text: Text"></span>',
+                '<span data-bind="text: Text, attr: { title: Key }"></span> <span class="text-muted">(<span data-bind="text: Type"></span>)</span>',
             '</li>',
             '<!-- /ko -->',
         '</ul>'
@@ -128,9 +128,10 @@
         this.ob_Checked = ko.observable(false);
     };
 
-    var CacheValue = function (key, text, id) {
+    var CacheValue = function (key, text, type, id) {
         this.Key = key;
         this.Text = text;
+        this.Type = type;
         this.Id = id;
     };
 
@@ -179,8 +180,9 @@
         //document.location.reload();
     };
 
-    CM.ClearRefreshSpinner = function () {
+    CM.AfterRenderCacheTree = function () {//elements
         $('.refresh-loading').addClass('hidden');
+        //other stuff?
     };
 
     CM.GoBack = function () {
@@ -369,7 +371,7 @@
             }
         })
         .fail(function (jqXHR, textStatus, errorThrown) {
-            handleFailError(jqXHR, textStatus, errorThrown);
+            handleFailError(jqXHR, textStatus, errorThrown);//Use status code specific errors when applicable?
             dfd.rejectWith(this, arguments);//proper context?
         })
         .always(function () {

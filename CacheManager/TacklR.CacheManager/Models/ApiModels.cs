@@ -13,6 +13,11 @@ namespace TacklR.CacheManager.Models.Api
     abstract class BaseViewModel
     {
         public bool Success { get; set; }
+        public string Message { get; set; }
+    }
+
+    internal class JsonErrorViewModel : BaseViewModel
+    {
     }
 
     internal class SerializeViewModel : BaseViewModel
