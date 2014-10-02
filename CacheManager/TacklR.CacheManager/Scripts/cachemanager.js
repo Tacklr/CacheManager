@@ -26,6 +26,10 @@
 
         //TODO: Escape non-printable character?
         //data.Delimiter = params['delimiter'] || data.Delimiter || delimiter;
+
+        //Better way to do these transforms?
+        data.MemoryLimit = data.MemoryLimit === null ? 'Unknown' : data.MemoryLimit === -1 ? 'Unlimited' : data.MemoryLimit;
+        data.MemoryLimitPercent = data.MemoryLimitPercent === null ? 'Unknown' : data.MemoryLimitPercent;
         data.ob_Delimiter = ko.observable(data.Delimiter);
         data.ob_Entries = ko.observableArray(data.Entries);
         data.ob_EntryTree = ko.computed(function () {

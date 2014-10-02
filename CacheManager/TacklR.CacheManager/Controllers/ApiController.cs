@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using TacklR.CacheManager.Caches;
 using TacklR.CacheManager.HttpHandlers;
+using TacklR.CacheManager.Interfaces;
 using TacklR.CacheManager.Models.Api;
 
 namespace TacklR.CacheManager.Controllers
@@ -20,8 +21,8 @@ namespace TacklR.CacheManager.Controllers
 
         internal IHttpHandler Stats()
         {
-            var cache = new HttpCacheShim();
-            var model = new StatsViewModel(cache.Count, HttpContext.Current) { Success = true };
+            var cache = new HttpCacheShim() as ICache;
+            var model = new StatsViewModel(cache, HttpContext.Current) { Success = true };
             return base.Json(model);
         }
 
@@ -33,9 +34,9 @@ namespace TacklR.CacheManager.Controllers
 
         internal IHttpHandler Combined()
         {
-            var cache = new HttpCacheShim();
-            var cacheEntries = cache.GetAll();
-            var model = new CombinedViewModel(cache.Count, HttpContext.Current, cacheEntries) { Success = true };
+            var cache = new HttpCacheShim() as ICache;
+            //var test = cache.GetAllEntries();
+            var model = new CombinedViewModel(cache, HttpContext.Current) { Success = true };
             return base.Json(model);
         }
 

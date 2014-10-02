@@ -47,7 +47,7 @@ Aria?
     .sr-only-focusable {
 
 
-
+List view with more info inline? sortable?
 
 
 

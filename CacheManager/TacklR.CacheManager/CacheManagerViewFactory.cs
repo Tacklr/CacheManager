@@ -21,6 +21,12 @@ namespace TacklR.CacheManager
             //Query string handling? Model binding? We could do it in a simple way using json
             HttpContext.Current.Cache.Add("This/Is-a/very/deep/entry/to-test/how/far/over/it/goes aaaaaaaaaaaaa aaaaaaaaaaaa aaaaaaaaaa", "derp", null, DateTime.UtcNow.AddDays(1), System.Web.Caching.Cache.NoSlidingExpiration, System.Web.Caching.CacheItemPriority.AboveNormal, null);
 
+
+
+
+
+
+
             RouteTable = new RouteTable();
             //Does it matter of we instantiate here or not? might make a difference if we intend to pass constructor parameters per-request.
             RouteTable.MapRoute("GET:", new Route(typeof(ManagerController), "Index"));

@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web;
+using TacklR.CacheManager.Caches;
 using TacklR.CacheManager.Interfaces;
 
 namespace TacklR.CacheManager.Models.Api
@@ -34,7 +35,7 @@ namespace TacklR.CacheManager.Models.Api
 
     internal class CombinedViewModel : BaseViewModel
     {
-        internal CombinedViewModel(int count, HttpContext context, IDictionary<string, object> entries)
+        internal CombinedViewModel(ICache cache, HttpContext context)
         {
             Delimiter = Configuration.Delimiter;
             ConfirmDeleteKey = Configuration.ConfirmDeleteKey;
@@ -42,11 +43,20 @@ namespace TacklR.CacheManager.Models.Api
             ExpandSingleBranches = Configuration.ExpandSingleBranches;
 
             AppPath = context.Request.ApplicationPath;
-            Count = count;
-            FreeMemory = Helpers.GetAvailableMemory();//this was in the AspAlliance version, not sure if it's really any help to report.
+            Count = cache.Count;
+            MemoryFree = Helpers.GetAvailableMemory();//this was in the AspAlliance version, not sure if it's really any help to report.
             ServerName = Environment.MachineName;
 
-            Entries = entries.Select(e => new Entry(e)).ToList();
+            //Will other shims have this?
+            if (cache is HttpCacheShim)
+            {
+                var httpCache = cache as HttpCacheShim;
+                MemoryLimitPercent = httpCache.EffectivePercentagePhysicalMemoryLimit;
+                var memoryLimitKB = httpCache.EffectivePrivateBytesLimit;
+                MemoryLimit = memoryLimitKB == -1 ? -1 : memoryLimitKB / 1024f;
+            }
+
+            Entries = cache.GetAll().Select(e => new Entry(e)).ToList();
         }
 
         public string Delimiter { get; set; }
@@ -56,8 +66,11 @@ namespace TacklR.CacheManager.Models.Api
 
         public string AppPath { get; set; }
         public int Count { get; set; }
-        public float? FreeMemory { get; set; }
+        public float? MemoryFree { get; set; }
         public string ServerName { get; set; }
+
+        public float? MemoryLimit { get; set; }
+        public long? MemoryLimitPercent { get; set; }
 
         public IList<Entry> Entries { get; set; }
 
@@ -103,18 +116,30 @@ namespace TacklR.CacheManager.Models.Api
 
     internal class StatsViewModel : BaseViewModel
     {
-        internal StatsViewModel(int count, HttpContext context)
+        internal StatsViewModel(ICache cache, HttpContext context)
         {
             AppPath = context.Request.ApplicationPath;
-            Count = count;
-            FreeMemory = Helpers.GetAvailableMemory();//this was in the AspAlliance version, not sure if it's really any help to report.
+            Count = cache.Count;
+            MemoryFree = Helpers.GetAvailableMemory();//this was in the AspAlliance version, not sure if it's really any help to report.
             ServerName = Environment.MachineName;
+
+            //Will other shims have this?
+            if (cache is HttpCacheShim)
+            {
+                var httpCache = cache as HttpCacheShim;
+                MemoryLimitPercent = httpCache.EffectivePercentagePhysicalMemoryLimit;
+                var memoryLimitKB = httpCache.EffectivePrivateBytesLimit;
+                MemoryLimit = memoryLimitKB == -1 ? -1 : memoryLimitKB / 1024f;
+            }
         }
 
         public string AppPath { get; set; }
         public int Count { get; set; }
-        public float? FreeMemory { get; set; }
+        public float? MemoryFree { get; set; }
         public string ServerName { get; set; }
+
+        public float? MemoryLimit { get; set; }
+        public long? MemoryLimitPercent { get; set; }
     }
 
     internal class SettingsViewModel : BaseViewModel

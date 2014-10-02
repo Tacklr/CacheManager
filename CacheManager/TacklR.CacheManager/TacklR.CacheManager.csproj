@@ -65,6 +65,7 @@
     </Compile>
     <Compile Include="HttpHandlers\DataHandler.cs" />
     <Compile Include="HttpHandlers\ResourceHandler.cs" />
+    <Compile Include="Interfaces\ICacheEntry.cs" />
     <Compile Include="Interfaces\ICache.cs" />
     <Compile Include="Models\ApiModels.cs" />
     <Compile Include="Properties\Resources.Designer.cs">

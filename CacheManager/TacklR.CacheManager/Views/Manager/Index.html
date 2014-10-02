@@ -37,18 +37,26 @@
                 <h3 class="panel-title"><span class="fa fa-lg fa-bar-chart"></span> Cache Stats</h3>
             </div>
             <table class="table table-bordered table-condensed">
-                <tr>
+                <!--<tr>
                     <th class="col-fit text-right">Server Name</th>
                     <td data-bind="text: ServerName"></td>
+                </tr>-->
+                <tr>
+                    <th class="col-fit text-right">Free Memory (MB)</th>
+                    <td data-bind="text: MemoryFree"></td>
                 </tr>
                 <tr>
-                    <th class="col-fit text-right">Free Memory</th>
-                    <td data-bind="text: FreeMemory"></td>
+                    <th class="col-fit text-right">Cache Limit (MB)</th>
+                    <td data-bind="text: MemoryLimit"></td>
                 </tr>
                 <tr>
+                    <th class="col-fit text-right">Cache Limit (%)</th>
+                    <td data-bind="text: MemoryLimitPercent"></td>
+                </tr>
+                <!--<tr>
                     <th class="col-fit text-right">App Path</th>
-                    <td data-bind="text: AppPath"></td><!-- What if this is long? -->
-                </tr>
+                    <td data-bind="text: AppPath"></td><!-- What if this is long? -- >
+                </tr>-->
                 <tr>
                     <th class="col-fit text-right">Cache Entries</th>
                     <td data-bind="text: ob_Entries().length"></td><!--show difference between reported/counted (Count)?-->

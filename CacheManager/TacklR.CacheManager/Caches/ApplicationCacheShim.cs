@@ -60,5 +60,26 @@ namespace TacklR.CacheManager.Caches
         {
             throw new NotImplementedException();
         }
+
+        //???
+        public ICacheEntry GetEntry(string key)
+        {
+            throw new NotImplementedException();
+        }
+
+        public ICacheEntry<T> GetEntry<T>(string key) where T : class
+        {
+            throw new NotImplementedException();
+        }
+
+        public IDictionary<string, ICacheEntry> GetAllEntries(string key = null, bool prefix = false)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool TryGetEntry<T>(string key, out ICacheEntry<T> value) where T : class
+        {
+            throw new NotImplementedException();
+        }
     }
 }
