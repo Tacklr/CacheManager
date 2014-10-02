@@ -4,6 +4,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -22,6 +23,23 @@ namespace TacklR.CacheManager
                 if (!s_BuildTime.HasValue)
                     s_BuildTime = DateTime.Parse(Properties.Resources.BuildTime, CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind);
                 return s_BuildTime.Value;
+            }
+        }
+
+        private static string s_BundleToken { get; set; }
+        internal static string BundleToken
+        {
+            get
+            {
+                if (String.IsNullOrEmpty(s_BundleToken))
+                {
+                    using (SHA1Managed sha1 = new SHA1Managed())
+                    {
+                        var hash = sha1.ComputeHash(Encoding.UTF8.GetBytes(Properties.Resources.BuildTime));
+                        return hash.ToHex();
+                    }
+                }
+                return s_BundleToken;
             }
         }
 

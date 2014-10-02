@@ -6,9 +6,10 @@
     <title>CacheManager</title>
     <base href="/CacheManager.axd/" /><!-- can't hard code, need to pass in somehow -->
     <link rel="shortcut icon" href="./content/img/favicon.ico">
-    <link rel="stylesheet" href="./bundles/combined.min.css">
+    <link rel="stylesheet" href="./bundles/combined.min.css?v={1}">
 </head>
 <body>
+    <!--switch to .tt?-->
     <div class="navbar navbar-default navbar-static-top">
         <div class="container">
             <div class="navbar-header">
@@ -23,6 +24,6 @@
         <p>Copyright &copy; <span data-bind="text: CM.CopyrightYear()">2014</span> TacklR</p>
     </div>
     <span id="fork-me"><a href="#https://github.com/<repo>" target="_blank">Fork me on GitHub</a></span>
-    <script src="./bundles/combined.min.js"></script>
+    <script src="./bundles/combined.min.js?v={1}"></script>
 </body>
 </html>

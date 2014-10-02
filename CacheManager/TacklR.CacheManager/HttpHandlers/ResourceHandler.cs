@@ -100,7 +100,7 @@ namespace TacklR.CacheManager.HttpHandlers
                 contentType = MimeType.Default;
 
             ContentType = contentType;
-            MaxAge = maxAge ?? TimeSpan.FromMinutes(1);//TODO: Better default max-age
+            MaxAge = maxAge ?? TimeSpan.FromDays(365);
             Name = name;
             return this;
         }

@@ -49,5 +49,10 @@ namespace TacklR.CacheManager
             overrides.AllKeys.ToList().ForEach(k => collection.Remove(k));
             collection.Add(overrides);
         }
+
+        public static string ToHex(this byte[] bytes)
+        {
+            return BitConverter.ToString(bytes).Replace("-", "");
+        }
     }
 }

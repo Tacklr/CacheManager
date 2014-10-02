@@ -61,7 +61,7 @@ namespace TacklR.CacheManager.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to test.
+        ///   Looks up a localized string similar to 2014-10-02T19:20:49.6683333Z.
         /// </summary>
         internal static string BuildTime {
             get {
