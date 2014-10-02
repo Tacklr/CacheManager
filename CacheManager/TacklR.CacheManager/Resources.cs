@@ -13,7 +13,6 @@ namespace TacklR.CacheManager
     internal static class Resources
     {
         private static IList<string> ResourceNames { get; set; }
-        private static Assembly Assembly { get; set; }
 
         private static DateTime? s_BuildTime { get; set; }
         internal static DateTime BuildTime
@@ -45,8 +44,7 @@ namespace TacklR.CacheManager
 
         static Resources()
         {
-            Assembly = CacheManagerViewFactory.Assembly;//Can this be passed around like this?
-            ResourceNames = Assembly.GetManifestResourceNames().ToList();
+            ResourceNames = Startup.Assembly.GetManifestResourceNames().ToList();
         }
 
         internal static bool ResourceExists(string name)
@@ -59,7 +57,7 @@ namespace TacklR.CacheManager
             var resource = ResourceNames.FirstOrDefault(n => n.EndsWith(name, StringComparison.OrdinalIgnoreCase));
             if (String.IsNullOrEmpty(resource))
                 throw new ArgumentException(String.Format("Embedded resource '{0}' not found.", name), "resource");
-            return CacheManagerViewFactory.Assembly.GetManifestResourceStream(resource);
+            return Startup.Assembly.GetManifestResourceStream(resource);
         }
 
         internal static string GetResourceString(string resource)

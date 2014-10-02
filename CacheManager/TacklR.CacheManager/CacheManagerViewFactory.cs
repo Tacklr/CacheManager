@@ -9,6 +9,53 @@ using System.Collections.Specialized;
 
 namespace TacklR.CacheManager
 {
+    internal static class Startup
+    {
+        internal static Assembly Assembly { get; set; }
+        internal static RouteTable RouteTable { get; set; }//hold this someplace else? case sensitivity of urls/params?
+
+        static Startup()
+        {
+            Assembly = typeof(Startup).Assembly;
+
+            //Query string handling? Model binding? We could do it in a simple way using json
+            HttpContext.Current.Cache.Add("This/Is-a/very/deep/entry/to-test/how/far/over/it/goes aaaaaaaaaaaaa aaaaaaaaaaaa aaaaaaaaaa", "derp", null, DateTime.UtcNow.AddDays(1), System.Web.Caching.Cache.NoSlidingExpiration, System.Web.Caching.CacheItemPriority.AboveNormal, null);
+
+            RouteTable = new RouteTable();
+            //Does it matter of we instantiate here or not? might make a difference if we intend to pass constructor parameters per-request.
+            RouteTable.MapRoute("GET:", new Route(typeof(ManagerController), "Index"));
+            RouteTable.MapRoute("GET:api/v1/cache", new Route(typeof(ApiController), "Cache"));
+            RouteTable.MapRoute("GET:api/v1/stats", new Route(typeof(ApiController), "Stats"));
+            RouteTable.MapRoute("GET:api/v1/settings", new Route(typeof(ApiController), "Settings"));
+            RouteTable.MapRoute("GET:api/v1/combined", new Route(typeof(ApiController), "Combined"));
+            RouteTable.MapRoute("GET:api/v1/serialize", new Route(typeof(ApiController), "Serialize"));
+            RouteTable.MapRoute("POST:api/v1/delete", new Route(typeof(ApiController), "Delete"));
+
+            //Generic routes? parameters? can the server default on mime types?
+            RouteTable.MapRoute("GET:bundles/combined.min.css", new Route(typeof(ResourceHandler), "Resource", Tuple.Create<string, object>("name", "combined.min.css")));
+            RouteTable.MapRoute("GET:bundles/combined.min.js", new Route(typeof(ResourceHandler), "Resource", Tuple.Create<string, object>("name", "combined.min.js")));
+
+            RouteTable.MapRoute("GET:content/img/favicon.ico", new Route(typeof(ResourceHandler), "Resource", Tuple.Create<string, object>("name", "favicon.ico")));
+
+            //TODO: Replace with trimmed down fontaweosme or other set.
+            RouteTable.MapRoute("GET:content/fonts/fontawesome-webfont.eot", new Route(typeof(ResourceHandler), "Resource", Tuple.Create<string, object>("name", "fontawesome-webfont.eot")));
+            RouteTable.MapRoute("GET:content/fonts/fontawesome-webfont.svg", new Route(typeof(ResourceHandler), "Resource", Tuple.Create<string, object>("name", "fontawesome-webfont.svg")));
+            RouteTable.MapRoute("GET:content/fonts/fontawesome-webfont.ttf", new Route(typeof(ResourceHandler), "Resource", Tuple.Create<string, object>("name", "fontawesome-webfont.ttf")));
+            RouteTable.MapRoute("GET:content/fonts/fontawesome-webfont.woff", new Route(typeof(ResourceHandler), "Resource", Tuple.Create<string, object>("name", "fontawesome-webfont.woff")));
+
+            RouteTable.MapRoute("GET:content/fonts/OpenSans-Bold.woff", new Route(typeof(ResourceHandler), "Resource", Tuple.Create<string, object>("name", "OpenSans-Bold.woff")));
+            RouteTable.MapRoute("GET:content/fonts/OpenSans-Extrabold.woff", new Route(typeof(ResourceHandler), "Resource", Tuple.Create<string, object>("name", "OpenSans-Extrabold.woff")));
+            RouteTable.MapRoute("GET:content/fonts/OpenSans-Italic.woff", new Route(typeof(ResourceHandler), "Resource", Tuple.Create<string, object>("name", "OpenSans-Italic.woff")));
+            RouteTable.MapRoute("GET:content/fonts/OpenSans-Light.woff", new Route(typeof(ResourceHandler), "Resource", Tuple.Create<string, object>("name", "OpenSans-Light.woff")));
+            RouteTable.MapRoute("GET:content/fonts/OpenSans-Semibold.woff", new Route(typeof(ResourceHandler), "Resource", Tuple.Create<string, object>("name", "OpenSans-Semibold.woff")));
+            RouteTable.MapRoute("GET:content/fonts/OpenSans.woff", new Route(typeof(ResourceHandler), "Resource", Tuple.Create<string, object>("name", "OpenSans.woff")));
+        }
+
+        internal static void Init()
+        {
+        }
+    }
+
     internal class Route
     {
         internal Route(Type controller, string action, params Tuple<string, object>[] parameters)
@@ -54,51 +101,14 @@ namespace TacklR.CacheManager
     }
 
 
+
+
     internal class CacheManagerViewFactory : IHttpHandlerFactory
     {
-        internal static Assembly Assembly { get; set; }
-        internal static RouteTable RouteTable { get; set; }//hold this someplace else? case sensitivity of urls/params?
 
         public CacheManagerViewFactory()
         {
-            if (Assembly == null)//Do we need this check?
-                Assembly = this.GetType().Assembly;
-
-            //Query string handling? Model binding? We could do it in a simple way using json
-            if (RouteTable == null)
-            {
-                HttpContext.Current.Cache.Add("This/Is-a/very/deep/entry/to-test/how/far/over/it/goes aaaaaaaaaaaaa aaaaaaaaaaaa aaaaaaaaaa", "derp", null, DateTime.UtcNow.AddDays(1), System.Web.Caching.Cache.NoSlidingExpiration, System.Web.Caching.CacheItemPriority.AboveNormal, null);
-
-
-                RouteTable = new RouteTable();
-                //Does it matter of we instantiate here or not? might make a difference if we intend to pass constructor parameters per-request.
-                RouteTable.MapRoute("GET:", new Route(typeof(ManagerController), "Index"));
-                RouteTable.MapRoute("GET:api/v1/cache", new Route(typeof(ApiController), "Cache"));
-                RouteTable.MapRoute("GET:api/v1/stats", new Route(typeof(ApiController), "Stats"));
-                RouteTable.MapRoute("GET:api/v1/settings", new Route(typeof(ApiController), "Settings"));
-                RouteTable.MapRoute("GET:api/v1/combined", new Route(typeof(ApiController), "Combined"));
-                RouteTable.MapRoute("GET:api/v1/serialize", new Route(typeof(ApiController), "Serialize"));
-                RouteTable.MapRoute("POST:api/v1/delete", new Route(typeof(ApiController), "Delete"));
-
-                //Generic routes? parameters? can the server default on mime types?
-                RouteTable.MapRoute("GET:bundles/combined.min.css", new Route(typeof(ResourceHandler), "Resource", Tuple.Create<string, object>("name", "combined.min.css")));
-                RouteTable.MapRoute("GET:bundles/combined.min.js", new Route(typeof(ResourceHandler), "Resource", Tuple.Create<string, object>("name", "combined.min.js")));
-
-                RouteTable.MapRoute("GET:content/img/favicon.ico", new Route(typeof(ResourceHandler), "Resource", Tuple.Create<string, object>("name", "favicon.ico")));
-
-                //TODO: Replace with trimmed down fontaweosme or other set.
-                RouteTable.MapRoute("GET:content/fonts/fontawesome-webfont.eot", new Route(typeof(ResourceHandler), "Resource", Tuple.Create<string, object>("name", "fontawesome-webfont.eot")));
-                RouteTable.MapRoute("GET:content/fonts/fontawesome-webfont.svg", new Route(typeof(ResourceHandler), "Resource", Tuple.Create<string, object>("name", "fontawesome-webfont.svg")));
-                RouteTable.MapRoute("GET:content/fonts/fontawesome-webfont.ttf", new Route(typeof(ResourceHandler), "Resource", Tuple.Create<string, object>("name", "fontawesome-webfont.ttf")));
-                RouteTable.MapRoute("GET:content/fonts/fontawesome-webfont.woff", new Route(typeof(ResourceHandler), "Resource", Tuple.Create<string, object>("name", "fontawesome-webfont.woff")));
-
-                RouteTable.MapRoute("GET:content/fonts/OpenSans-Bold.woff", new Route(typeof(ResourceHandler), "Resource", Tuple.Create<string, object>("name", "OpenSans-Bold.woff")));
-                RouteTable.MapRoute("GET:content/fonts/OpenSans-Extrabold.woff", new Route(typeof(ResourceHandler), "Resource", Tuple.Create<string, object>("name", "OpenSans-Extrabold.woff")));
-                RouteTable.MapRoute("GET:content/fonts/OpenSans-Italic.woff", new Route(typeof(ResourceHandler), "Resource", Tuple.Create<string, object>("name", "OpenSans-Italic.woff")));
-                RouteTable.MapRoute("GET:content/fonts/OpenSans-Light.woff", new Route(typeof(ResourceHandler), "Resource", Tuple.Create<string, object>("name", "OpenSans-Light.woff")));
-                RouteTable.MapRoute("GET:content/fonts/OpenSans-Semibold.woff", new Route(typeof(ResourceHandler), "Resource", Tuple.Create<string, object>("name", "OpenSans-Semibold.woff")));
-                RouteTable.MapRoute("GET:content/fonts/OpenSans.woff", new Route(typeof(ResourceHandler), "Resource", Tuple.Create<string, object>("name", "OpenSans.woff")));
-            }
+            Startup.Init();//Can we get in any sooner than this?
         }
 
         public IHttpHandler GetHandler(HttpContext context, string requestType, string url, string pathTranslated)
@@ -108,7 +118,7 @@ namespace TacklR.CacheManager
                 return new ErrorController().Error403();
 
             Route handler;
-            if (RouteTable.TryGetRoute(context.Request, out handler))
+            if (Startup.RouteTable.TryGetRoute(context.Request, out handler))
             {
                 //this method instead?
                 //var constructor = handler.Controller.GetConstructor(BindingFlags.Instance | BindingFlags.NonPublic, null, new Type[0], null);
