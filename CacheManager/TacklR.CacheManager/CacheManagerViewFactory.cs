@@ -84,6 +84,8 @@ namespace TacklR.CacheManager
                 RouteTable.MapRoute("GET:bundles/combined.min.css", new Route(typeof(ResourceHandler), "Resource", Tuple.Create<string, object>("name", "combined.min.css")));
                 RouteTable.MapRoute("GET:bundles/combined.min.js", new Route(typeof(ResourceHandler), "Resource", Tuple.Create<string, object>("name", "combined.min.js")));
 
+                RouteTable.MapRoute("GET:content/img/favicon.ico", new Route(typeof(ResourceHandler), "Resource", Tuple.Create<string, object>("name", "favicon.ico")));
+
                 //TODO: Replace with trimmed down fontaweosme or other set.
                 RouteTable.MapRoute("GET:content/fonts/fontawesome-webfont.eot", new Route(typeof(ResourceHandler), "Resource", Tuple.Create<string, object>("name", "fontawesome-webfont.eot")));
                 RouteTable.MapRoute("GET:content/fonts/fontawesome-webfont.svg", new Route(typeof(ResourceHandler), "Resource", Tuple.Create<string, object>("name", "fontawesome-webfont.svg")));

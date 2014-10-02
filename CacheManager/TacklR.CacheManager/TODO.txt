@@ -26,7 +26,7 @@ Build subset for jquery? bootstrap js?
 Wrap ajax calls like in alerts/tacklr
 Handle errors (messages) on client side (toastr?)
 
-
+favicon?
 
 Old notes:
 
