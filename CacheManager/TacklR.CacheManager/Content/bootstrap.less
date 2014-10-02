@@ -48,3 +48,63 @@
 // Utility classes
 @import "bootstrap/utilities.less";
 @import "bootstrap/responsive-utilities.less";
+
+
+////Custom Breakpoints
+//// Subdivision of the xs range into xs0 and xs1.
+//@screen-xs0-min: 0px;
+//@screen-xs1-min: 480px;
+//
+//// Smaller grid, based on a subdivision of the xs range.
+//// See https://github.com/twbs/bootstrap/issues/10203
+//
+//.make-grid-columns() {
+//  // Common styles for all sizes of grid columns, widths 1-12
+//  .col(@index) when (@index = 1) { // initial
+//    @item: ~".col-xs-@{index}, .col-xs1-@{index}, .col-sm-@{index}, .col-md-@{index}, .col-lg-@{index}";
+//    .col((@index + 1), @item);
+//  }
+//  .col(@index, @list) when (@index =< @grid-columns) { // general; "=<" isn't a typo
+//    @item: ~".col-xs-@{index}, .col-xs1-@{index}, .col-sm-@{index}, .col-md-@{index}, .col-lg-@{index}";
+//    .col((@index + 1), ~"@{list}, @{item}");
+//  }
+//  .col(@index, @list) when (@index > @grid-columns) { // terminal
+//    @{list} {
+//      position: relative;
+//      // Prevent columns from collapsing when empty
+//      min-height: 1px;
+//      // Inner gutter via padding
+//      padding-left:  (@grid-gutter-width / 2);
+//      padding-right: (@grid-gutter-width / 2);
+//    }
+//  }
+//  .col(1); // kickstart it
+//}
+//
+//@media (min-width: @screen-xs1-min) and (max-width: @screen-xs-max) {
+//    .make-grid(xs1);
+//}
+//
+//.visible-xs1-block,
+//.visible-xs1-inline,
+//.visible-xs1-inline-block {
+//    display: none !important;
+//}
+//
+//.visible-xs1-block {
+//    @media (min-width: @screen-xs1-min) and (max-width: @screen-xs-max) {
+//        display: block !important;
+//    }
+//}
+//
+//.visible-xs1-inline {
+//    @media (min-width: @screen-xs1-min) and (max-width: @screen-xs-max) {
+//        display: inline !important;
+//    }
+//}
+//
+//.visible-xs1-inline-block {
+//    @media (min-width: @screen-xs1-min) and (max-width: @screen-xs-max) {
+//        display: inline-block !important;
+//    }
+//}

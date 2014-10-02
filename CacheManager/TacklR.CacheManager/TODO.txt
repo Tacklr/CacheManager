@@ -26,7 +26,34 @@ Build subset for jquery? bootstrap js?
 Wrap ajax calls like in alerts/tacklr
 Handle errors (messages) on client side (toastr?)
 
-favicon?
+Fixed refresh button on small sizes?
+
+License?
+
+idle session timeout
+
+sticky/fixed refresh button?
+    an idea
+        $(window).on('scroll', function () {
+            $('#Refresh').css('right', $(document).width() - $(window).width() + 22 - $(window).scrollLeft())
+        });
+
+
+Accessability?
+Aria?
+    // Use in conjunction with .sr-only to only display content when it's focused.
+    // Useful for "Skip to main content" links; see http://www.w3.org/TR/2013/NOTE-WCAG20-TECHS-20130905/G1
+    // Credit: HTML5 Boilerplate
+    .sr-only-focusable {
+
+
+
+
+
+
+
+
+
 
 Old notes:
 

@@ -26,6 +26,7 @@
 
 .css-treeview label {
     margin: 0;
+    margin-left: 2px;
 }
 
 .css-treeview ul,
@@ -35,17 +36,21 @@
     margin: 0;
     //margin: 4px 0;
     list-style: none;
+
+    .btn-xs {
+        padding: 1px 2px;
+    }
 }
 
 .highlight {
     background-color: #dadada;
 }
 
-.css-treeview input
+.css-treeview input[type=checkbox]
 {
     position: absolute;
-    display: none;
-    //opacity: 0;
+    //display: none;
+    opacity: 0;//for keyboard access, better way?
 }
 
 .css-treeview a
@@ -59,14 +64,22 @@
     text-decoration: underline;
 }
 
-//.css-treeview input + label + ul
-.css-treeview input + label ~ ul
+//ehhh
+//other browsers?
+.css-treeview input[type=checkbox]:focus + label
+{
+    outline: dotted 1px black;
+    outline: auto -webkit-focus-ring-color;
+}
+
+//.css-treeview input[type=checkbox] + label ~ ul
+.css-treeview input[type=checkbox] + label + ul
 {
     //margin: 0 0 0 22px
     margin: 0 0 0 28px;
 }
 
-.css-treeview input ~ ul
+.css-treeview input[type=checkbox] ~ ul
 {
     display: none;
 }
@@ -77,13 +90,13 @@
     cursor: pointer;
 }
 
-.css-treeview input:disabled + label
+.css-treeview input[type=checkbox]:disabled + label
 {
     cursor: not-allowed;//why doesn't this affect the area of the checkbox?
     opacity: .6;
 }
 
-.css-treeview input:checked:not(:disabled) ~ ul
+.css-treeview input[type=checkbox]:checked:not(:disabled) ~ ul
 {
     display: block;
 }
@@ -128,7 +141,7 @@
     margin-right: 4px;
 }
 
-.css-treeview input:checked + label::before
+.css-treeview input[type=checkbox]:checked + label::before
 {
     //background-position: 0 -16px;
     //content: '\e118';//glyphicons
