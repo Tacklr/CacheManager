@@ -65,10 +65,15 @@
                 <button type="button" class="btn btn-sm btn-default btn-panel-heading" data-bind="click: CM.Refresh"><span class="fa fa-lg fa-refresh"></span> Refresh</button>
             </div>
             <div class="panel-body">
-                <div class="css-treeview no-wrap" data-bind="template: { name: 'tree-template', data: ob_EntryTree(), afterRender: CM.ClearRefreshSpinner }"></div><!--TODO: Show "none" indicator if there are no cache items-->
+                <div class="css-treeview no-wrap" data-bind="template: { name: 'CacheTreeTemplate', data: ob_EntryTree(), afterRender: CM.ClearRefreshSpinner }"></div><!--TODO: Show "none" indicator if there are no cache items-->
                 <div class="refresh-loading hidden"></div>
             </div>
         </div>
     </div>
 </div>
 <div class="content-loading"></div>
+<div id="modal-container" class="modal fade" data-bind="stopBinding: true">
+    <div class="modal-dialog">
+        <div class="modal-content" data-bind="template: { name: Template }"></div>
+    </div>
+</div>

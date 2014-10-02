@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using TacklR.CacheManager.Caches;
@@ -42,10 +43,9 @@ namespace TacklR.CacheManager.Controllers
         {
             //TODO: Custom serializer routing, we want to serialize the data we can serialize, instead of failing on the first bad object
             var cache = new HttpCacheShim();
-            if (prefix)
-                return base.Json(cache.GetAll(key));
-            else
-                return base.Json(cache.Get(key));//do we want just the data, or a single entry array?
+            var cacheEntries = cache.GetAll(key, prefix);
+            var model = new SerializeViewModel(key, cacheEntries) { Success = true };
+            return base.Json(model);
         }
 
         //POST

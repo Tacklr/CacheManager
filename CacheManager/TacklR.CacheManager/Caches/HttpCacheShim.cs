@@ -60,16 +60,15 @@ namespace TacklR.CacheManager.Caches
         }
 
         //Are cache keys case sensitive?
-        public IDictionary<string, object> GetAll(string prefix = null)
+        public IDictionary<string, object> GetAll(string key = null, bool prefix = false)
         {
-            var checkPrefix = !String.IsNullOrEmpty(prefix);
             var cacheEntries = new Dictionary<string, object>();
             var enumerator = Cache.GetEnumerator();
             while (enumerator.MoveNext())
             {
-                var key = enumerator.Key.ToString();
-                if (!checkPrefix || key.StartsWith(prefix))
-                    cacheEntries.Add(key, enumerator.Value);
+                var valueKey = enumerator.Key.ToString();
+                if ((!prefix && (String.IsNullOrEmpty(key) || valueKey == key)) || (prefix && valueKey.StartsWith(key)))
+                    cacheEntries.Add(valueKey, enumerator.Value);
             }
             return cacheEntries;
         }

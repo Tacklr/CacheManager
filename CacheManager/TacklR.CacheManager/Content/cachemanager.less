@@ -43,9 +43,21 @@ body {
 }
 
 .btn-link {
+    //default colors for serialize?
     .fa-trash-o {
         color: @brand-danger;
     }
+
+    &:hover {
+        .fa-trash-o {
+            color: darken(@brand-danger, 15%);
+        }
+    }
+}
+
+.serialized-data {
+    width: 100%;
+    height: 140px;
 }
 
 .checkbox-inline.no-indent,

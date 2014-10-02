@@ -46,7 +46,7 @@ namespace TacklR.CacheManager.Caches
             throw new NotImplementedException();
         }
 
-        public IDictionary<string, object> GetAll(string prefix = null)
+        public IDictionary<string, object> GetAll(string key = null, bool prefix = false)
         {
             throw new NotImplementedException();
         }

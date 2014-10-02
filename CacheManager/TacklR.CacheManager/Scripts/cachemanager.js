@@ -70,29 +70,49 @@
     var cacheData = {};
     var delimiter = '/';//because we are using it later, we must always have one. Apparenly we can even have null keys, so use \x00 if we don't want a delimiter? I don't know if a c# key can contain a null.
 
+    ko.bindingHandlers.stopBinding = {
+        init: function () {
+            return { controlsDescendantBindings: true };
+        }
+    };
+
     //#endregion Properties
 
     //#region Templates
 
-    ko.templates['tree-template'] = [
-    '<ul>',
-        '<!-- ko foreach: CM.Sort(CM.ObjectAsArray($data.Children), CM.SortCacheKey) -->',//eww
-        '<li>',
-            '<button type="button" title="Delete Prefix" class="btn btn-xs btn-link" data-bind="click: CM.DeleteNode(Key, true)"><span class="fa fa-lg fa-trash-o"></span></button>',
-            //'<button type="button" title="Serialize Prefix" class="btn btn-xs btn-link" data-bind="click: CM.SerializeNode(Key, true)"><span class="fa fa-lg fa-code"></span></button>',
-            '<input type="checkbox" class="expand" data-bind="checked: ob_Checked, attr: { id: Id }, click: CM.BranchExpand" />',
-            '<label data-bind="attr: { for: Id }"><span data-bind="text: Text"></span> <span class="delimiter" data-bind="text: $root.Delimiter"></span></label>',
-            '<!-- ko template: { name: \'tree-template\', data: $data } --><!-- /ko -->',
-        '</li>',
-        '<!-- /ko -->',
-        '<!-- ko foreach: CM.Sort($data.Values, CM.SortCacheKey) -->',//eww
-        '<li>',
-            '<button type="button" title="Delete Key" class="btn btn-xs btn-link" data-bind="click: CM.DeleteNode(Key)"><span class="fa fa-lg fa-trash-o"></span></button>',
-            '<button type="button" title="Serialize Key" class="btn btn-xs btn-link" data-bind="click: CM.SerializeNode(Key)"><span class="fa fa-lg fa-code"></span></button>',
-            '<span data-bind="text: Text"></span>',
-        '</li>',
-        '<!-- /ko -->',
-    '</ul>'
+    ko.templates['CacheTreeTemplate'] = [
+        '<ul>',
+            '<!-- ko foreach: CM.Sort(CM.ObjectAsArray($data.Children), CM.SortCacheKey) -->',//eww
+            '<li>',
+                '<button type="button" title="Delete Prefix" class="btn btn-xs btn-link" data-bind="click: CM.DeleteNode(Key, true)"><span class="fa fa-lg fa-trash-o"></span></button>',
+                //'<button type="button" title="Serialize Prefix" class="btn btn-xs btn-link" data-bind="click: CM.SerializeNode(Key, true)"><span class="fa fa-lg fa-code"></span></button>',
+                '<input type="checkbox" class="expand" data-bind="checked: ob_Checked, attr: { id: Id }, click: CM.BranchExpand" />',
+                '<label data-bind="attr: { for: Id }"><span data-bind="text: Text"></span> <span class="delimiter" data-bind="text: $root.Delimiter"></span></label>',
+                '<!-- ko template: { name: \'CacheTreeTemplate\', data: $data } --><!-- /ko -->',
+            '</li>',
+            '<!-- /ko -->',
+            '<!-- ko foreach: CM.Sort($data.Values, CM.SortCacheKey) -->',//eww
+            '<li>',
+                '<button type="button" title="Delete Key" class="btn btn-xs btn-link" data-bind="click: CM.DeleteNode(Key)"><span class="fa fa-lg fa-trash-o"></span></button>',
+                '<button type="button" title="Serialize Key" class="btn btn-xs btn-link" data-bind="click: CM.SerializeNode(Key)"><span class="fa fa-lg fa-code"></span></button>',
+                '<span data-bind="text: Text"></span>',
+            '</li>',
+            '<!-- /ko -->',
+        '</ul>'
+    ].join('');
+
+    ko.templates['SerializeNodeTemplate'] = [
+        '<div class="modal-header">',
+            '<button type="button" class="close" data-dismiss="modal" aria-hidden="true"><span class="fa fa-times fa-fw"></span></button>',//styled ×?
+            '<h4 class="modal-title">Serialized Data</h4>',
+        '</div>',
+        '<div class="modal-body">',
+            '<textarea class="serialized-data" data-bind="text: Values" wrap="off" disabled></textarea>',
+        '</div>',
+        '<div class="modal-footer">',
+            //'<a href="#" class="btn btn-default">Format</a>',//format, download, other buttons/actions?
+            '<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>',
+        '</div>',
     ].join('');
 
     //#endregion Templates
@@ -221,7 +241,23 @@
         op_prefix = op_prefix || false;
 
         return function () {
+            $.get('api/v1/serialize', { Key: key, Prefix: op_prefix })
+            .done(function (data) {
+                if (data.Success) {
+                    data.Values = JSON.stringify(data.Values, null, '    ');
 
+                    //show serialized data
+                    //Make seperate modal methods? right now this the only usage.
+                    var $container = $('#modal-container');
+                    var $content = $container.find('.modal-content').first();
+                    var content = $content[0];
+                    ko.cleanNode(content);
+                    ko.applyBindings($.extend({}, data, { Template: 'SerializeNodeTemplate' }), content);
+                    $container.modal('show');
+                } else {
+                    //error
+                }
+            });
         };
     };
 

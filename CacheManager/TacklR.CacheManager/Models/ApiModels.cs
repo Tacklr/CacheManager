@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -12,6 +13,18 @@ namespace TacklR.CacheManager.Models.Api
     abstract class BaseViewModel
     {
         public bool Success { get; set; }
+    }
+
+    internal class SerializeViewModel : BaseViewModel
+    {
+        internal SerializeViewModel(string key, IDictionary<string, object> data)
+        {
+            Key = key;
+            Values = data;//custom serializer?
+        }
+
+        public string Key { get; set; }
+        public IDictionary<string, object> Values { get; set; }
     }
 
     internal class CombinedViewModel : BaseViewModel

@@ -12,7 +12,7 @@ namespace TacklR.CacheManager.Interfaces
         IList<string> Find(string prefix);
         object Get(string key);
         T Get<T>(string key) where T : class;
-        IDictionary<string, object> GetAll(string prefix = null);
+        IDictionary<string, object> GetAll(string key = null, bool prefix = false);
         IList<string> Keys();
         bool TryGet<T>(string key, out T value) where T : class;
     }
