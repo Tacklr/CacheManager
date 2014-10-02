@@ -102,7 +102,7 @@
     ].join('');
 
     ko.templates['SerializeNodeTemplate'] = [
-        '<div class="modal-header">',
+        '<div class="modal-header" tabindex="-1">',
             '<button type="button" class="close" data-dismiss="modal" aria-hidden="true"><span class="fa fa-times fa-fw"></span></button>',//styled ×?
             '<h4 class="modal-title">Serialized Data</h4>',
         '</div>',
