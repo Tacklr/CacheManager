@@ -104,10 +104,10 @@
     ko.templates['SerializeNodeTemplate'] = [
         '<div class="modal-header" tabindex="-1">',
             '<button type="button" class="close" data-dismiss="modal" aria-hidden="true"><span class="fa fa-times fa-fw"></span></button>',//styled ×?
-            '<h4 class="modal-title">Serialized Data</h4>',
+            '<h4 class="modal-title" id="modal-title">Serialized Data</h4>',
         '</div>',
         '<div class="modal-body">',
-            '<textarea class="serialized-data" data-bind="text: Values" wrap="off" disabled></textarea>',
+            '<textarea class="serialized-data" data-bind="text: Values" wrap="off" readonly></textarea>',
         '</div>',
         '<div class="modal-footer">',
             //'<a href="#" class="btn btn-default">Format</a>',//format, download, other buttons/actions?
@@ -125,7 +125,7 @@
         this.Children = {};//Nodes
         this.Values = [];//Values
         this.Id = id;
-        this.ob_Checked = ko.observable(true);
+        this.ob_Checked = ko.observable(false);
     };
 
     var CacheValue = function (key, text, id) {
