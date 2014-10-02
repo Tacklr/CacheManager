@@ -177,6 +177,7 @@ namespace TacklR.CacheManager.Caches
             private static readonly PropertyInfo UtcExpires;
             private static readonly PropertyInfo SlidingExpiration;
             private static readonly PropertyInfo UsageBucket;
+            private static readonly PropertyInfo Dependency;
 
             static CacheInfo()
             {
@@ -189,59 +190,39 @@ namespace TacklR.CacheManager.Caches
                 UtcExpires = cacheEntryType.GetProperty("UtcExpires", BindingFlags.NonPublic | BindingFlags.Instance);
                 SlidingExpiration = cacheEntryType.GetProperty("SlidingExpiration", BindingFlags.NonPublic | BindingFlags.Instance);
                 UsageBucket = cacheEntryType.GetProperty("UsageBucket", BindingFlags.NonPublic | BindingFlags.Instance);
-                //Dependency?
-
-                //UsageBucket === byte.MaxValue = CacheItemPriority.NotRemovable
-                //else UsageBucket + 1 = (byte)CacheItemPriority.<value>
+                Dependency = cacheEntryType.GetProperty("Dependency", BindingFlags.NonPublic | BindingFlags.Instance);
 
                 HttpRuntime.Cache.Remove(testKey);
             }
 
-            //Can we merge these methods?
             internal static CacheEntry GetCacheEntry(string key)
             {
-                var value = Cache.Get(key);
                 //check if key exists first?
+                var value = Cache.Get(key);
                 var cacheEntry = CacheGet.Invoke(HttpRuntime.Cache, new object[] { key, 1 });
 
-                var utcCreated = UtcCreated.GetValue(cacheEntry, null) as DateTime?;
-                var utcExpires = UtcExpires.GetValue(cacheEntry, null) as DateTime?;
-                var slidingExpiration = SlidingExpiration.GetValue(cacheEntry, null) as TimeSpan?;
+                var utcCreated = UtcCreated.GetValue(cacheEntry, null) as DateTime? ?? DateTime.MinValue;
+                var utcExpires = UtcExpires.GetValue(cacheEntry, null) as DateTime? ?? Cache.NoAbsoluteExpiration;
+                var slidingExpiration = SlidingExpiration.GetValue(cacheEntry, null) as TimeSpan? ?? Cache.NoSlidingExpiration;
                 var usageBucket = UsageBucket.GetValue(cacheEntry, null) as byte? ?? default(byte);
                 var priority = usageBucket == byte.MaxValue ? CacheItemPriority.NotRemovable : (CacheItemPriority)(usageBucket + 1);
+
+                //var dependency = Dependency.GetValue(cacheEntry, null) as CacheDependency;
 
                 return new CacheEntry
                 {
                     Key = key,
                     Value = value,
-                    AbsoluteExpiration = utcExpires.HasValue ? utcExpires.Value : Cache.NoAbsoluteExpiration,
-                    SlidingExpiration = slidingExpiration.HasValue ? slidingExpiration.Value : Cache.NoSlidingExpiration,
+                    Created = utcCreated,
+                    AbsoluteExpiration = utcExpires,
+                    SlidingExpiration = slidingExpiration,
                     Priority = priority
                 };
             }
 
             internal static CacheEntry<T> GetCacheEntry<T>(string key)
             {
-                var value = (T)Cache.Get(key);
-                //check if key exists first?
-                var cacheEntry = CacheGet.Invoke(HttpRuntime.Cache, new object[] { key, 1 });
-
-                var utcCreated = UtcCreated.GetValue(cacheEntry, null) as DateTime?;
-                var utcExpires = UtcExpires.GetValue(cacheEntry, null) as DateTime?;
-                var slidingExpiration = SlidingExpiration.GetValue(cacheEntry, null) as TimeSpan?;
-                var usageBucket = UsageBucket.GetValue(cacheEntry, null) as byte? ?? default(byte);
-                var priority = usageBucket == byte.MaxValue ? CacheItemPriority.NotRemovable : (CacheItemPriority)(usageBucket + 1);
-
-
-
-                return new CacheEntry<T>
-                {
-                    Key = key,
-                    Value = value,
-                    AbsoluteExpiration = utcExpires.HasValue ? utcExpires.Value : Cache.NoAbsoluteExpiration,
-                    SlidingExpiration = slidingExpiration.HasValue ? slidingExpiration.Value : Cache.NoSlidingExpiration,
-                    Priority = priority
-                };
+                return new CacheEntry<T>(GetCacheEntry(key));
             }
         }
     }
