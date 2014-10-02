@@ -170,7 +170,7 @@
     CM.Refresh = function () {
         $('.refresh-loading').removeClass('hidden');
 
-        $.get('api/v1/cache')//'refresh' url? include freemem/other stats?
+        Ajax.Get('api/v1/cache')//'refresh' url? include freemem/other stats?
         .done(function (data) {
             cacheData.ob_Entries(data.Entries);
         });
@@ -214,7 +214,7 @@
         //Not sure how much I like spawning a new function for each one. Make each level a seperate observable? eww
         return function () {
             if (!op_prefix && (!cacheData.ConfirmDeleteKey || confirm('Are you sure you want to delete this cache value?\n\nKey: ' + key))) {
-                $.post('api/v1/delete', { Key: key })
+                Ajax.Post('api/v1/delete', { data: { Key: key } })
                 .done(function (data) {
                     if (data.Success) {
                         //delete
@@ -224,7 +224,7 @@
                     }
                 });
             } else if (op_prefix && (!cacheData.ConfirmDeletePrefix || confirm('Are you sure you want to delete everything with this prefix?\n\nPrefix: ' + key))) {
-                $.post('api/v1/delete', { Key: key, Prefix: true })
+                Ajax.Post('api/v1/delete', { data: { Key: key, Prefix: true } })
                 .done(function (data) {
                     if (data.Success) {
                         //delete
@@ -241,7 +241,7 @@
         op_prefix = op_prefix || false;
 
         return function () {
-            $.get('api/v1/serialize', { Key: key, Prefix: op_prefix })
+            Ajax.Get('api/v1/serialize', { data: { Key: key, Prefix: op_prefix } })
             .done(function (data) {
                 if (data.Success) {
                     data.Values = JSON.stringify(data.Values, null, '    ');
@@ -308,6 +308,101 @@
     //#endregion Public Methods
 
     //#region Private Methods
+
+    var Ajax = {};
+
+    var handleDataError = function (response) {//, textStatus, jqXHR) {
+        var message = response.Message || "An unknown error has occured."
+        //messageHandler(message);//toastr?
+        console.log(message);
+    };
+
+    var handleFailError = function (jqXHR, textStatus, errorThrown) {
+        var response = jqXHR.responseJSON || {};
+        var message = response.Message || errorThrown || "An unknown error has occured."
+        //messageHandler(message);//toastr?
+        console.log(message);
+    };
+
+    Ajax.Post = function (url, options) {
+        var opts = $.extend({}, { type: 'POST' }, options);
+        return Ajax.Request(url, opts);
+    };
+
+    Ajax.Get = function (url, options) {
+        var opts = $.extend({}, { type: 'GET' }, options);
+        return Ajax.Request(url, opts);
+    };
+
+    var busyCounter = 0;
+    Ajax.Request = function (url, options) {
+        var dfd = $.Deferred();
+        var busyClass = 'busy-' + busyCounter++;
+
+        var defaults = {
+            type: 'POST',
+            dataType: 'json',
+            data: null,
+            traditional: true,// lets us post arrays as foo=1&foo=2 instead of foo[]=1&foo[]=2, which makes MVC happier
+            //contentType: "application/x-www-form-urlencoded; charset=UTF-8",
+
+            //messageHandler: function (message) { /*if (console && console.log) console.log(message);*/ Alerts.Messaging.Error(message); },
+            //statusCode: {
+            //    //Can we insert the options object into the jqXHR response somehow so we don't have to do this?
+            //    400: function (jqXHR, textStatus, errorThrown) { handleServerError(jqXHR, textStatus, errorThrown, this.messageHandler, options.validator); },
+            //    401: function (jqXHR, textStatus, errorThrown) { handleServerAuthorization(jqXHR, textStatus, errorThrown, this.messageHandler); },
+            //    500: function (jqXHR, textStatus, errorThrown) { handleServerException(jqXHR, textStatus, errorThrown, this.messageHandler); }
+            //},
+            //handle client side error?
+        };
+
+        var opts = $.extend({}, defaults, options);
+
+        $('html').addClass(busyClass);
+        return $.ajax(url, opts)
+        .done(function (response) {
+            if (response.Success) {
+                dfd.resolveWith(this, arguments);//proper context?
+            } else {
+                handleDataError(response);
+                dfd.rejectWith(this, arguments);//proper context?
+            }
+        })
+        .fail(function (jqXHR, textStatus, errorThrown) {
+            handleFailError(jqXHR, textStatus, errorThrown);
+            dfd.rejectWith(this, arguments);//proper context?
+        })
+        .always(function () {
+            $('html').removeClass(busyClass);
+        });
+
+        return dfd;
+    };
+
+    //Really messy chaining of deferreds but there is no way to block.
+    //Ajax.Post = function (url, options) {
+    //    var dfd = $.Deferred();
+    //
+    //    Ajax.GetVerificationToken('/VerificationToken')
+    //    .always(function (token) {
+    //        var opts = $.extend({}, { type: 'POST', headers: { 'VerificationToken': token } }, options);
+    //        Ajax.Request(url, opts)
+    //        .done(function () {
+    //            dfd.resolveWith(this, arguments);//proper context?
+    //        })
+    //        .fail(function () {
+    //            dfd.rejectWith(this, arguments);//proper context?
+    //        });
+    //    });
+    //    //.fail(function () {
+    //    //    dfd.rejectWith();//proper context and args?
+    //    //});
+    //
+    //    return dfd.promise();
+    //
+    //    //var opts = $.extend({}, { type: 'POST', headers: { 'VerificationToken': token } }, options);
+    //    //return Ajax.Request(url, opts);
+    //};
 
     //var parseQuery = function (op_lowercase) {
     //    op_lowercase = op_lowercase || false;
