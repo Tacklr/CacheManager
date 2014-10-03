@@ -58,6 +58,14 @@ namespace TacklR.CacheManager
                 return CacheManagerConfig.Settings.ExpandSingleBranches;
             }
         }
+
+        internal static string DetailView
+        {
+            get
+            {
+                return CacheManagerConfig.Settings.DetailView;
+            }
+        }
     }
 
     internal class CacheManagerConfigSection : ConfigurationSection
@@ -157,6 +165,26 @@ namespace TacklR.CacheManager
             set
             {
                 base["expandSingleBranches"] = value;
+            }
+        }
+
+        [ConfigurationProperty("detailView", IsKey = false, IsRequired = false, DefaultValue = "tree")]
+        internal string DetailView
+        {
+            get
+            {
+                var value = ((string)base["detailView"] ?? String.Empty).ToLowerInvariant();
+                switch (value) {
+                    case "list":
+                        return "list";
+                    case "tree":
+                    default:
+                        return "tree";
+                }
+            }
+            set
+            {
+                base["detailView"] = value;
             }
         }
     }

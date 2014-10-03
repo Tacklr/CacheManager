@@ -31,6 +31,7 @@
         data.MemoryLimit = data.MemoryLimit === null ? 'Unknown' : data.MemoryLimit === -1 ? 'Unlimited' : data.MemoryLimit;
         data.MemoryLimitPercent = data.MemoryLimitPercent === null ? 'Unknown' : data.MemoryLimitPercent;
         data.ob_Delimiter = ko.observable(data.Delimiter);
+        data.ob_DetailView = ko.observable(data.DetailView);
         data.ob_Entries = ko.observableArray(data.Entries);
         data.ob_EntryTree = ko.computed(function () {
             //Can we template directly off the array somehow instead of building our tree here?
@@ -70,7 +71,7 @@
         ko.applyBindings(data);//Tree parts lose open state on delete, need to save the state somehow.
         cacheData = data;
 
-        //window.DERP = data;
+        window.DERP = data;
 
         //Clear loading indiciator
         $('.content-loading').fadeOut(function () {
@@ -106,9 +107,14 @@
     //#region Templates
 
     //We would want the details info for these to start with.
-    //ko.templates['CacheListTemplate'] = [
-    //    ''
-    //].join('');
+    ko.templates['CacheListTemplate'] = [
+        '<tr>',
+            '<td><button type="button" title="Delete Entry" class="btn btn-xs btn-danger" data-bind="click: CM.DeleteNode(Key)"><span class="fa fa-lg fa-trash-o"></span></button></td>',
+            '<td data-bind="text: Key"></td>',
+            '<td data-bind="text: Type"></td>',
+            //other info
+        '</tr>'
+    ].join('');
 
     ko.templates['CacheTreeTemplate'] = [
         '<ul>',
@@ -137,10 +143,6 @@
             '<h4 class="modal-title" id="modal-title">Entry Details</h4>',
         '</div>',
         '<div class="modal-body">',
-
-
-
-
 
 
 
@@ -240,7 +242,7 @@
         //document.location.reload();
     };
 
-    CM.AfterRenderCacheTree = function () {//elements
+    CM.AfterRenderDetailView = function () {//elements
         $('.refresh-loading').addClass('hidden');
         //other stuff?
     };

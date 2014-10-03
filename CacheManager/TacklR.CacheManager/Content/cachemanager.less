@@ -38,6 +38,28 @@ body {
     width: inherit;
 }
 
+.tree-view {
+    width: 100%;
+    margin-bottom: 15px;
+    overflow-y: hidden;//Should we scroll instead of expanding?
+    overflow-x: auto;
+    -ms-overflow-style: -ms-autohiding-scrollbar;
+    -webkit-overflow-scrolling: touch;
+}
+
+.table-view {
+    @media screen and (max-width: @screen-xs-max) {//why screen? responsive table has it for some reason
+        tbody td:nth-child(3),
+        thead th:nth-child(3) {
+            display: none;
+        }
+    }
+}
+
+
+
+
+
 .no-wrap {
     white-space: nowrap;
 }
@@ -79,6 +101,11 @@ body {
 
 .cursor-default {
     cursor: default;
+}
+
+input[type=radio],
+input[type=checkbox] {
+    cursor: pointer;
 }
 
 .content-javascript {

@@ -37,14 +37,29 @@
     </div>
 </div>
 <div class="row">
-    <div class="col-xs-12 panel-expand">
+    <div class="col-xs-12 _panel-expand">
         <div class="panel panel-default">
             <div class="panel-heading">
                 <h3 class="panel-title"><span class="fa fa-lg fa-sitemap"></span> Cache Detail</h3>
                 <button type="button" class="btn btn-sm btn-default btn-panel-heading" data-bind="click: CM.Refresh"><span class="fa fa-lg fa-refresh"></span> Refresh</button>
             </div>
             <div class="panel-body">
-                <div class="css-treeview no-wrap" data-bind="template: { name: 'CacheTreeTemplate', data: ob_EntryTree(), afterRender: CM.AfterRenderCacheTree }"></div><!--TODO: Show "none" indicator if there are no cache items-->
+
+                <div class="css-treeview no-wrap tree-view" data-bind="template: { name: 'CacheTreeTemplate', data: ob_EntryTree(), afterRender: CM.AfterRenderDetailView }"></div><!--TODO: Show "none" indicator if there are no cache items-->
+
+                <!--<div class="table-responsive">
+                    <table class="table table-bordered table-condensed table-view">
+                        <thead>
+                            <tr>
+                                <th style="width: 1px;"></th>
+                                <th>Key</th>
+                                <th>Type</th>
+                            </tr>
+                        </thead>
+                        <tbody data-bind="template: { name: 'CacheListTemplate', foreach: ob_Entries(), afterRender: CM.AfterRenderDetailView }"></tbody>
+                    </table>
+                </div>-->
+
                 <div class="refresh-loading hidden"></div>
             </div>
         </div>
@@ -69,17 +84,23 @@
                         </span>
                     </div>
                 </div>
-                <div class="checkbox">
-                    <label class="checkbox-inline no-indent">
-                        <input type="checkbox" data-bind="checked: ConfirmDeleteKey"> Confirm delete key
-                    </label>
-                    <label class="checkbox-inline no-indent">
-                        <input type="checkbox" data-bind="checked: ConfirmDeletePrefix"> Confirm delete prefix
-                    </label>
-                    <label class="checkbox-inline no-indent">
-                        <input type="checkbox" data-bind="checked: ExpandSingleBranches"> Expand single branches
-                    </label>
-                </div>
+
+                <label class="checkbox-inline no-indent">
+                    <input type="checkbox" data-bind="checked: ConfirmDeleteKey"> Confirm delete key
+                </label>
+                <label class="checkbox-inline no-indent">
+                    <input type="checkbox" data-bind="checked: ConfirmDeletePrefix"> Confirm delete prefix
+                </label>
+                <label class="checkbox-inline no-indent">
+                    <input type="checkbox" data-bind="checked: ExpandSingleBranches"> Expand single branches
+                </label>
+
+                <!--<label class="radio-inline no-indent">
+                    <input type="radio" name="DetailView" value="tree" data-bind="checked: ob_DetailView"> Tree View
+                </label>
+                <label class="radio-inline no-indent">
+                    <input type="radio" name="DetailView" value="list" data-bind="checked: ob_DetailView"> List View
+                </label>-->
 
             </div>
         </div>

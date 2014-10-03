@@ -72,6 +72,7 @@ namespace TacklR.CacheManager.Models.Api
         internal CombinedViewModel(ICache cache, HttpContext context)
         {
             Delimiter = Configuration.Delimiter;
+            DetailView = Configuration.DetailView;
             ConfirmDeleteKey = Configuration.ConfirmDeleteKey;
             ConfirmDeletePrefix = Configuration.ConfirmDeletePrefix;
             ExpandSingleBranches = Configuration.ExpandSingleBranches;
@@ -94,6 +95,7 @@ namespace TacklR.CacheManager.Models.Api
         }
 
         public string Delimiter { get; set; }
+        public string DetailView { get; set; }
         public bool ConfirmDeleteKey { get; set; }
         public bool ConfirmDeletePrefix { get; set; }
         public bool ExpandSingleBranches { get; set; }
@@ -176,12 +178,14 @@ namespace TacklR.CacheManager.Models.Api
         internal SettingsViewModel()
         {
             Delimiter = Configuration.Delimiter;
+            DetailView = Configuration.DetailView;
             ConfirmDeleteKey = Configuration.ConfirmDeleteKey;
             ConfirmDeletePrefix = Configuration.ConfirmDeletePrefix;
             ExpandSingleBranches = Configuration.ExpandSingleBranches;
         }
 
         public string Delimiter { get; set; }
+        public string DetailView { get; set; }
         public bool ConfirmDeleteKey { get; set; }
         public bool ConfirmDeletePrefix { get; set; }
         public bool ExpandSingleBranches { get; set; }
