@@ -16,7 +16,7 @@ namespace TacklR.CacheManager.Interfaces
         //Entry state?
     }
 
-    internal interface ICacheEntry<T>
+    internal interface ICacheEntry<T>// : ICacheEntry
     {
         string Key { get; set; }
         T Value { get; set; }

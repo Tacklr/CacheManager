@@ -130,7 +130,8 @@ namespace TacklR.CacheManager.Caches
         public IDictionary<string, ICacheEntry> GetAllEntries(string key = null, bool prefix = false)
         {
             var cacheEntries = new Dictionary<string, ICacheEntry>();
-            foreach (var cacheKey in Keys())
+            var cacheKeys = Keys().Where(k => (!prefix && (String.IsNullOrEmpty(key) || k == key)) || (prefix && k.StartsWith(key)));
+            foreach (var cacheKey in cacheKeys)
             {
                 //Should we just die on exceptions?
                 try
@@ -161,6 +162,9 @@ namespace TacklR.CacheManager.Caches
 
 
 
+
+
+
         internal static class CacheInfo
         {
             //Can we pass the Cache object in somehow?
@@ -181,7 +185,7 @@ namespace TacklR.CacheManager.Caches
 
             static CacheInfo()
             {
-                var testKey = Resources.BundleToken;
+                var testKey = Resources.BundleToken;//Random string instead? The main this is we don't want to collide.
                 Cache.Add(testKey, testKey, null, DateTime.UtcNow.AddMinutes(1), Cache.NoSlidingExpiration, CacheItemPriority.AboveNormal, null);
 
                 var cacheEntry = CacheGet.Invoke(Cache, new object[] { testKey, 1 });

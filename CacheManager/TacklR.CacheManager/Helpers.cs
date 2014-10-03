@@ -10,6 +10,8 @@ namespace TacklR.CacheManager
 {
     internal static class Helpers
     {
+        private static readonly DateTime UnixEpochUtc = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+
         internal static float? GetAvailableMemory()
         {
             try
@@ -50,9 +52,30 @@ namespace TacklR.CacheManager
             collection.Add(overrides);
         }
 
-        public static string ToHex(this byte[] bytes)
+        internal static string ToHex(this byte[] bytes)
         {
             return BitConverter.ToString(bytes).Replace("-", "");
+        }
+
+        internal static long? ToUnixMilliseconds(this DateTime? time)//long?
+        {
+            if (!time.HasValue)
+                return default(long?);
+            return time.Value.ToUnixMilliseconds();
+        }
+
+        internal static long ToUnixMilliseconds(this DateTime time)
+        {
+            var difference = time - UnixEpochUtc;
+            var timestamp = difference.TotalMilliseconds;
+            return (long)timestamp;
+        }
+
+        internal static long? ToMilliseconds(this TimeSpan? timespan)
+        {
+            if (!timespan.HasValue)
+                return default(long?);
+            return (long)timespan.Value.TotalMilliseconds;
         }
     }
 }

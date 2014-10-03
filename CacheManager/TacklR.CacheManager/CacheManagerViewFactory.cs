@@ -34,7 +34,8 @@ namespace TacklR.CacheManager
             RouteTable.MapRoute("GET:api/v1/stats", new Route(typeof(ApiController), "Stats"));
             RouteTable.MapRoute("GET:api/v1/settings", new Route(typeof(ApiController), "Settings"));
             RouteTable.MapRoute("GET:api/v1/combined", new Route(typeof(ApiController), "Combined"));
-            RouteTable.MapRoute("GET:api/v1/serialize", new Route(typeof(ApiController), "Serialize"));
+            RouteTable.MapRoute("GET:api/v1/details", new Route(typeof(ApiController), "Details"));
+            //RouteTable.MapRoute("GET:api/v1/serialize", new Route(typeof(ApiController), "Serialize"));
             RouteTable.MapRoute("POST:api/v1/delete", new Route(typeof(ApiController), "Delete"));
 
             //Generic routes? parameters? can the server default on mime types?

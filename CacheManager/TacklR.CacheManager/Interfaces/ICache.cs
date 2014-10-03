@@ -4,7 +4,7 @@ using System.Web.Caching;
 
 namespace TacklR.CacheManager.Interfaces
 {
-    internal interface ICache
+    internal interface ICache//Make this a generic interface for the ICacheEntry type of a particular cache?
     {
         int Count { get; }
         void Clear();

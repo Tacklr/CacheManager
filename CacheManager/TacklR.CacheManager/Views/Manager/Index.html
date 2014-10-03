@@ -1,5 +1,58 @@
 ﻿<div class="row">
-    <div class="col-sm-6">
+    <div class="col-sm-offset-8 col-sm-4 col-md-offset-9 col-md-3">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title"><span class="fa fa-lg fa-bar-chart"></span> Cache Stats</h3>
+            </div>
+            <table class="table table-bordered table-condensed">
+                <!--<tr>
+                    <th class="col-fit text-right">Server Name</th>
+                    <td data-bind="text: ServerName"></td>
+                </tr>-->
+                <tr>
+                    <th class="col-fit text-right">Free Memory (MB)</th>
+                    <td data-bind="text: MemoryFree"></td>
+                </tr>
+                <tr>
+                    <th class="col-fit text-right">Cache Limit (MB)</th>
+                    <td data-bind="text: MemoryLimit"></td>
+                </tr>
+                <tr>
+                    <th class="col-fit text-right">Cache Limit (%)</th>
+                    <td data-bind="text: MemoryLimitPercent"></td>
+                </tr>
+                <!--<tr>
+                    <th class="col-fit text-right">App Path</th>
+                    <td data-bind="text: AppPath"></td><!-- What if this is long? -- >
+                </tr>-->
+                <tr>
+                    <th class="col-fit text-right">Cache Entries</th>
+                    <td data-bind="text: ob_Entries().length"></td><!--show difference between reported/counted (Count)?-->
+                </tr>
+            </table>
+
+
+
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-xs-12 panel-expand">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title"><span class="fa fa-lg fa-sitemap"></span> Cache Detail</h3>
+                <button type="button" class="btn btn-sm btn-default btn-panel-heading" data-bind="click: CM.Refresh"><span class="fa fa-lg fa-refresh"></span> Refresh</button>
+            </div>
+            <div class="panel-body">
+                <div class="css-treeview no-wrap" data-bind="template: { name: 'CacheTreeTemplate', data: ob_EntryTree(), afterRender: CM.AfterRenderCacheTree }"></div><!--TODO: Show "none" indicator if there are no cache items-->
+                <div class="refresh-loading hidden"></div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <!--different column widths?-->
+    <div class="col-sm-offset-6 col-sm-6">
         <div class="panel panel-default">
             <div class="panel-heading">
                 <h3 class="panel-title"><span class="fa fa-lg fa-gears"></span> Settings</h3>
@@ -31,57 +84,14 @@
             </div>
         </div>
     </div>
-    <div class="col-sm-offset-2 col-sm-4 col-md-offset-3 col-md-3">
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <h3 class="panel-title"><span class="fa fa-lg fa-bar-chart"></span> Cache Stats</h3>
-            </div>
-            <table class="table table-bordered table-condensed">
-                <!--<tr>
-                    <th class="col-fit text-right">Server Name</th>
-                    <td data-bind="text: ServerName"></td>
-                </tr>-->
-                <tr>
-                    <th class="col-fit text-right">Free Memory (MB)</th>
-                    <td data-bind="text: MemoryFree"></td>
-                </tr>
-                <tr>
-                    <th class="col-fit text-right">Cache Limit (MB)</th>
-                    <td data-bind="text: MemoryLimit"></td>
-                </tr>
-                <tr>
-                    <th class="col-fit text-right">Cache Limit (%)</th>
-                    <td data-bind="text: MemoryLimitPercent"></td>
-                </tr>
-                <!--<tr>
-                    <th class="col-fit text-right">App Path</th>
-                    <td data-bind="text: AppPath"></td><!-- What if this is long? -- >
-                </tr>-->
-                <tr>
-                    <th class="col-fit text-right">Cache Entries</th>
-                    <td data-bind="text: ob_Entries().length"></td><!--show difference between reported/counted (Count)?-->
-                </tr>
-            </table>
-        </div>
-    </div>
 </div>
-<div class="row">
-    <div class="col-xs-12 panel-expand">
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <h3 class="panel-title"><span class="fa fa-lg fa-sitemap"></span> Cache Detail</h3>
-                <button type="button" class="btn btn-sm btn-default btn-panel-heading" data-bind="click: CM.Refresh"><span class="fa fa-lg fa-refresh"></span> Refresh</button>
-            </div>
-            <div class="panel-body">
-                <div class="css-treeview no-wrap" data-bind="template: { name: 'CacheTreeTemplate', data: ob_EntryTree(), afterRender: CM.AfterRenderCacheTree }"></div><!--TODO: Show "none" indicator if there are no cache items-->
-                <div class="refresh-loading hidden"></div>
-            </div>
-        </div>
-    </div>
-</div>
-<div class="content-loading"></div>
+
+<!--put this into layout?-->
 <div id="modal-container" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true" aria-labelledby="modal-title" data-bind="stopBinding: true">
     <div class="modal-dialog">
         <div class="modal-content" data-bind="template: { name: Template }"></div>
     </div>
 </div>
+
+<div class="content-loading"></div>
+<noscript><div class="content-javascript"></div></noscript>

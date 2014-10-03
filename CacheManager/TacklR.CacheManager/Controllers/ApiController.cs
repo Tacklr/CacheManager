@@ -14,8 +14,7 @@ namespace TacklR.CacheManager.Controllers
         internal IHttpHandler Cache()
         {
             var cache = new HttpCacheShim();
-            var cacheEntries = cache.GetAll();
-            var model = new CacheViewModel(cacheEntries) { Success = true };
+            var model = new CacheViewModel(cache) { Success = true };
             return base.Json(model);
         }
 
@@ -35,19 +34,25 @@ namespace TacklR.CacheManager.Controllers
         internal IHttpHandler Combined()
         {
             var cache = new HttpCacheShim() as ICache;
-            //var test = cache.GetAllEntries();
             var model = new CombinedViewModel(cache, HttpContext.Current) { Success = true };
             return base.Json(model);
         }
 
-        internal IHttpHandler Serialize(string key, bool prefix = false)
+        internal IHttpHandler Details(string key)
         {
-            //TODO: Custom serializer routing, we want to serialize the data we can serialize, instead of failing on the first bad object
-            var cache = new HttpCacheShim();
-            var cacheEntries = cache.GetAll(key, prefix);
-            var model = new SerializeViewModel(key, cacheEntries) { Success = true };
+            var cache = new HttpCacheShim() as ICache;
+            var entry = cache.GetEntry(key);//TODO: Check if null
+            var model = new DetailsViewModel(entry) { Success = true };
             return base.Json(model);
         }
+
+        //internal IHttpHandler Serialize(string key, bool prefix = false)
+        //{
+        //    //TODO: Custom serializer routing, we want to serialize the data we can serialize, instead of failing on the first bad object
+        //    var cache = new HttpCacheShim() as ICache;
+        //    var model = new SerializeViewModel(cache, key, prefix) { Success = true };
+        //    return base.Json(model);
+        //}
 
         //POST
         internal IHttpHandler Delete(string key, bool prefix = false)

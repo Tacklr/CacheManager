@@ -81,6 +81,51 @@ body {
     cursor: default;
 }
 
+.content-javascript {
+    overflow: hidden;
+    display: block;
+    //position: absolute;
+    position: fixed;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    background-color: #ffffff;
+    background-color: rgba(255, 255, 255, 0.95);
+    z-index: @zindex-content-loading;
+
+    //background-color: @white;
+    //background-color: rgba(255, 255, 255, 0.9);
+    //z-index: 500;//This should be as high as possible, but lower than anything that overlaps it from outside (menus)
+
+    &:before {
+        //Probably not needed
+        text-align: center;
+        vertical-align: middle;
+
+        display: inline-block;
+        //position: absolute;
+        position: fixed;
+        margin: auto;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        right: 0;
+
+        height: 3rem;//better value?
+        font-size: 2rem;
+        font-weight: bold;
+        color: @state-danger-text;
+
+        text-rendering: auto;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        content: 'CacheManager requires JavaScript.';
+        //Fade in?
+        //Make into a link? e.g. http://www.enable-javascript.com/ (can't be done with Content, would need markup)
+    }
+}
+
 .content-loading {
     overflow: hidden;
     display: block;
@@ -282,4 +327,15 @@ body {
         top: auto;
     }
 }
+
+
+
+
+
+
+
+
+
+
+
 

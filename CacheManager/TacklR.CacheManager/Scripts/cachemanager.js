@@ -17,7 +17,7 @@
     var docReady = $.Deferred();
     $(docReady.resolve);
 
-    window.HERP = checkedState = {};
+    var checkedState = {};
 
     $.when($.get('api/v1/combined'), docReady)
     .done(function (combined) {
@@ -41,27 +41,27 @@
             };
 
             var id_i = 0;//need hash function or something
+            var delimiter = data.ob_Delimiter();
             //Build our tree, any advantage to doing it server side?
             $.each(data.ob_Entries(), function (i, cache) {
                 var key = cache.Key;
-                var keyParts = key.split(data.ob_Delimiter() || null).reverse();
+                var keyParts = key.split(delimiter || null).reverse();
                 var current = CacheRoot;
                 var currentKeyParts = [];
                 while (keyParts.length > 1) {
                     var keyPart = keyParts.pop();
                     currentKeyParts.push(keyPart);
                     if (current.Children[keyPart] === undefined) {
-                        var currentKey = currentKeyParts.join(data.ob_Delimiter()) + data.ob_Delimiter();
-
+                        var currentKey = currentKeyParts.join(delimiter) + delimiter;//Tacking the delimiter on the end should also prevent collisions for different delimiters on checked state (I think). (actually this may not work if set to no delimiter in certain cases (key ending with delimiter))
                         //Can this be done more cleanly?
                         if (checkedState[currentKey] === undefined)
                             checkedState[currentKey] = ko.observable(false);
 
-                        current.Children[keyPart] = new CacheNode(currentKey, keyPart, 'item-' + id_i++);//need to get the subkey up to this point
+                        current.Children[keyPart] = new CacheNode(currentKey, keyPart, checkedState[currentKey], 'item-' + id_i++);//need to get the subkey up to this point
                     }
                     current = current.Children[keyPart];
                 }
-                current.Values.push(new CacheValue(key, keyParts.pop(), cache.Type, 'item-' + id_i++));//TODO: Prevent duplicates
+                current.Values.push(new CacheValue(cache, keyParts.pop(), 'item-' + id_i++));//TODO: Prevent duplicates
             });
 
             return CacheRoot;
@@ -70,7 +70,7 @@
         ko.applyBindings(data);//Tree parts lose open state on delete, need to save the state somehow.
         cacheData = data;
 
-        window.DERP = data;
+        //window.DERP = data;
 
         //Clear loading indiciator
         $('.content-loading').fadeOut(function () {
@@ -85,6 +85,16 @@
     var cacheData = {};
     var delimiter = '/';//because we are using it later, we must always have one. Apparenly we can even have null keys, so use \x00 if we don't want a delimiter? I don't know if a c# key can contain a null.
 
+    //From System.Web.Caching.CacheItemPriority (unlikely to change, probably doesn't need to be dynamic.)
+    var cachePriority = {
+        '1': 'Low',
+        '2': 'BelowNormal',
+        '3': 'Normal',//Also 'Default'
+        '4': 'AboveNormal',
+        '5': 'High',
+        '6': 'NotRemovable'
+    };
+
     ko.bindingHandlers.stopBinding = {
         init: function () {
             return { controlsDescendantBindings: true };
@@ -94,6 +104,11 @@
     //#endregion Properties
 
     //#region Templates
+
+    //We would want the details info for these to start with.
+    //ko.templates['CacheListTemplate'] = [
+    //    ''
+    //].join('');
 
     ko.templates['CacheTreeTemplate'] = [
         '<ul>',
@@ -107,40 +122,62 @@
             '</li>',
             '<!-- /ko -->',
             '<!-- ko foreach: CM.Sort($data.Values, CM.SortCacheKey) -->',//eww
-            '<li>',
-                '<button type="button" title="Delete Key" class="btn btn-xs btn-link" data-bind="click: CM.DeleteNode(Key)"><span class="fa fa-lg fa-trash-o"></span></button>',
-                '<button type="button" title="Serialize Key" class="btn btn-xs btn-link" data-bind="click: CM.SerializeNode(Key)"><span class="fa fa-lg fa-code"></span></button>',
-                '<span data-bind="text: Text, attr: { title: Key }"></span> <span class="text-muted">(<span data-bind="text: Type"></span>)</span>',
+            '<li>',//Make delete button last tab index?
+                '<button type="button" title="Delete Entry" class="btn btn-xs btn-link" data-bind="click: CM.DeleteNode(Key)"><span class="fa fa-lg fa-trash-o"></span></button>',
+                '<button type="button" title="View Entry Details" class="btn btn-xs btn-link" data-bind="click: CM.EntryDetails(Key)"><span class="fa fa-lg fa-info-circle"></span></button>',
+                '<span data-bind="text: Text, attr: { title: Key }"></span>',// <span class="text-muted">(<span data-bind="text: Type"></span>)</span>
             '</li>',
             '<!-- /ko -->',
         '</ul>'
     ].join('');
 
-    ko.templates['SerializeNodeTemplate'] = [
+    ko.templates['EntryDetailsTemplate'] = [
         '<div class="modal-header" tabindex="-1">',
             '<button type="button" class="close" data-dismiss="modal" aria-hidden="true"><span class="fa fa-times fa-fw"></span></button>',//styled ×?
-            '<h4 class="modal-title" id="modal-title">Serialized Data</h4>',
+            '<h4 class="modal-title" id="modal-title">Entry Details</h4>',
         '</div>',
         '<div class="modal-body">',
-            '<textarea class="serialized-data" data-bind="text: Values" wrap="off" readonly></textarea>',
+
+
+
+
+
+
+
+
+            '<textarea class="serialized-data" data-bind="text: Value" wrap="off" readonly></textarea>',
         '</div>',
         '<div class="modal-footer">',
-            //'<a href="#" class="btn btn-default">Format</a>',//format, download, other buttons/actions?
+            '<button type="button" class="btn btn-danger pull-left" data-bind="click: CM.DeleteNode(Key)">Delete</button>',//format, download, other buttons/actions?
             '<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>',
         '</div>',
     ].join('');
+
+    //ko.templates['SerializeNodeTemplate'] = [
+    //    '<div class="modal-header" tabindex="-1">',
+    //        '<button type="button" class="close" data-dismiss="modal" aria-hidden="true"><span class="fa fa-times fa-fw"></span></button>',//styled ×?
+    //        '<h4 class="modal-title" id="modal-title">Serialized Data</h4>',
+    //    '</div>',
+    //    '<div class="modal-body">',
+    //        '<textarea class="serialized-data" data-bind="text: Values" wrap="off" readonly></textarea>',
+    //    '</div>',
+    //    '<div class="modal-footer">',
+    //        //'<a href="#" class="btn btn-default">Format</a>',//format, download, other buttons/actions?
+    //        '<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>',
+    //    '</div>',
+    //].join('');
 
     //#endregion Templates
 
     //#region Classes
 
-    var CacheNode = function (key, text, id) {//, ob_checked
+    var CacheNode = function (key, text, ob_Checked, id) {//, ob_checked
         this.Key = key;
         this.Text = text;
         this.Children = {};//Nodes
         this.Values = [];//Values
         this.Id = id;
-        this.ob_Checked = checkedState[key]//ko.observable(false);
+        this.ob_Checked = ob_Checked;//ko.observable(false);
         //this.ob_Checked = ko.computed({
         //    read: function () {
         //        return ob_checked();
@@ -151,10 +188,10 @@
         //});
     };
 
-    var CacheValue = function (key, text, type, id) {
-        this.Key = key;
+    var CacheValue = function (cache, text, id) {
+        this.Key = cache.Key;
         this.Text = text;
-        this.Type = type;
+        this.Type = cache.Type;
         this.Id = id;
     };
 
@@ -208,17 +245,6 @@
         //other stuff?
     };
 
-    CM.GoBack = function () {
-        document.location.href = './';
-        //try {
-        //    history.go(-1);
-        //}
-        //catch (e) { }
-        //$.wait(100).then(function () {
-        //    document.location = './';
-        //});
-    };
-
     CM.SetDelimiter = function (data) {
         //delimiter will already be set via two way input binding, this would also be caused by a refresh (use same button text?)
         //trigger re-draw of tree
@@ -241,50 +267,60 @@
             if (!op_prefix && (!cacheData.ConfirmDeleteKey || confirm('Are you sure you want to delete this cache value?\n\nKey: ' + key))) {
                 Ajax.Post('api/v1/delete', { data: { Key: key } })
                 .done(function (data) {
-                    if (data.Success) {
-                        //delete
-                        cacheData.ob_Entries.remove(CM.FindCacheKey(key))
-                    } else {
-                        //error
-                    }
+                    cacheData.ob_Entries.remove(CM.FindCacheKey(key))
                 });
             } else if (op_prefix && (!cacheData.ConfirmDeletePrefix || confirm('Are you sure you want to delete everything with this prefix?\n\nPrefix: ' + key))) {
                 Ajax.Post('api/v1/delete', { data: { Key: key, Prefix: true } })
                 .done(function (data) {
-                    if (data.Success) {
-                        //delete
-                        cacheData.ob_Entries.remove(CM.FindCacheKey(key, true))
-                    } else {
-                        //error
-                    }
+                    cacheData.ob_Entries.remove(CM.FindCacheKey(key, true))
                 });
             }
         };
     };
 
-    CM.SerializeNode = function (key, op_prefix) {
-        op_prefix = op_prefix || false;
-
+    //Store the response data against the key object for later? or JIT every time?
+    CM.EntryDetails = function (key) {
         return function () {
-            Ajax.Get('api/v1/serialize', { data: { Key: key, Prefix: op_prefix } })
+            Ajax.Get('api/v1/details', { data: { Key: key } })
             .done(function (data) {
-                if (data.Success) {
-                    data.Values = JSON.stringify(data.Values, null, '    ');
+                data.Value = data.Value === 'undefined' ? 'Error serializing data.' : JSON.stringify(JSON.parse(data.Value), null, '    ');//eww, but the only way we can catch serialization errors without killing the wholer response is to serialize on the server.
+                data.Priority = cachePriority[data.Priority] || 'Unknown';
+                //moment.js? change to date format at binding level?
+                //this.AbsoluteExpiration = cache.AbsoluteExpiration;
+                //this.Created = cache.Created;
+                //this.SlidingExpiration = cache.SlidingExpiration;
 
-                    //show serialized data
-                    //Make seperate modal methods? right now this the only usage.
-                    var $container = $('#modal-container');
-                    var $content = $container.find('.modal-content').first();
-                    var content = $content[0];
-                    ko.cleanNode(content);
-                    ko.applyBindings($.extend({}, data, { Template: 'SerializeNodeTemplate' }), content);
-                    $container.modal('show');
-                } else {
-                    //error
-                }
+                //show serialized data
+                //Make seperate modal methods? right now this the only usage.
+                var $container = $('#modal-container');
+                var $content = $container.find('.modal-content').first();
+                var content = $content[0];
+                ko.cleanNode(content);
+                ko.applyBindings($.extend({}, data, { Template: 'EntryDetailsTemplate' }), content);
+                $container.modal('show');
             });
         };
     };
+
+    //CM.SerializeNode = function (key, op_prefix) {
+    //    op_prefix = op_prefix || false;
+
+    //    return function () {
+    //        Ajax.Get('api/v1/info', { data: { Key: key, Prefix: op_prefix } })
+    //        .done(function (data) {
+    //            data.Values = JSON.stringify(data.Values, null, '    ');
+
+    //            //show serialized data
+    //            //Make seperate modal methods? right now this the only usage.
+    //            var $container = $('#modal-container');
+    //            var $content = $container.find('.modal-content').first();
+    //            var content = $content[0];
+    //            ko.cleanNode(content);
+    //            ko.applyBindings($.extend({}, data, { Template: 'SerializeNodeTemplate' }), content);
+    //            $container.modal('show');
+    //        });
+    //    };
+    //};
 
     CM.ObjectAsArray = function (object) {
         var properties = [];
