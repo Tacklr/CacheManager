@@ -27,6 +27,14 @@ namespace TacklR.CacheManager
             }
         }
 
+        internal static string BaseUrl
+        {
+            get
+            {
+                return CacheManagerConfig.BaseUrl;
+            }
+        }
+
         internal static string Delimiter
         {
             get
@@ -70,6 +78,20 @@ namespace TacklR.CacheManager
 
     internal class CacheManagerConfigSection : ConfigurationSection
     {
+        [ConfigurationProperty("baseUrl", IsKey = false, IsRequired = true, DefaultValue = "/CacheManager.axd/")]
+        internal string BaseUrl
+        {
+            get
+            {
+                var baseUrl = (string)base["baseUrl"];
+                return baseUrl.TrimEnd('/') + "/";//Make sure we have the /
+            }
+            set
+            {
+                base["baseUrl"] = value;
+            }
+        }
+
         [ConfigurationProperty("security")]
         internal SecurityConfigElement Security
         {

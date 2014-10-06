@@ -29,17 +29,19 @@ namespace TacklR.CacheManager.HttpHandlers
         private string BodyContent { get; set; }
         private HttpStatusCode Status { get; set; }
         private TimeSpan MaxAge { get; set; }
+        private string BaseUrl { get; set; }
 
         internal PageHandler()
         {
             Status = HttpStatusCode.InternalServerError;
+            BaseUrl = Configuration.BaseUrl;
         }
 
         internal IHttpHandler Content(string content, HttpStatusCode status = HttpStatusCode.OK)
         {
             //Output cache?
             var _Layout = Resources.GetResourceString("_Layout.min.html");
-            BodyContent = String.Format(_Layout, content, Resources.BundleToken);
+            BodyContent = String.Format(_Layout, content, BaseUrl, Resources.BundleToken);
             Status = status;
             return this;
         }
@@ -49,7 +51,7 @@ namespace TacklR.CacheManager.HttpHandlers
             var _Layout = Resources.GetResourceString("_Layout.min.html");
             var body = Resources.GetResourceString(viewName);
 
-            BodyContent = String.Format(_Layout, body, Resources.BundleToken);
+            BodyContent = String.Format(_Layout, body, BaseUrl, Resources.BundleToken);
             Status = status;
             MaxAge = maxAge ?? TimeSpan.FromMinutes(1);//get better max-age, move this up to controller level so it's per-page?
             return this;
