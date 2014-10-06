@@ -69,13 +69,16 @@ namespace TacklR.CacheManager.Models.Api
 
     internal class CombinedViewModel : BaseViewModel
     {
-        internal CombinedViewModel(ICache cache, HttpContext context, bool defer)
+        internal CombinedViewModel(ICache cache, HttpContext context)
         {
             Delimiter = Configuration.Delimiter;
             DetailView = Configuration.DetailView;
             ConfirmDeleteKey = Configuration.ConfirmDeleteKey;
             ConfirmDeletePrefix = Configuration.ConfirmDeletePrefix;
             ExpandSingleBranches = Configuration.ExpandSingleBranches;
+
+            //var Defer = Configuration.Defer;
+            var Deferred = false;//base off detail view value? if a default view is set we shouldn't defer, if not then we can
 
             Count = cache.Count;
             MemoryFree = Helpers.GetAvailableMemory();//this was in the AspAlliance version, not sure if it's really any help to report.
@@ -89,7 +92,7 @@ namespace TacklR.CacheManager.Models.Api
                 MemoryLimit = memoryLimitKB == -1 ? -1 : memoryLimitKB / 1024f;
             }
 
-            Entries = defer ? new List<Entry>() : cache.GetAll().Select(e => new Entry(e)).ToList();
+            Entries = Deferred ? new List<Entry>() : cache.GetAll().Select(e => new Entry(e)).ToList();
         }
 
         public string Delimiter { get; set; }

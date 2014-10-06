@@ -31,10 +31,10 @@ namespace TacklR.CacheManager.Controllers
             return base.Json(model);
         }
 
-        internal IHttpHandler Combined(bool defer = false)//default true? should probably be a setting with a default (of?)
+        internal IHttpHandler Combined()
         {
             var cache = new HttpCacheShim() as ICache;
-            var model = new CombinedViewModel(cache, HttpContext.Current, defer) { Success = true };
+            var model = new CombinedViewModel(cache, HttpContext.Current) { Success = true };
             return base.Json(model);
         }
 

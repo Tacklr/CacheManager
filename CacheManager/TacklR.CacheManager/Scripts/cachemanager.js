@@ -69,6 +69,22 @@
             return CacheRoot;
         });
 
+        var $collapseTree = $('#collapse-tree');
+        var deferred = false;//data.Deferred or view?
+        if (deferred) {
+            $collapseTree.one('show.bs.collapse', function () {
+                //just trigger refresh button?
+                $('.refresh-loading').removeClass('hidden');
+
+                Ajax.Get('api/v1/cache')//'refresh' url? include freemem/other stats?
+                .done(function (response) {
+                    data.ob_Entries(response.Entries);
+                });
+            });
+        }
+
+        //$collapseTree binding to enable/disable refresh button?
+
         ko.applyBindings(data);//Tree parts lose open state on delete, need to save the state somehow.
         cacheData = data;
 
@@ -458,9 +474,6 @@
     //    return false;
     //});
 
-    $('#collapse-tree').on('shown.bs.collapse', function (e) {
-        console.log(e);
-    });
 
 
 

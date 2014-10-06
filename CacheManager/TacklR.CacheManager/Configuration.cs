@@ -168,23 +168,24 @@ namespace TacklR.CacheManager
             }
         }
 
-        [ConfigurationProperty("detailView", IsKey = false, IsRequired = false, DefaultValue = "tree")]
+        [ConfigurationProperty("detailView", IsKey = false, IsRequired = false, DefaultValue = "")]
         internal string DetailView
         {
             get
             {
                 var value = ((string)base["detailView"] ?? String.Empty).ToLowerInvariant();
                 switch (value) {
-                    case "list":
-                        return "list";
+                    //case "list":
+                    //    return "list";
                     case "tree":
-                    default:
                         return "tree";
+                    default:
+                        return "";
                 }
             }
             set
             {
-                base["detailView"] = value;
+                base["detailView"] = value;//check value?
             }
         }
     }

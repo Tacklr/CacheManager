@@ -1,62 +1,6 @@
 ﻿<div class="row">
 
-    <div class="col-sm-4">
 
-    <div class="panel with-nav-tabs panel-default">
-        <div class="panel-heading">
-            <ul class="nav nav-tabs">
-                <li class="active"><a href="#tab-stats" data-toggle="tab"><span class="fa fa-lg fa-bar-chart"></span> Cache Stats</a></li>
-                <li><a href="#tab-settings" data-toggle="tab"><span class="fa fa-lg fa-gears"></span> Settings</a></li>
-            </ul>
-        </div>
-        <div class="tab-content">
-            <div class="tab-pane fade in active" id="tab-stats">
-                <table class="table table-bordered table-condensed">
-                    <tr>
-                        <th class="col-fit text-right">Free Memory (MB)</th>
-                        <td data-bind="text: MemoryFree"></td>
-                    </tr>
-                    <tr>
-                        <th class="col-fit text-right">Cache Limit (MB)</th>
-                        <td data-bind="text: MemoryLimit"></td>
-                    </tr>
-                    <tr>
-                        <th class="col-fit text-right">Cache Limit (%)</th>
-                        <td data-bind="text: MemoryLimitPercent"></td>
-                    </tr>
-                    <tr>
-                        <th class="col-fit text-right">Cache Entries</th>
-                        <td data-bind="text: ob_Entries().length"></td><!--show difference between reported/counted (Count)?-->
-                    </tr>
-                </table>
-            </div>
-            <div class="tab-pane fade" id="tab-settings">
-                <div class="panel-body">
-                    <div class="form-group">
-                        <div class="input-group">
-                            <span class="input-group-addon cursor-default">Delimiter</span>
-                            <input type="text" class="form-control" id="Delimiter" name="Delimiter" placeholder="Delimiter" data-bind="value: Delimiter, event: { keyup: CM.EnterDelimiter }"><!--data-binding="Delimiter"--><!-- maxlength="1"-->
-                            <span class="input-group-btn">
-                                <button class="btn btn-default" type="button" data-bind="click: CM.SetDelimiter">Set</button>
-                            </span>
-                        </div>
-                    </div>
-
-                    <label class="checkbox-inline no-indent">
-                        <input type="checkbox" data-bind="checked: ConfirmDeleteKey"> Confirm delete key
-                    </label>
-                    <label class="checkbox-inline no-indent">
-                        <input type="checkbox" data-bind="checked: ConfirmDeletePrefix"> Confirm delete prefix
-                    </label>
-                    <label class="checkbox-inline no-indent">
-                        <input type="checkbox" data-bind="checked: ExpandSingleBranches"> Expand single branches
-                    </label>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    </div>
 
 
 
@@ -83,7 +27,7 @@
                 <tr>
                     <th class="col-fit text-right">Cache Entries</th>
                     <td>
-                        <span data-bind="text: ob_Count()">0</span> (<span data-bind="text: ob_Entries().length">0</span> shown)
+                        <span data-bind="text: ob_Entries().length">0</span> (of <span data-bind="text: ob_Count()">0</span>)
                     </td><!--show difference between reported/counted (Count)? should we just refresh stats when we delete?-->
                 </tr>
             </table>
@@ -100,7 +44,8 @@
                     <h3 class="panel-title"><span class="fa fa-lg fa-sitemap"></span> Cache Tree</h3>
                     <span class="btn-group btn-group-panel-heading">
                         <button type="button" class="btn btn-sm btn-default btn-collapse collapsed" data-toggle="collapse" data-parent="#detail-view" data-target="#collapse-tree"></button>
-                        <button type="button" class="btn btn-sm btn-default" data-bind="click: CM.Refresh"><span class="fa fa-lg fa-refresh"></span> Refresh</button>
+                        <button type="button" class="btn btn-sm btn-default btn-refresh" disabled><span class="fa fa-lg fa-refresh"></span> Refresh</button><!--fake 'disabled' button so we can show/hide with pure css, not sure it's worth it-->
+                        <button type="button" class="btn btn-sm btn-default btn-refresh" data-bind="click: CM.Refresh"><span class="fa fa-lg fa-refresh"></span> Refresh</button>
                     </span>
                 </div>
                 <div id="collapse-tree" class="panel-collapse collapse">
