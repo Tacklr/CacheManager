@@ -224,6 +224,15 @@
 
     //#region Public Methods
 
+    CM.ClearCache = function () {
+
+    };
+
+    CM.PageCache = function () {
+        //Modal?
+        var url = prompt('Enter the relative URL (e.g. /foo/bar) to remove all output cache entries.');
+    };
+
     CM.SortCacheKey = function (node1, node2) {
         var key1 = node1.Key;
         var key2 = node2.Key;
