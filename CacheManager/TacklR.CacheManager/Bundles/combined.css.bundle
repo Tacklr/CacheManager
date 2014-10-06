@@ -17,6 +17,7 @@
     <file>/Content/bootstrap.css</file>
     <file>/Content/theme.css</file>
     <file>/Content/css-treeview.css</file>
+    <file>/Content/toastr.css</file>
     <file>/Content/cachemanager.css</file>
   </files>
 </bundle>

@@ -142,12 +142,13 @@ namespace TacklR.CacheManager
                     var parameters = method.GetParameters();
                     foreach (var parameter in parameters)
                     {
+                        var changedValue = default(object);
                         var handlerValue = default(object);
-                        var postValue = collection[parameter.Name];
-                        if (postValue != null)
-                            methodParameters.Add(Convert.ChangeType(postValue, parameter.ParameterType));
-                        else if (handler.Parameters.TryGetValue(parameter.Name, out handlerValue))
-                            methodParameters.Add(Convert.ChangeType(handlerValue, parameter.ParameterType));
+                        var paramValue = collection[parameter.Name];
+                        if (paramValue != null && Helpers.TryChangeType(paramValue, parameter.ParameterType, out changedValue))
+                            methodParameters.Add(changedValue);
+                        else if (handler.Parameters.TryGetValue(parameter.Name, out handlerValue) && Helpers.TryChangeType(handlerValue, parameter.ParameterType, out changedValue))
+                            methodParameters.Add(changedValue);
                         else
                             methodParameters.Add(Type.Missing);
                     }

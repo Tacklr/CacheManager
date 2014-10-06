@@ -99,7 +99,7 @@ Can we use razor without it being a dependency? e.g. compile the views into clas
 
 build our tree structor on the client side? then we can change the delimiter without calling the server again
 
-
+click expanding a tree moves scroll over?
 
 
 

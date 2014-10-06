@@ -177,6 +177,7 @@
     <EmbeddedResource Include="Content\fonts\fontawesome-webfont.woff" />
     <None Include="Bundles\combined.css.bundle" />
     <None Include="Content\theme.less" />
+    <None Include="Content\toastr.less" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
@@ -196,7 +197,14 @@
       <DependentUpon>combined.js.bundle</DependentUpon>
     </Content>
     <EmbeddedResource Include="Content\img\favicon.ico" />
+    <Content Include="Content\toastr.css">
+      <DependentUpon>toastr.less</DependentUpon>
+    </Content>
+    <Content Include="Content\toastr.min.css">
+      <DependentUpon>toastr.css</DependentUpon>
+    </Content>
     <Content Include="Scripts\stringTemplateEngine.js" />
+    <Content Include="Scripts\toastr.js" />
     <Content Include="TODO.txt" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

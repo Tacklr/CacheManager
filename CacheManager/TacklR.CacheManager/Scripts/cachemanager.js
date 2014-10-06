@@ -30,6 +30,7 @@
         //Better way to do these transforms?
         data.MemoryLimit = data.MemoryLimit === null ? 'Unknown' : data.MemoryLimit === -1 ? 'Unlimited' : data.MemoryLimit;
         data.MemoryLimitPercent = data.MemoryLimitPercent === null ? 'Unknown' : data.MemoryLimitPercent;
+        data.ob_Count = ko.observable(data.Count);
         data.ob_Delimiter = ko.observable(data.Delimiter);
         data.ob_DetailView = ko.observable(data.DetailView);
         data.ob_Entries = ko.observableArray(data.Entries);
@@ -79,6 +80,22 @@
         });
     });
 
+    toastr.options = {
+        closeButton: true,
+        closeHtml: '<button type="button"><span class="fa fa-times fa-fw"></span></button>',
+        //debug: false,//default
+        //positionClass: 'toast-top-right',//default
+        //onclick: null,//default
+        //showDuration: 300,//default
+        //hideDuration: 1000,//default
+        //timeOut: 5000,//default
+        //extendedTimeOut: 1000,//default
+        //showEasing: 'swing',//default
+        hideEasing: 'linear',
+        //showMethod: 'fadeIn',//default
+        //hideMethod: 'fadeOut'//default
+    };
+
     //#endregion Initalize
 
     //#region Properties
@@ -107,67 +124,65 @@
     //#region Templates
 
     //We would want the details info for these to start with.
-    ko.templates['CacheListTemplate'] = [
-        '<tr>',
-            '<td><button type="button" title="Delete Entry" class="btn btn-xs btn-danger" data-bind="click: CM.DeleteNode(Key)"><span class="fa fa-lg fa-trash-o"></span></button></td>',
-            '<td data-bind="text: Key"></td>',
-            '<td data-bind="text: Type"></td>',
-            //other info
-        '</tr>'
-    ].join('');
+    //ko.templates['CacheListTemplate'] =
+    //    '<tr>' +
+    //        '<td>' +
+    //            '<span class="btn-group">' +
+    //                '<button type="button" title="Delete Entry" class="btn btn-xs btn-danger" data-bind="click: CM.DeleteNode(Key)"><span class="fa fa-lg fa-trash-o"></span></button>' +
+    //                '<button type="button" title="View Entry Details" class="btn btn-xs btn-info" data-bind="click: CM.EntryDetails(Key)"><span class="fa fa-lg fa-info-circle"></span></button>' +
+    //            '</span>' +
+    //        '</td>' +
+    //        '<td data-bind="text: Key"></td>' +
+    //        '<td data-bind="text: Type"></td>' +
+    //        //other info
+    //    '</tr>';
 
-    ko.templates['CacheTreeTemplate'] = [
-        '<ul>',
-            '<!-- ko foreach: CM.Sort(CM.ObjectAsArray($data.Children), CM.SortCacheKey) -->',//eww
-            '<li>',
-                '<button type="button" title="Delete Prefix" class="btn btn-xs btn-link" data-bind="click: CM.DeleteNode(Key, true)"><span class="fa fa-lg fa-trash-o"></span></button>',
-                //'<button type="button" title="Serialize Prefix" class="btn btn-xs btn-link" data-bind="click: CM.SerializeNode(Key, true)"><span class="fa fa-lg fa-code"></span></button>',
-                '<input type="checkbox" class="expand" data-bind="checked: ob_Checked, attr: { id: Id }, click: CM.BranchExpand" />',
-                '<label data-bind="attr: { for: Id }"><span data-bind="text: Text"></span> <span class="delimiter" data-bind="text: $root.Delimiter"></span></label>',
-                '<!-- ko template: { name: \'CacheTreeTemplate\', data: $data } --><!-- /ko -->',
-            '</li>',
-            '<!-- /ko -->',
-            '<!-- ko foreach: CM.Sort($data.Values, CM.SortCacheKey) -->',//eww
-            '<li>',//Make delete button last tab index?
-                '<button type="button" title="Delete Entry" class="btn btn-xs btn-link" data-bind="click: CM.DeleteNode(Key)"><span class="fa fa-lg fa-trash-o"></span></button>',
-                '<button type="button" title="View Entry Details" class="btn btn-xs btn-link" data-bind="click: CM.EntryDetails(Key)"><span class="fa fa-lg fa-info-circle"></span></button>',
-                '<span data-bind="text: Text, attr: { title: Key }"></span>',// <span class="text-muted">(<span data-bind="text: Type"></span>)</span>
-            '</li>',
-            '<!-- /ko -->',
-        '</ul>'
-    ].join('');
+    ko.templates['CacheTreeTemplate'] =
+        '<ul>' +
+            '<!-- ko foreach: CM.Sort(CM.ObjectAsArray($data.Children), CM.SortCacheKey) -->' +//eww
+            '<li>' +
+                '<button type="button" title="Delete Prefix" class="btn btn-xs btn-link" data-bind="click: CM.DeleteNode(Key, true)"><span class="fa fa-lg fa-trash-o"></span></button>' +
+                //'<button type="button" title="Serialize Prefix" class="btn btn-xs btn-link" data-bind="click: CM.SerializeNode(Key, true)"><span class="fa fa-lg fa-code"></span></button>' +
+                '<input type="checkbox" class="expand" data-bind="checked: ob_Checked, attr: { id: Id }, click: CM.BranchExpand" />' +
+                '<label data-bind="attr: { for: Id }"><span data-bind="text: Text"></span> <span class="delimiter" data-bind="text: $root.Delimiter"></span></label>' +
+                '<!-- ko template: { name: "CacheTreeTemplate", data: $data } --><!-- /ko -->' +
+            '</li>' +
+            '<!-- /ko -->' +
+            '<!-- ko foreach: CM.Sort($data.Values, CM.SortCacheKey) -->' +//eww
+            '<li>' +//Make delete button last tab index?
+                '<button type="button" title="Delete Entry" class="btn btn-xs btn-link" data-bind="click: CM.DeleteNode(Key)"><span class="fa fa-lg fa-trash-o"></span></button>' +
+                '<button type="button" title="View Entry Details" class="btn btn-xs btn-link" data-bind="click: CM.EntryDetails(Key)"><span class="fa fa-lg fa-info-circle"></span></button>' +
+                '<span data-bind="text: Text, attr: { title: Key }"></span>' +// <span class="text-muted">(<span data-bind="text: Type"></span>)</span>
+            '</li>' +
+            '<!-- /ko -->' +
+        '</ul>';
 
-    ko.templates['EntryDetailsTemplate'] = [
-        '<div class="modal-header" tabindex="-1">',
-            '<button type="button" class="close" data-dismiss="modal" aria-hidden="true"><span class="fa fa-times fa-fw"></span></button>',//styled ×?
-            '<h4 class="modal-title" id="modal-title">Entry Details</h4>',
-        '</div>',
-        '<div class="modal-body">',
+    ko.templates['EntryDetailsTemplate'] =
+        '<div class="modal-header" tabindex="-1">' +
+            '<button type="button" class="close" data-dismiss="modal" aria-hidden="true"><span class="fa fa-times fa-fw"></span></button>' +//styled ×?
+            '<h4 class="modal-title" id="modal-title">Entry Details</h4>' +
+        '</div>' +
+        '<div class="modal-body">' +
+            //TODO: Add extra info
+            '<textarea class="serialized-data" data-bind="text: Value" wrap="off" readonly></textarea>' +
+        '</div>' +
+        '<div class="modal-footer">' +
+            '<button type="button" class="btn btn-danger pull-left" data-bind="click: CM.DeleteNode(Key)">Delete</button>' +//format, download, other buttons/actions?
+            '<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>' +
+        '</div>';
 
-
-
-
-            '<textarea class="serialized-data" data-bind="text: Value" wrap="off" readonly></textarea>',
-        '</div>',
-        '<div class="modal-footer">',
-            '<button type="button" class="btn btn-danger pull-left" data-bind="click: CM.DeleteNode(Key)">Delete</button>',//format, download, other buttons/actions?
-            '<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>',
-        '</div>',
-    ].join('');
-
-    //ko.templates['SerializeNodeTemplate'] = [
-    //    '<div class="modal-header" tabindex="-1">',
-    //        '<button type="button" class="close" data-dismiss="modal" aria-hidden="true"><span class="fa fa-times fa-fw"></span></button>',//styled ×?
-    //        '<h4 class="modal-title" id="modal-title">Serialized Data</h4>',
-    //    '</div>',
-    //    '<div class="modal-body">',
-    //        '<textarea class="serialized-data" data-bind="text: Values" wrap="off" readonly></textarea>',
-    //    '</div>',
-    //    '<div class="modal-footer">',
-    //        //'<a href="#" class="btn btn-default">Format</a>',//format, download, other buttons/actions?
-    //        '<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>',
-    //    '</div>',
-    //].join('');
+    //ko.templates['SerializeNodeTemplate'] =
+    //    '<div class="modal-header" tabindex="-1">' +
+    //        '<button type="button" class="close" data-dismiss="modal" aria-hidden="true"><span class="fa fa-times fa-fw"></span></button>' +//styled ×?
+    //        '<h4 class="modal-title" id="modal-title">Serialized Data</h4>' +
+    //    '</div>' +
+    //    '<div class="modal-body">' +
+    //        '<textarea class="serialized-data" data-bind="text: Values" wrap="off" readonly></textarea>' +
+    //    '</div>' +
+    //    '<div class="modal-footer">' +
+    //        //'<a href="#" class="btn btn-default">Format</a>' +//format, download, other buttons/actions?
+    //        '<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>' +
+    //    '</div>';
 
     //#endregion Templates
 
@@ -179,15 +194,7 @@
         this.Children = {};//Nodes
         this.Values = [];//Values
         this.Id = id;
-        this.ob_Checked = ob_Checked;//ko.observable(false);
-        //this.ob_Checked = ko.computed({
-        //    read: function () {
-        //        return ob_checked();
-        //    },
-        //    write: function (value) {
-        //        ob_checked(value);
-        //    }
-        //});
+        this.ob_Checked = ob_Checked;
     };
 
     var CacheValue = function (cache, text, id) {
@@ -237,9 +244,6 @@
         .done(function (data) {
             cacheData.ob_Entries(data.Entries);
         });
-
-        //TODO: Inline refresh (observables?)
-        //document.location.reload();
     };
 
     CM.AfterRenderDetailView = function () {//elements
@@ -377,14 +381,16 @@
     var handleDataError = function (response) {//, textStatus, jqXHR) {
         var message = response.Message || "An unknown error has occured."
         //messageHandler(message);//toastr?
-        console.log(message);
+        //console.log(message);
+        toastr.error(message);
     };
 
     var handleFailError = function (jqXHR, textStatus, errorThrown) {
         var response = jqXHR.responseJSON || {};
         var message = response.Message || errorThrown || "An unknown error has occured."
         //messageHandler(message);//toastr?
-        console.log(message);
+        //console.log(message);
+        toastr.error(message);
     };
 
     Ajax.Post = function (url, options) {
@@ -441,6 +447,28 @@
 
         return dfd;
     };
+
+
+
+    //$('#collapseOne, #collapseTwo').on('show.bs.collapse', function () {
+    //    Ajax.Get('api/v1/cache')//'refresh' url? include freemem/other stats?
+    //    .done(function (data) {
+    //        cacheData.ob_Entries(data.Entries);
+    //    });
+    //    return false;
+    //});
+
+    $('#collapse-tree').on('shown.bs.collapse', function (e) {
+        console.log(e);
+    });
+
+
+
+
+
+
+
+
 
     //Really messy chaining of deferreds but there is no way to block.
     //Ajax.Post = function (url, options) {

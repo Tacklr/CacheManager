@@ -69,7 +69,7 @@ namespace TacklR.CacheManager.Models.Api
 
     internal class CombinedViewModel : BaseViewModel
     {
-        internal CombinedViewModel(ICache cache, HttpContext context)
+        internal CombinedViewModel(ICache cache, HttpContext context, bool defer)
         {
             Delimiter = Configuration.Delimiter;
             DetailView = Configuration.DetailView;
@@ -77,10 +77,8 @@ namespace TacklR.CacheManager.Models.Api
             ConfirmDeletePrefix = Configuration.ConfirmDeletePrefix;
             ExpandSingleBranches = Configuration.ExpandSingleBranches;
 
-            AppPath = context.Request.ApplicationPath;
             Count = cache.Count;
             MemoryFree = Helpers.GetAvailableMemory();//this was in the AspAlliance version, not sure if it's really any help to report.
-            ServerName = Environment.MachineName;
 
             //Will other shims have this?
             if (cache is HttpCacheShim)
@@ -91,7 +89,7 @@ namespace TacklR.CacheManager.Models.Api
                 MemoryLimit = memoryLimitKB == -1 ? -1 : memoryLimitKB / 1024f;
             }
 
-            Entries = cache.GetAll().Select(e => new Entry(e)).ToList();
+            Entries = defer ? new List<Entry>() : cache.GetAll().Select(e => new Entry(e)).ToList();
         }
 
         public string Delimiter { get; set; }
@@ -100,11 +98,8 @@ namespace TacklR.CacheManager.Models.Api
         public bool ConfirmDeletePrefix { get; set; }
         public bool ExpandSingleBranches { get; set; }
 
-        public string AppPath { get; set; }
         public int Count { get; set; }
         public float? MemoryFree { get; set; }
-        public string ServerName { get; set; }
-
         public float? MemoryLimit { get; set; }
         public long? MemoryLimitPercent { get; set; }
 
@@ -149,10 +144,8 @@ namespace TacklR.CacheManager.Models.Api
     {
         internal StatsViewModel(ICache cache, HttpContext context)
         {
-            AppPath = context.Request.ApplicationPath;
             Count = cache.Count;
             MemoryFree = Helpers.GetAvailableMemory();//this was in the AspAlliance version, not sure if it's really any help to report.
-            ServerName = Environment.MachineName;
 
             //Will other shims have this?
             if (cache is HttpCacheShim)
@@ -164,11 +157,8 @@ namespace TacklR.CacheManager.Models.Api
             }
         }
 
-        public string AppPath { get; set; }
         public int Count { get; set; }
         public float? MemoryFree { get; set; }
-        public string ServerName { get; set; }
-
         public float? MemoryLimit { get; set; }
         public long? MemoryLimitPercent { get; set; }
     }

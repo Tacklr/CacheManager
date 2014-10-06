@@ -77,5 +77,20 @@ namespace TacklR.CacheManager
                 return default(long?);
             return (long)timespan.Value.TotalMilliseconds;
         }
+
+        internal static bool TryChangeType(object value, Type type, out object converted)
+        {
+            try
+            {
+                converted = Convert.ChangeType(value, type);
+                return true;
+            }
+            catch (Exception)
+            {
+                //log?
+                converted = default(object);
+                return false;
+            }
+        }
     }
 }
