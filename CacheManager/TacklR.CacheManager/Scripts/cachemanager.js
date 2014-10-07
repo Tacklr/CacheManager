@@ -125,11 +125,11 @@
     //From System.Web.Caching.CacheItemPriority (unlikely to change, probably doesn't need to be dynamic.)
     var cachePriority = {
         '1': 'Low',
-        '2': 'BelowNormal',
+        '2': 'Below Normal',
         '3': 'Normal',//Also 'Default'
-        '4': 'AboveNormal',
+        '4': 'Above Normal',
         '5': 'High',
-        '6': 'NotRemovable'
+        '6': 'Not Removable'
     };
 
     ko.bindingHandlers.stopBinding = {
@@ -184,8 +184,45 @@
             '<h4 class="modal-title" id="modal-title">Entry Details</h4>' +
         '</div>' +
         '<div class="modal-body">' +
-            //TODO: Add extra info
-            '<textarea class="serialized-data" data-bind="text: Value" wrap="off" readonly></textarea>' +
+            '<div class="row">' +
+                '<div class="col-xs-12">' +
+                    '<div class="table-responsive">' +
+                        '<table class="table table-bordered table-condensed">' +//Better way to display this? independent columns? collapsable?
+                            '<tbody>' +
+                                '<tr>' +
+                                    '<th class="col-fit text-right">Key</th>' +
+                                    '<td data-bind="text: Key"></td>' +
+                                '</tr>' +
+                                '<tr>' +
+                                    '<th class="col-fit text-right">Type</th>' +
+                                    '<td data-bind="text: Type"></td>' +
+                                '</tr>' +
+                                '<tr>' +
+                                    '<th class="col-fit text-right">Priority</th>' +
+                                    '<td data-bind="text: Priority"></td>' +
+                                '</tr>' +
+                                '<tr>' +
+                                    '<th class="col-fit text-right">Created</th>' +
+                                    '<td data-bind="text: Created"></td>' +
+                                '</tr>' +
+                                '<tr>' +
+                                    '<th class="col-fit text-right">Absolute Expiration</th>' +
+                                    '<td data-bind="text: AbsoluteExpiration"></td>' +
+                                '</tr>' +
+                                '<tr>' +
+                                    '<th class="col-fit text-right">Sliding Expiration</th>' +
+                                    '<td data-bind="text: SlidingExpiration"></td>' +
+                                '</tr>' +
+                            '</tbody>' +
+                        '</table>' +
+                    '</div>' +
+                '</div>' +
+            '</div>' +
+            '<div class="row">' +
+                '<div class="col-xs-12">' +
+                    '<textarea class="serialized-data" data-bind="text: Value" wrap="off" readonly></textarea>' +
+                '</div>' +
+            '</div>' +
         '</div>' +
         '<div class="modal-footer">' +
             '<button type="button" class="btn btn-danger pull-left" data-bind="click: CM.DeleteNode(Key)">Delete</button>' +//format, download, other buttons/actions?
@@ -321,13 +358,13 @@
         //Not sure how much I like spawning a new function for each one. Make each level a seperate observable? eww
         return function () {
             //TODO: Combine these calls, I don't want to seperate ones.
-            if (!op_prefix && (!cacheData.ConfirmDeleteKey || confirm('Are you sure you want to delete this cache value?\n\nKey: ' + key))) {
+            if (!op_prefix && (!cacheData.ConfirmDeleteKey || confirm('Are you sure you want to delete this cache value?\n\n' + key))) {
                 Ajax.Post('api/v1/delete', { data: { Key: key } })
                 .done(function (data) {
                     cacheData.ob_Count(data.Count);
                     cacheData.ob_Entries.remove(CM.FindCacheKey(key))
                 });
-            } else if (op_prefix && (!cacheData.ConfirmDeletePrefix || confirm('Are you sure you want to delete everything with this prefix?\n\nPrefix: ' + key))) {
+            } else if (op_prefix && (!cacheData.ConfirmDeletePrefix || confirm('Are you sure you want to delete everything with this prefix?\n\n' + key))) {
                 Ajax.Post('api/v1/delete', { data: { Key: key, Prefix: true } })
                 .done(function (data) {
                     cacheData.ob_Count(data.Count);
@@ -345,9 +382,9 @@
                 data.Value = data.Value === 'undefined' ? 'Error serializing data.' : JSON.stringify(JSON.parse(data.Value), null, '    ');//eww, but the only way we can catch serialization errors without killing the wholer response is to serialize on the server.
                 data.Priority = cachePriority[data.Priority] || 'Unknown';
                 //moment.js? change to date format at binding level?
-                //this.AbsoluteExpiration = cache.AbsoluteExpiration;
-                //this.Created = cache.Created;
-                //this.SlidingExpiration = cache.SlidingExpiration;
+                data.AbsoluteExpiration = new Date(data.AbsoluteExpiration).toLocaleString();
+                data.Created = new Date(data.Created).toLocaleString();
+                data.SlidingExpiration = (data.SlidingExpiration / 1000) + " Seconds";//Need better timespan formatting.
 
                 //show serialized data
                 //Make seperate modal methods? right now this the only usage.

@@ -76,17 +76,17 @@ namespace TacklR.CacheManager.Controllers
         //    return base.Json(model);
         //}
 
-        internal IHttpHandler Settings()
-        {
-            var model = new SettingsViewModel() { Success = true };
-            return base.Json(model);
-        }
+        //internal IHttpHandler Settings()
+        //{
+        //    var model = new SettingsViewModel() { Success = true };
+        //    return base.Json(model);
+        //}
 
-        internal IHttpHandler Stats()
-        {
-            var cache = new HttpCacheShim() as ICache;
-            var model = new StatsViewModel(cache, HttpContext.Current) { Success = true };
-            return base.Json(model);
-        }
+        //internal IHttpHandler Stats()
+        //{
+        //    var cache = new HttpCacheShim() as ICache;
+        //    var model = new StatsViewModel(cache, HttpContext.Current) { Success = true };
+        //    return base.Json(model);
+        //}
     }
 }
