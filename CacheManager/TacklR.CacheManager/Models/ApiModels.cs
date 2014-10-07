@@ -95,9 +95,6 @@ namespace TacklR.CacheManager.Models.Api
             ConfirmDeletePrefix = Configuration.ConfirmDeletePrefix;
             ExpandSingleBranches = Configuration.ExpandSingleBranches;
 
-            //var Defer = Configuration.Defer;
-            var Deferred = false;//base off detail view value? if a default view is set we shouldn't defer, if not then we can
-
             Count = cache.Count;
             MemoryFree = Helpers.GetAvailableMemory();//this was in the AspAlliance version, not sure if it's really any help to report.
 
@@ -110,11 +107,11 @@ namespace TacklR.CacheManager.Models.Api
                 MemoryLimit = memoryLimitKB == -1 ? -1 : memoryLimitKB / 1024f;
             }
 
-            Entries = Deferred ? new List<Entry>() : cache.GetAll().Select(e => new Entry(e)).ToList();
+            Entries =  DetailView == ViewType.Defer ? new List<Entry>() : cache.GetAll().Select(e => new Entry(e)).ToList();
         }
 
         public string Delimiter { get; set; }
-        public string DetailView { get; set; }
+        public ViewType DetailView { get; set; }
         public bool ConfirmDeleteKey { get; set; }
         public bool ConfirmDeletePrefix { get; set; }
         public bool ExpandSingleBranches { get; set; }
@@ -199,7 +196,7 @@ namespace TacklR.CacheManager.Models.Api
         }
 
         public string Delimiter { get; set; }
-        public string DetailView { get; set; }
+        public ViewType DetailView { get; set; }
         public bool ConfirmDeleteKey { get; set; }
         public bool ConfirmDeletePrefix { get; set; }
         public bool ExpandSingleBranches { get; set; }

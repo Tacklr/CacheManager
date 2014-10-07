@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -67,7 +69,7 @@ namespace TacklR.CacheManager
             }
         }
 
-        internal static string DetailView
+        internal static ViewType DetailView
         {
             get
             {
@@ -190,25 +192,26 @@ namespace TacklR.CacheManager
             }
         }
 
-        [ConfigurationProperty("detailView", IsKey = false, IsRequired = false, DefaultValue = "")]
-        internal string DetailView
+        [ConfigurationProperty("detailView", IsKey = false, IsRequired = false, DefaultValue = "Defer")]
+        internal ViewType DetailView
         {
             get
             {
-                var value = ((string)base["detailView"] ?? String.Empty).ToLowerInvariant();
-                switch (value) {
-                    //case "list":
-                    //    return "list";
-                    case "tree":
-                        return "tree";
-                    default:
-                        return "";
-                }
+                return (ViewType)base["detailView"];
             }
             set
             {
                 base["detailView"] = value;//check value?
             }
         }
+    }
+
+    [JsonConverter(typeof(StringEnumConverter))]
+    internal enum ViewType
+    {
+        None,
+        Defer,//special case
+        Tree,
+        //List,
     }
 }

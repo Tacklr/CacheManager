@@ -56,12 +56,12 @@
                 <div class="panel-heading">
                     <h3 class="panel-title"><span class="fa fa-lg fa-sitemap"></span> Cache Tree</h3>
                     <span class="btn-group btn-group-panel-heading">
-                        <button type="button" class="btn btn-sm btn-default btn-collapse collapsed" data-toggle="collapse" data-parent="#detail-view" data-target="#collapse-tree"></button>
+                        <button type="button" class="btn btn-sm btn-default btn-collapse collapsed" data-toggle="collapse" data-parent="#detail-view" data-target="#collapse-tree" data-bind="css: { collapsed: DetailView !== 'Tree' }"></button>
                         <button type="button" class="btn btn-sm btn-default btn-refresh" disabled><span class="fa fa-lg fa-refresh"></span> Refresh</button><!--fake 'disabled' button so we can show/hide with pure css, not sure it's worth it-->
                         <button type="button" class="btn btn-sm btn-default btn-refresh" data-bind="click: CM.Refresh"><span class="fa fa-lg fa-refresh"></span> Refresh</button>
                     </span>
                 </div>
-                <div id="collapse-tree" class="panel-collapse collapse">
+                <div id="collapse-tree" class="panel-collapse collapse" data-bind="css: { in: DetailView === 'Tree' }">
                     <div class="panel-body">
                         <div class="css-treeview no-wrap tree-view" data-bind="template: { name: 'CacheTreeTemplate', data: ob_EntryTree(), afterRender: CM.AfterRenderDetailView }"></div>
                         <div class="text-center" data-bind="visible: ob_EntryTree().isEmpty()"><strong class="text-muted">There are no cache entries loaded or the cache is empty.</strong></div><!--refresh button?-->

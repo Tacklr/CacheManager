@@ -72,10 +72,9 @@
             return CacheRoot;
         });
 
-        var $collapseTree = $('#collapse-tree');
-        var deferred = false;//data.Deferred or view?
+        var deferred = data.DetailView === 'Defer';//data.Deferred or view?
         if (deferred) {
-            $collapseTree.one('show.bs.collapse', function () {
+            $('#collapse-tree').one('show.bs.collapse', function () {//Can we do this with knockout?
                 //just trigger refresh button?
                 $('.refresh-loading').removeClass('hidden');
 
@@ -86,12 +85,9 @@
             });
         }
 
-        //$collapseTree binding to enable/disable refresh button?
-
         ko.applyBindings(data);//Tree parts lose open state on delete, need to save the state somehow.
         cacheData = data;
-
-        window.DERP = data;
+        //window.DERP = data;
 
         //Clear loading indiciator
         $('.content-loading').fadeOut(function () {
@@ -191,7 +187,7 @@
                             '<tbody>' +
                                 '<tr>' +
                                     '<th class="col-fit text-right">Key</th>' +
-                                    '<td data-bind="text: Key"></td>' +
+                                    '<td class="break-all" data-bind="text: Key"></td>' +
                                 '</tr>' +
                                 '<tr>' +
                                     '<th class="col-fit text-right">Type</th>' +
@@ -220,7 +216,7 @@
             '</div>' +
             '<div class="row">' +
                 '<div class="col-xs-12">' +
-                    '<textarea class="serialized-data" data-bind="text: Value" wrap="off" readonly></textarea>' +
+                    '<textarea class="serialized-data" data-bind="text: Value" wrap="off" readonly></textarea>' +//better formatting? syntax highlight?
                 '</div>' +
             '</div>' +
         '</div>' +
@@ -382,9 +378,9 @@
                 data.Value = data.Value === 'undefined' ? 'Error serializing data.' : JSON.stringify(JSON.parse(data.Value), null, '    ');//eww, but the only way we can catch serialization errors without killing the wholer response is to serialize on the server.
                 data.Priority = cachePriority[data.Priority] || 'Unknown';
                 //moment.js? change to date format at binding level?
-                data.AbsoluteExpiration = new Date(data.AbsoluteExpiration).toLocaleString();
+                data.AbsoluteExpiration = data.AbsoluteExpiration === null ? 'None' : new Date(data.AbsoluteExpiration).toLocaleString();
                 data.Created = new Date(data.Created).toLocaleString();
-                data.SlidingExpiration = (data.SlidingExpiration / 1000) + " Seconds";//Need better timespan formatting.
+                data.SlidingExpiration = data.SlidingExpiration === null ? 'None' : (data.SlidingExpiration / 1000) + " Seconds";//Need better timespan formatting.
 
                 //show serialized data
                 //Make seperate modal methods? right now this the only usage.

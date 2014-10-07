@@ -74,7 +74,7 @@ namespace TacklR.CacheManager.HttpHandlers
 
         private string ContentType { get; set; }
         private string Name { get; set; }
-        private TimeSpan MaxAge { get; set; }
+        private TimeSpan? MaxAge { get; set; }
 
         public void ProcessRequest(HttpContext context)
         {
@@ -83,12 +83,12 @@ namespace TacklR.CacheManager.HttpHandlers
 
             context.Response.Clear();
 
+            context.Response.Headers.Override(Helpers.SecurityHeaders);
+
             context.Response.Cache.SetCacheability(HttpCacheability.Public);
             context.Response.Cache.SetLastModified(Resources.BuildTime);
-            context.Response.Cache.SetMaxAge(MaxAge);
-
-            context.Response.Headers.Override(Helpers.SecurityHeaders);
-            
+            context.Response.Cache.SetMaxAge(MaxAge ?? TimeSpan.FromDays(365));
+           
             context.Response.ContentType = ContentType;
             context.Response.BinaryWrite(Resources.GetResourceBytes(Name));
             context.Response.End();
@@ -100,7 +100,7 @@ namespace TacklR.CacheManager.HttpHandlers
                 contentType = MimeType.Default;
 
             ContentType = contentType;
-            MaxAge = maxAge ?? TimeSpan.FromDays(365);
+            MaxAge = maxAge;
             Name = name;
             return this;
         }
