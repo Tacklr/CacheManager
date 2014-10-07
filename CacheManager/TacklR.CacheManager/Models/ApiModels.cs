@@ -22,6 +22,24 @@ namespace TacklR.CacheManager.Models.Api
     {
     }
 
+    internal class DeleteViewModel : BaseViewModel
+    {
+        internal DeleteViewModel(ICache cache)
+        {
+            Count = cache.Count;
+        }
+
+        public int Count { get; set; }
+    }
+
+    internal class ClearViewModel : BaseViewModel
+    {
+    }
+
+    internal class PageViewModel : BaseViewModel
+    {
+    }
+
     //internal class SerializeViewModel : BaseViewModel
     //{
     //    internal SerializeViewModel(ICache cache, string key, bool prefix)
@@ -125,9 +143,12 @@ namespace TacklR.CacheManager.Models.Api
     {
         internal CacheViewModel(ICache cache)
         {
+            //Refresh other stats?
+            Count = cache.Count;
             Entries = cache.GetAll().Select(e => new Entry(e)).ToList();
         }
 
+        public int Count { get; set; }
         public IList<Entry> Entries { get; set; }
 
         internal class Entry

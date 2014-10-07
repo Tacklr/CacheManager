@@ -204,6 +204,8 @@ namespace TacklR.CacheManager.Caches
                 //check if key exists first?
                 var value = Cache.Get(key);
                 var cacheEntry = CacheGet.Invoke(HttpRuntime.Cache, new object[] { key, 1 });
+                if (cacheEntry == null)
+                    return default(CacheEntry);
 
                 var utcCreated = UtcCreated.GetValue(cacheEntry, null) as DateTime? ?? DateTime.MinValue;
                 var utcExpires = UtcExpires.GetValue(cacheEntry, null) as DateTime? ?? Cache.NoAbsoluteExpiration;

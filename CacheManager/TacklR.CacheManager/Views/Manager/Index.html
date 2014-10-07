@@ -4,12 +4,12 @@
     <div class="col-sm-3 col-md-3">
         <div class="panel panel-default">
             <div class="panel-heading">
-                <h3 class="panel-title"><span class="fa fa-lg fa-bar-chart"></span> Actions</h3>
+                <h3 class="panel-title"><span class="fa fa-lg fa-power-off"></span> Actions</h3>
             </div>
             <div class="panel-body">
                 <div class="space-btns">
-                    <button type="button" class="btn btn-danger" data-bind="click: CM.ClearCache" style="width: 100%"><span class="fa fa-lg fa-trash-o"></span> Clear Cache</button>
-                    <button type="button" class="btn btn-warning" data-bind="click: CM.PageCache" style="width: 100%"><span class="fa fa-lg fa-trash-o"></span> Page Cache</button>
+                    <button type="button" class="btn btn-block btn-danger" data-bind="click: CM.ClearCache"><span class="fa fa-lg fa-trash-o"></span> Clear Cache</button>
+                    <button type="button" class="btn btn-block btn-warning" data-bind="click: CM.PageCache"><span class="fa fa-lg fa-trash-o"></span> Page Cache</button>
                 </div>
             </div>
         </div>
@@ -63,7 +63,8 @@
                 </div>
                 <div id="collapse-tree" class="panel-collapse collapse">
                     <div class="panel-body">
-                        <div class="css-treeview no-wrap tree-view" data-bind="template: { name: 'CacheTreeTemplate', data: ob_EntryTree(), afterRender: CM.AfterRenderDetailView }"></div><!--TODO: Show "none" indicator if there are no cache items-->
+                        <div class="css-treeview no-wrap tree-view" data-bind="template: { name: 'CacheTreeTemplate', data: ob_EntryTree(), afterRender: CM.AfterRenderDetailView }"></div>
+                        <div class="text-center" data-bind="visible: ob_EntryTree().isEmpty()"><strong class="text-muted">There are no cache entries loaded or the cache is empty.</strong></div><!--refresh button?-->
                         <div class="refresh-loading hidden"></div>
                     </div>
                 </div>

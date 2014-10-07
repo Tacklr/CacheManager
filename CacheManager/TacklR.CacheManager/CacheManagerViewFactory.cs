@@ -19,24 +19,20 @@ namespace TacklR.CacheManager
             Assembly = typeof(Startup).Assembly;
 
             //Query string handling? Model binding? We could do it in a simple way using json
-            HttpContext.Current.Cache.Add("This/Is-a/very/deep/entry/to-test/how/far/over/it/goes aaaaaaaaaaaaa aaaaaaaaaaaa aaaaaaaaaa", "derp", null, DateTime.UtcNow.AddDays(1), System.Web.Caching.Cache.NoSlidingExpiration, System.Web.Caching.CacheItemPriority.AboveNormal, null);
-
-
-
-
-
-
+            //HttpContext.Current.Cache.Add("This/Is-a/very/deep/entry/to-test/how/far/over/it/goes aaaaaaaaaaaaa aaaaaaaaaaaa aaaaaaaaaa", "derp", null, DateTime.UtcNow.AddDays(1), System.Web.Caching.Cache.NoSlidingExpiration, System.Web.Caching.CacheItemPriority.AboveNormal, null);
 
             RouteTable = new RouteTable();
             //Does it matter of we instantiate here or not? might make a difference if we intend to pass constructor parameters per-request.
             RouteTable.MapRoute("GET:", new Route(typeof(ManagerController), "Index"));
             RouteTable.MapRoute("GET:api/v1/cache", new Route(typeof(ApiController), "Cache"));
-            RouteTable.MapRoute("GET:api/v1/stats", new Route(typeof(ApiController), "Stats"));
-            RouteTable.MapRoute("GET:api/v1/settings", new Route(typeof(ApiController), "Settings"));
             RouteTable.MapRoute("GET:api/v1/combined", new Route(typeof(ApiController), "Combined"));
             RouteTable.MapRoute("GET:api/v1/details", new Route(typeof(ApiController), "Details"));
             //RouteTable.MapRoute("GET:api/v1/serialize", new Route(typeof(ApiController), "Serialize"));
+            RouteTable.MapRoute("GET:api/v1/settings", new Route(typeof(ApiController), "Settings"));
+            RouteTable.MapRoute("GET:api/v1/stats", new Route(typeof(ApiController), "Stats"));
+            RouteTable.MapRoute("POST:api/v1/clear", new Route(typeof(ApiController), "Clear"));
             RouteTable.MapRoute("POST:api/v1/delete", new Route(typeof(ApiController), "Delete"));
+            RouteTable.MapRoute("POST:api/v1/page", new Route(typeof(ApiController), "Page"));
 
             //Generic routes? parameters? can the server default on mime types?
             RouteTable.MapRoute("GET:bundles/combined.min.css", new Route(typeof(ResourceHandler), "Resource", Tuple.Create<string, object>("name", "combined.min.css")));
@@ -58,9 +54,9 @@ namespace TacklR.CacheManager
             RouteTable.MapRoute("GET:content/fonts/OpenSans.woff", new Route(typeof(ResourceHandler), "Resource", Tuple.Create<string, object>("name", "OpenSans.woff")));
         }
 
-        internal static void Init()
-        {
-        }
+        //internal static void Init()
+        //{
+        //}
     }
 
     internal class Route
@@ -112,11 +108,10 @@ namespace TacklR.CacheManager
 
     internal class CacheManagerViewFactory : IHttpHandlerFactory
     {
-
-        public CacheManagerViewFactory()
-        {
-            Startup.Init();//Can we get in any sooner than this?
-        }
+        //public CacheManagerViewFactory()
+        //{
+        //    Startup.Init();//Can we get in any sooner than this?
+        //}
 
         public IHttpHandler GetHandler(HttpContext context, string requestType, string url, string pathTranslated)
         {

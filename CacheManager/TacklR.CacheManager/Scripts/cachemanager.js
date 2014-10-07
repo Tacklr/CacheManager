@@ -39,7 +39,10 @@
             //TODO: need to somehow keep checked state
             var CacheRoot = {
                 Children: {},
-                Values: []
+                Values: [],
+                isEmpty: function () {
+                    return this.Values.length === 0 && $.isEmptyObject(this.Children);
+                }
             };
 
             var id_i = 0;//need hash function or something
@@ -154,6 +157,7 @@
     //    '</tr>';
 
     ko.templates['CacheTreeTemplate'] =
+        '<!-- ko if: !$data.isEmpty() -->' +//better check? make it a method of the node/root?
         '<ul>' +
             '<!-- ko foreach: CM.Sort(CM.ObjectAsArray($data.Children), CM.SortCacheKey) -->' +//eww
             '<li>' +
@@ -171,7 +175,8 @@
                 '<span data-bind="text: Text, attr: { title: Key }"></span>' +// <span class="text-muted">(<span data-bind="text: Type"></span>)</span>
             '</li>' +
             '<!-- /ko -->' +
-        '</ul>';
+        '</ul>' +
+        '<!-- /ko -->';
 
     ko.templates['EntryDetailsTemplate'] =
         '<div class="modal-header" tabindex="-1">' +
@@ -211,6 +216,9 @@
         this.Values = [];//Values
         this.Id = id;
         this.ob_Checked = ob_Checked;
+        this.isEmpty = function () {
+            return this.Values.length === 0 && $.isEmptyObject(this.Children);
+        };
     };
 
     var CacheValue = function (cache, text, id) {
@@ -225,12 +233,28 @@
     //#region Public Methods
 
     CM.ClearCache = function () {
-
+        if (confirm('Are you sure you want to clear the cache?')) {
+            Ajax.Post('api/v1/clear')
+            .done(function (data) {
+                cacheData.ob_Entries([]);
+                cacheData.ob_Count(0);
+                toastr.success('Cache has been cleared.');
+            });
+        }
     };
 
     CM.PageCache = function () {
         //Modal?
-        var url = prompt('Enter the relative URL (e.g. /foo/bar) to remove all output cache entries.');
+        var url = prompt('Enter the relative url (e.g. /foo/bar) to remove all output cache entries.');
+        if (url.indexOf('/') === 0) {
+            Ajax.Post('api/v1/page', { data: { Url: url } })
+            .done(function (data) {
+                cacheData.ob_Entries([]);
+                toastr.success('Output cache cleared.');
+            });
+        } else {
+            toastr.error('Url must start with a "/".');
+        }
     };
 
     CM.SortCacheKey = function (node1, node2) {
@@ -267,6 +291,7 @@
 
         Ajax.Get('api/v1/cache')//'refresh' url? include freemem/other stats?
         .done(function (data) {
+            cacheData.ob_Count(data.Count);
             cacheData.ob_Entries(data.Entries);
         });
     };
@@ -295,14 +320,17 @@
         //Need to somehow keep checked state on redraw
         //Not sure how much I like spawning a new function for each one. Make each level a seperate observable? eww
         return function () {
+            //TODO: Combine these calls, I don't want to seperate ones.
             if (!op_prefix && (!cacheData.ConfirmDeleteKey || confirm('Are you sure you want to delete this cache value?\n\nKey: ' + key))) {
                 Ajax.Post('api/v1/delete', { data: { Key: key } })
                 .done(function (data) {
+                    cacheData.ob_Count(data.Count);
                     cacheData.ob_Entries.remove(CM.FindCacheKey(key))
                 });
             } else if (op_prefix && (!cacheData.ConfirmDeletePrefix || confirm('Are you sure you want to delete everything with this prefix?\n\nPrefix: ' + key))) {
                 Ajax.Post('api/v1/delete', { data: { Key: key, Prefix: true } })
                 .done(function (data) {
+                    cacheData.ob_Count(data.Count);
                     cacheData.ob_Entries.remove(CM.FindCacheKey(key, true))
                 });
             }

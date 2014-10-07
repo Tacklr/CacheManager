@@ -101,9 +101,9 @@ build our tree structor on the client side? then we can change the delimiter wit
 
 click expanding a tree moves scroll over?
 
+refresh on every open of tree?
 
-
-
+increase toastr opacity? (e.g. for small views when its over dark text)
 
 
 
