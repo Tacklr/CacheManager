@@ -206,6 +206,7 @@ namespace TacklR.CacheManager
         }
     }
 
+    //Move this someplace else?
     [JsonConverter(typeof(StringEnumConverter))]
     internal enum ViewType
     {

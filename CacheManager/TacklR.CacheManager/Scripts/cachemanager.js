@@ -534,8 +534,6 @@
         return dfd;
     };
 
-
-
     //$('#collapseOne, #collapseTwo').on('show.bs.collapse', function () {
     //    Ajax.Get('api/v1/cache')//'refresh' url? include freemem/other stats?
     //    .done(function (data) {
@@ -543,15 +541,6 @@
     //    });
     //    return false;
     //});
-
-
-
-
-
-
-
-
-
 
     //Really messy chaining of deferreds but there is no way to block.
     //Ajax.Post = function (url, options) {

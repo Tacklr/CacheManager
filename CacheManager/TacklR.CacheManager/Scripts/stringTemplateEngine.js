@@ -1,19 +1,19 @@
 /*!
  * MIT License
- * https://github.com/rniemeyer/SamplePresentation/blob/master/js/stringTemplateEngine.js
+ * Based on: https://github.com/rniemeyer/SamplePresentation/blob/master/js/stringTemplateEngine.js
  */
-(function(ko) {
+(function (ko) {
     //define a template source that tries to key into an object first to find a template string
     var templates = {},
         data = {},
         engine = new ko.nativeTemplateEngine();
 
-    ko.templateSources.stringTemplate = function(template) {
+    ko.templateSources.stringTemplate = function (template) {
         this.templateName = template;
     };
 
     ko.utils.extend(ko.templateSources.stringTemplate.prototype, {
-        data: function(key, value) {
+        data: function (key, value) {
             data[this.templateName] = data[this.templateName] || {};
 
             if (arguments.length === 1) {
@@ -22,12 +22,12 @@
 
             data[this.templateName][key] = value;
         },
-        text: function(value) {
+        text: function (value) {
             if (arguments.length === 0) {
                 var template = templates[this.templateName];
 
                 if (typeof (template) === "undefined") {
-                     throw Error("Template not found: " + this.templateName);
+                    throw Error("Template not found: " + this.templateName);
                 }
 
                 return template;
@@ -37,10 +37,10 @@
         }
     });
 
-    engine.makeTemplateSource = function(template, doc) {
+    engine.makeTemplateSource = function (template, doc) {
         var elem;
         if (typeof template === "string") {
-            elem = (doc || document).getElementById(template);
+            elem = (doc || document).getElementById(template);//look for a prefix?
 
             if (elem) {
                 return new ko.templateSources.domElement(elem);
@@ -58,4 +58,4 @@
 
     //make this new template engine our default engine
     ko.setTemplateEngine(engine);
-}(ko));
+}(window.ko));

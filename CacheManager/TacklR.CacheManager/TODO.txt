@@ -107,6 +107,7 @@ increase toastr opacity? (e.g. for small views when its over dark text)
 
 is col-xs-12 implied or does it have to be specific?
 
+poll for stats? (decaying?)
 
 
 
