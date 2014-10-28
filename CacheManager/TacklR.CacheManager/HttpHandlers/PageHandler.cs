@@ -10,21 +10,21 @@ namespace TacklR.CacheManager.HttpHandlers
     internal abstract class PageHandler : Page, IHttpHandler//Do we want to use Page at all?
     {
         //Are these already in Page?
-        internal HttpContext Context
-        {
-            get
-            {
-                return HttpContext.Current;
-            }
-        }
+        //internal HttpContext Context
+        //{
+        //    get
+        //    {
+        //        return HttpContext.Current;
+        //    }
+        //}
 
-        internal HttpRequest Request
-        {
-            get
-            {
-                return HttpContext.Current.Request;
-            }
-        }
+        //internal HttpRequest Request
+        //{
+        //    get
+        //    {
+        //        return HttpContext.Current.Request;
+        //    }
+        //}
 
         private string BodyContent { get; set; }
         private HttpStatusCode Status { get; set; }
