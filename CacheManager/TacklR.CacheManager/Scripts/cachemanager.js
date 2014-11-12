@@ -384,12 +384,17 @@
 
                 //show serialized data
                 //Make seperate modal methods? right now this the only usage.
-                var $container = $('#modal-container');
-                var $content = $container.find('.modal-content').first();
-                var content = $content[0];
-                ko.cleanNode(content);
-                ko.applyBindings($.extend({}, data, { Template: 'EntryDetailsTemplate' }), content);
-                $container.modal('show');
+
+                var modal = Modal.Generate('EntryDetailsTemplate');
+                ko.applyBindings($.extend({}, data), modal[0]);
+                modal.modal('show');
+
+                //var $container = $('#modal-container');
+                //var $content = $container.find('.modal-content').first();
+                //var content = $content[0];
+                //ko.cleanNode(content);
+                //ko.applyBindings($.extend({}, data, { Template: 'EntryDetailsTemplate' }), content);
+                //$container.modal('show');
             });
         };
     };
@@ -461,6 +466,35 @@
     //#endregion Public Methods
 
     //#region Private Methods
+
+    var Modal = {};
+
+    Modal.Generate = function (template, options) {
+        var defaults = {
+            Size: '',//modal-lg for large or modal-sm for small, otherwise default.
+            Animate: true
+        };
+        var opts = $.extend({}, defaults, options);
+
+        //Right now we only allow one modal to be open by closing any previous. Should we allow stacking? Should we fail the new one?
+        var $existing = $('#modal-container');
+        if ($existing.hasClass('in')) {//Should we bother doing this check?
+            $existing.modal('hide');
+        } else {
+            $existing.remove();
+        }
+
+        var $modalContainer = $(
+            '<div id="modal-container" class="modal ' + (opts.Animate ? 'fade' : '') + '" tabindex="-1" role="dialog" aria-hidden="true" aria-labelledby="modal-title">' +
+                '<div class="modal-dialog' + (opts.Size ? ' ' + opts.Size : '') + '">' +
+                    '<div class="modal-content" data-bind="template: { name: \'' + template + '\' }"></div>' +
+                '</div>' +
+            '</div>')
+            .one('hidden.bs.modal', function () {
+                $(this).remove();
+            });
+        return $modalContainer;
+    };
 
     var Ajax = {};
 
