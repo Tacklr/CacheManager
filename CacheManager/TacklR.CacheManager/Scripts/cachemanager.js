@@ -388,13 +388,6 @@
                 var modal = Modal.Generate('EntryDetailsTemplate');
                 ko.applyBindings($.extend({}, data), modal[0]);
                 modal.modal('show');
-
-                //var $container = $('#modal-container');
-                //var $content = $container.find('.modal-content').first();
-                //var content = $content[0];
-                //ko.cleanNode(content);
-                //ko.applyBindings($.extend({}, data, { Template: 'EntryDetailsTemplate' }), content);
-                //$container.modal('show');
             });
         };
     };
@@ -470,6 +463,7 @@
     var Modal = {};
 
     Modal.Generate = function (template, options) {
+        //Deferred?
         var defaults = {
             Size: '',//modal-lg for large or modal-sm for small, otherwise default.
             Animate: true
@@ -496,12 +490,18 @@
         return $modalContainer;
     };
 
-    var Ajax = {};
+    var Ajax = {
+        BusyClass: function(){
+            var i = 0;
+            return function(){
+                return 'busy-' + i++;
+            };
+        }()
+    };
 
     var handleDataError = function (response) {//, textStatus, jqXHR) {
         var message = response.Message || "An unknown error has occured."
         //messageHandler(message);//toastr?
-        //console.log(message);
         toastr.error(message);
     };
 
@@ -509,7 +509,6 @@
         var response = jqXHR.responseJSON || {};
         var message = response.Message || errorThrown || "An unknown error has occured."
         //messageHandler(message);//toastr?
-        //console.log(message);
         toastr.error(message);
     };
 
@@ -526,13 +525,13 @@
     var busyCounter = 0;
     Ajax.Request = function (url, options) {
         var dfd = $.Deferred();
-        var busyClass = 'busy-' + busyCounter++;
+        var busyClass = Ajax.BusyClass();
 
         var defaults = {
             type: 'POST',
             dataType: 'json',
             data: null,
-            traditional: true,// lets us post arrays as foo=1&foo=2 instead of foo[]=1&foo[]=2, which makes MVC happier
+            //traditional: true,// lets us post arrays as foo=1&foo=2 instead of foo[]=1&foo[]=2, which makes MVC happier
             //contentType: "application/x-www-form-urlencoded; charset=UTF-8",
 
             //messageHandler: function (message) { /*if (console && console.log) console.log(message);*/ Alerts.Messaging.Error(message); },
@@ -564,8 +563,6 @@
         .always(function () {
             $('html').removeClass(busyClass);
         });
-
-        return dfd;
     };
 
     //$('#collapseOne, #collapseTwo').on('show.bs.collapse', function () {
