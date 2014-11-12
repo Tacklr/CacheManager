@@ -128,11 +128,11 @@
         '6': 'Not Removable'
     };
 
-    ko.bindingHandlers.stopBinding = {
-        init: function () {
-            return { controlsDescendantBindings: true };
-        }
-    };
+    //ko.bindingHandlers.stopBinding = {
+    //    init: function () {
+    //        return { controlsDescendantBindings: true };
+    //    }
+    //};
 
     //#endregion Properties
 
@@ -375,7 +375,13 @@
         return function () {
             Ajax.Get('api/v1/details', { data: { Key: key } })
             .done(function (data) {
-                data.Value = data.Value === 'undefined' ? 'Error serializing data.' : JSON.stringify(JSON.parse(data.Value), null, '    ');//eww, but the only way we can catch serialization errors without killing the wholer response is to serialize on the server.
+                //better data transformer? viewmodel constructor?
+                if (data.ValueError) {
+                    data.Value = data.ValueError || 'Unknown error serializing data.';
+                } else {
+                    data.Value = JSON.stringify(JSON.parse(data.Value), null, '    ');//eww, but the only way we can catch serialization errors without killing the wholer response is to serialize on the server.
+                }
+
                 data.Priority = cachePriority[data.Priority] || 'Unknown';
                 //moment.js? change to date format at binding level?
                 data.AbsoluteExpiration = data.AbsoluteExpiration === null ? 'None' : new Date(data.AbsoluteExpiration).toLocaleString();

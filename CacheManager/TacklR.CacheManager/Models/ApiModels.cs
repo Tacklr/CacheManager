@@ -56,33 +56,42 @@ namespace TacklR.CacheManager.Models.Api
     {
         internal DetailsViewModel(ICacheEntry entry)
         {
-            Key = entry.Key;
-            Type = entry.Value.GetType().ToString();
+            var type = entry.Value.GetType();//null value? possible?
 
+            Key = entry.Key;
+            Type = type.FullName;//Would getting the type's assembly be useful?
             AbsoluteExpiration = (entry.AbsoluteExpiration == Cache.NoAbsoluteExpiration ? default(DateTime?) : entry.AbsoluteExpiration).ToUnixMilliseconds();
             Created = entry.Created.ToUnixMilliseconds();
             Priority = entry.Priority;
             SlidingExpiration = (entry.SlidingExpiration == Cache.NoSlidingExpiration ? default(TimeSpan?) : entry.SlidingExpiration).ToMilliseconds();
 
-            try
+            if (type.Namespace == "System.Data.Entity.DynamicProxies")
             {
-                Value = JsonConvert.SerializeObject(entry.Value);
+                ValueError = "Dynamic proxy objects cannot currently be serialized.";
             }
-            catch (Exception)
+            else
             {
-                Value = "undefined";//need to handle on client side.
+                try
+                {
+                    Value = JsonConvert.SerializeObject(entry.Value);
+                }
+                catch (Exception ex)
+                {
+                    //get inner exception message? will there ever be any?
+                    ValueError = "Error serializing data." + (String.IsNullOrEmpty(ex.Message) ? String.Empty : " " + ex.Message);
+                }
             }
         }
 
         public string Key { get; set; }
         public string Type { get; set; }
-
         public long? AbsoluteExpiration { get; set; }
         public long Created { get; set; }
         public long? SlidingExpiration { get; set; }
         public CacheItemPriority Priority { get; set; }
 
         public string Value { get; set; }
+        public string ValueError { get; set; }
     }
 
     internal class CombinedViewModel : BaseViewModel
