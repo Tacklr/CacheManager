@@ -191,7 +191,7 @@
                                 '</tr>' +
                                 '<tr>' +
                                     '<th class="col-fit text-right">Type</th>' +
-                                    '<td data-bind="text: Type"></td>' +
+                                    '<td class="break-all" data-bind="text: Type"></td>' +
                                 '</tr>' +
                                 '<tr>' +
                                     '<th class="col-fit text-right">Priority</th>' +
