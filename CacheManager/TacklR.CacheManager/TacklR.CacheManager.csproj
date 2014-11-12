@@ -193,18 +193,45 @@
     <None Include="Views\Shared\Error403.html" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Content\img\favicon.ico" />
+    <Content Include="Bundles\combined.css">
+      <DependentUpon>combined.css.bundle</DependentUpon>
+    </Content>
     <Content Include="Bundles\combined.js">
       <DependentUpon>combined.js.bundle</DependentUpon>
     </Content>
-    <EmbeddedResource Include="Content\img\favicon.ico" />
+    <EmbeddedResource Include="Bundles\combined.min.css">
+      <DependentUpon>combined.css</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Bundles\combined.min.js">
+      <DependentUpon>combined.js</DependentUpon>
+    </EmbeddedResource>
     <Content Include="Content\toastr.css">
       <DependentUpon>toastr.less</DependentUpon>
     </Content>
     <Content Include="Content\toastr.min.css">
       <DependentUpon>toastr.css</DependentUpon>
     </Content>
+    <Content Include="Scripts\bootstrap.min.js">
+      <DependentUpon>bootstrap.js</DependentUpon>
+    </Content>
+    <Content Include="Scripts\cachemanager.min.js">
+      <DependentUpon>cachemanager.js</DependentUpon>
+    </Content>
+    <Content Include="Scripts\jquery-2.1.1.min.js">
+      <DependentUpon>jquery-2.1.1.js</DependentUpon>
+    </Content>
+    <Content Include="Scripts\knockout-3.2.0.min.js">
+      <DependentUpon>knockout-3.2.0.js</DependentUpon>
+    </Content>
     <Content Include="Scripts\stringTemplateEngine.js" />
+    <Content Include="Scripts\stringTemplateEngine.min.js">
+      <DependentUpon>stringTemplateEngine.js</DependentUpon>
+    </Content>
     <Content Include="Scripts\toastr.js" />
+    <Content Include="Scripts\toastr.min.js">
+      <DependentUpon>toastr.js</DependentUpon>
+    </Content>
     <Content Include="TODO.txt" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -233,16 +260,7 @@
     <None Include="Content\fonts.min.css">
       <DependentUpon>fonts.css</DependentUpon>
     </None>
-    <EmbeddedResource Include="Bundles\combined.min.js">
-      <DependentUpon>combined.js</DependentUpon>
-    </EmbeddedResource>
     <None Include="Scripts\knockout-3.2.0.js" />
-    <Content Include="Bundles\combined.css">
-      <DependentUpon>combined.css.bundle</DependentUpon>
-    </Content>
-    <EmbeddedResource Include="Bundles\combined.min.css">
-      <DependentUpon>combined.css</DependentUpon>
-    </EmbeddedResource>
     <None Include="Content\bootstrap.css">
       <DependentUpon>bootstrap.less</DependentUpon>
     </None>

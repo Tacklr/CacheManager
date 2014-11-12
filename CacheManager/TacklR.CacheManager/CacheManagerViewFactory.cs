@@ -150,7 +150,7 @@ namespace TacklR.CacheManager
                     {
                         return method.Invoke(controller, methodParameters.ToArray()) as IHttpHandler;
                     }
-                    catch (ArgumentException ex)
+                    catch (ArgumentException)
                     {
                         //bad arguments
                         return new ErrorController().Error500();

@@ -5,6 +5,7 @@
 *.min.map
 *.min.html
 *.min.css
+*.min.js
 *.css
 
 #################
