@@ -115,6 +115,7 @@
 
     //#region Properties
 
+    var canResize = 'resize' in base.document.body.style;
     var cacheData = {};
     var delimiter = '/';//because we are using it later, we must always have one. Apparenly we can even have null keys, so use \x00 if we don't want a delimiter? I don't know if a c# key can contain a null.
 
@@ -182,41 +183,64 @@
         '<div class="modal-body">' +
             '<div class="row">' +
                 '<div class="col-xs-12">' +
-                    '<div class="table-responsive">' +
-                        '<table class="table table-bordered table-condensed">' +//Better way to display this? independent columns? collapsable?
-                            '<tbody>' +
-                                '<tr>' +
-                                    '<th class="col-fit text-right">Key</th>' +
-                                    '<td class="break-all" data-bind="text: Key"></td>' +
-                                '</tr>' +
-                                '<tr>' +
-                                    '<th class="col-fit text-right">Type</th>' +
-                                    '<td class="break-all" data-bind="text: Type"></td>' +
-                                '</tr>' +
-                                '<tr>' +
-                                    '<th class="col-fit text-right">Priority</th>' +
-                                    '<td data-bind="text: Priority"></td>' +
-                                '</tr>' +
-                                '<tr>' +
-                                    '<th class="col-fit text-right">Created</th>' +
-                                    '<td data-bind="text: Created"></td>' +
-                                '</tr>' +
-                                '<tr>' +
-                                    '<th class="col-fit text-right">Absolute Expiration</th>' +
-                                    '<td data-bind="text: AbsoluteExpiration"></td>' +
-                                '</tr>' +
-                                '<tr>' +
-                                    '<th class="col-fit text-right">Sliding Expiration</th>' +
-                                    '<td data-bind="text: SlidingExpiration"></td>' +
-                                '</tr>' +
-                            '</tbody>' +
-                        '</table>' +
+                    //Would a <dl> list be better?
+                    //'<dl class="dl-horizontal">' +
+                    //    '<dt>Key</dt>' +
+                    //    '<dd data-bind="text: Key"></dd>' +
+                    //    '<dt>Type</dt>' +
+                    //    '<dd data-bind="text: Type"></dd>' +
+                    //    '<dt>Priority</dt>' +
+                    //    '<dd data-bind="text: Priority"></dd>' +
+                    //    '<dt>Created</dt>' +
+                    //    '<dd data-bind="text: Created"></dd>' +
+                    //    '<dt>Absolute Expiration</dt>' +
+                    //    '<dd data-bind="text: AbsoluteExpiration"></dd>' +
+                    //    '<dt>Sliding Expiration</dt>' +
+                    //    '<dd data-bind="text: SlidingExpiration"></dd>' +
+                    //'</dl>' +
+                    '<div class="panel panel-default">'+
+                        '<div class="table-responsive">' +
+                            '<table class="table table-bordered table-condensed">' +//Better way to display this? independent columns? collapsable?
+                                '<tbody>' +
+                                    '<tr>' +
+                                        '<th class="col-fit text-right">Key</th>' +
+                                        '<td class="break-all" data-bind="text: Key"></td>' +
+                                    '</tr>' +
+                                    '<tr>' +
+                                        '<th class="col-fit text-right">Type</th>' +
+                                        '<td class="break-all" data-bind="text: Type"></td>' +
+                                    '</tr>' +
+                                    '<tr>' +
+                                        '<th class="col-fit text-right">Priority</th>' +
+                                        '<td data-bind="text: Priority"></td>' +
+                                    '</tr>' +
+                                    '<tr>' +
+                                        '<th class="col-fit text-right">Created</th>' +
+                                        '<td data-bind="text: Created"></td>' +
+                                    '</tr>' +
+                                    '<tr>' +
+                                        '<th class="col-fit text-right">Absolute Expiration</th>' +
+                                        '<td data-bind="text: AbsoluteExpiration"></td>' +
+                                    '</tr>' +
+                                    '<tr>' +
+                                        '<th class="col-fit text-right">Sliding Expiration</th>' +
+                                        '<td data-bind="text: SlidingExpiration"></td>' +
+                                    '</tr>' +
+                                '</tbody>' +
+                            '</table>' +
+                        '</div>' +
                     '</div>' +
                 '</div>' +
             '</div>' +
             '<div class="row">' +
                 '<div class="col-xs-12">' +
-                    '<textarea class="serialized-data" data-bind="text: Value" wrap="off" readonly></textarea>' +//better formatting? syntax highlight?
+                    (!canResize ?//TODO: resizable pre that works with IE, replace pre with textarea on focus? (it seems to work okay but the sizes will be different, need to keep them synced)
+                    '<textarea class="serialized-data" data-bind="text: Value" wrap="off" readonly></textarea>' ://better formatting? syntax highlight?
+                    '<pre class="serialized-data" data-bind="html: ValueHtml"></pre>') +
+                    //(!canResize ?//TODO: resizable pre that works with IE, replace pre with textarea on focus? (it seems to work okay but the sizes will be different, need to keep them synced)
+                    //'<textarea class="serialized-data" data-bind="text: Value" wrap="off" readonly></textarea>' :
+                    //'<textarea class="serialized-data" style="display: none;" data-bind="text: Value, event: { blur: act_DataBlur }" wrap="off" readonly></textarea>' +//better formatting? syntax highlight?
+                    //'<pre class="serialized-data" data-bind="html: ValueHtml, click: act_DataFocus"></pre>') +
                 '</div>' +
             '</div>' +
         '</div>' +
@@ -376,10 +400,13 @@
             Ajax.Get('api/v1/details', { data: { Key: key } })
             .done(function (data) {
                 //better data transformer? viewmodel constructor?
+                data.Value = '{"Alerts":[{"AlertId":16,"Headline":"AlertWire Launching Soon!","Message":"We are happy to announce the imminent launch of AlertWire, the easiest way to get the word out to your web sites\' visitors.","Url":"http://www.alertwi.re/","UrlText":"Click Here to Learn More","BackgroundColor":"D0E0E3","IconColor":"FF0000","TextColor":"000000","Icon":"alert-system-i-spam","Closing":1,"Method":0},{"AlertId":26,"Headline":"HONESTY IN PET FOOD.","Message":"Purina believes that honesty is the most important ingredient in the relationship between pet owners and pet food manufacturers. Please visit www.petfoodhonesty.com to learn more about actions we are taking to stop false advertising aimed at pet owners.","Url":"http://www.petfoodhonesty.com","UrlText":"Click Here to Learn More","BackgroundColor":"85C569","IconColor":"F1C232","TextColor":"000000","Icon":"alert-system-i-search","Closing":1,"Method":0}],"CssNamespace":"alert-system","CssUrl":"http://api.dev.noticegiver.com/Core/core-wip.min.css?_=D251D0443E84D050CD56F43363DD0D3785FA7F7E","Preview":false,"Audit":false,"Success":true,"Errors":{},"Message":null}';
+
                 if (data.ValueError) {
                     data.Value = data.ValueError || 'Unknown error serializing data.';
                 } else {
                     data.Value = JSON.stringify(JSON.parse(data.Value), null, '    ');//eww, but the only way we can catch serialization errors without killing the wholer response is to serialize on the server.
+                    data.ValueHtml = Prism.highlight(data.Value, Prism.languages.json);
                 }
 
                 data.Priority = cachePriority[data.Priority] || 'Unknown';
@@ -387,6 +414,23 @@
                 data.AbsoluteExpiration = data.AbsoluteExpiration === null ? 'None' : new Date(data.AbsoluteExpiration).toLocaleString();
                 data.Created = new Date(data.Created).toLocaleString();
                 data.SlidingExpiration = data.SlidingExpiration === null ? 'None' : (data.SlidingExpiration / 1000) + " Seconds";//Need better timespan formatting.
+
+                //data.act_DataBlur = function (model, e) {
+                //    var $this = $(e.target);
+                //    var $sibling = $this.siblings('pre').first();
+                //    if ($sibling.length > 0) {
+                //        $this.hide();
+                //        $sibling.show();
+                //    }
+                //};
+                //data.act_DataFocus = function (model, e) {
+                //    var $this = $(e.target);
+                //    var $sibling = $this.siblings('textarea').first();
+                //    if ($sibling.length > 0) {
+                //        $this.hide();
+                //        $sibling.show().focus();
+                //    }
+                //};
 
                 //show serialized data
                 //Make seperate modal methods? right now this the only usage.

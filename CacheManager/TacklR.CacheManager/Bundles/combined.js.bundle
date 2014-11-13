@@ -16,6 +16,8 @@
     <file>/Scripts/knockout-3.2.0.js</file>
     <file>/Scripts/stringTemplateEngine.js</file>
     <file>/Scripts/toastr.js</file>
+    <file>/Scripts/prism.js</file>
+    <file>/Scripts/prism.language.json.js</file>
     <file>/Scripts/cachemanager.js</file>
   </files>
 </bundle>
