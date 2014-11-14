@@ -29,7 +29,7 @@ namespace TacklR.CacheManager
             }
         }
 
-        internal static string BaseUrl
+        internal static string BaseUrl//BaseUrlPath
         {
             get
             {

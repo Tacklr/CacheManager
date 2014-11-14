@@ -410,7 +410,7 @@
                 }
 
                 data.Priority = cachePriority[data.Priority] || 'Unknown';
-                //moment.js? change to date format at binding level?
+                //moment.js? config setting? change to date format at binding level?
                 data.AbsoluteExpiration = data.AbsoluteExpiration === null ? 'None' : new Date(data.AbsoluteExpiration).toLocaleString();
                 data.Created = new Date(data.Created).toLocaleString();
                 data.SlidingExpiration = data.SlidingExpiration === null ? 'None' : (data.SlidingExpiration / 1000) + " Seconds";//Need better timespan formatting.
@@ -562,9 +562,75 @@
         toastr.error(message);
     };
 
+    var nonce = function (short) {
+        short = short || false;
+        var rand = new Date().getTime() + '' + parseInt(Math.random() * 100000);
+        if (short) {
+            rand = parseInt(rand, 10).toString(36);
+        }
+        return rand;
+    };
+
     Ajax.Post = function (url, options) {
         var opts = $.extend({}, { type: 'POST' }, options);
         return Ajax.Request(url, opts);
+    };
+
+    Ajax.VerificationTokens = {};//Make caching optional?
+    Ajax.GetVerificationToken = function (url, timeout) {
+        var delay = timeout || 30 * 1000;//default? (30 seconds right now)
+        var src = url + (url.indexOf('?') > -1 ? "&" : "?") + "_=" + nonce(true);
+        var dfd = $.Deferred();
+        var busyClass = Ajax.BusyClass();
+
+        if (!Ajax.VerificationTokens[url]) {
+            $('html').addClass(busyClass);
+            var $iframe = $('<iframe src="' + src + '" style="height: 0; width: 0; border: 0;">')//pass token name? callback name? better hiding?
+            .on('load', function () {
+                var token = $(this).contents().find('#VerificationToken').val();
+                if (token) {
+                    Ajax.VerificationTokens[url] = token;
+                    dfd.resolve(token);
+                }
+                else
+                    dfd.reject();
+
+                $iframe.remove();
+            })
+            .appendTo('body');
+        }
+        else
+            dfd.resolve(Ajax.VerificationTokens[url]);
+
+        setTimeout(function () {
+            if (dfd.state() === 'pending') {
+                dfd.reject();//timeout
+                $iframe.remove();
+            }
+        }, delay);
+
+        return dfd.promise().always(function () {
+            $('html').removeClass(busyClass);
+        });
+    }
+
+    //Really messy chaining of deferreds but there is no way to block.
+    Ajax.Post = function (url, options) {
+        var dfd = $.Deferred();
+    
+        Ajax.GetVerificationToken('VerificationToken')
+        .always(function (token) {
+            var opts = $.extend({}, { type: 'POST', headers: { 'X-CSRF-Token': token } }, options);
+            Ajax.Request(url, opts)
+            .done(function () {
+                dfd.resolveWith(this, arguments);//proper context?
+            })
+            .fail(function () {
+                dfd.rejectWith(this, arguments);//proper context?
+            });
+        });
+    
+        return dfd.promise();
     };
 
     Ajax.Get = function (url, options) {

@@ -64,6 +64,14 @@ namespace TacklR.CacheManager.HttpHandlers
             }
         }
 
+        internal HttpResponse Response
+        {
+            get
+            {
+                return HttpContext.Current.Response;
+            }
+        }
+
         public bool IsReusable
         {
             get

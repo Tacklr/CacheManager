@@ -25,6 +25,8 @@ namespace TacklR.CacheManager
             RouteTable = new RouteTable();
             //Does it matter of we instantiate here or not? might make a difference if we intend to pass constructor parameters per-request.
             RouteTable.MapRoute("GET:", new Route(typeof(ManagerController), "Index"));
+            RouteTable.MapRoute("GET:verificationtoken", new Route(typeof(ManagerController), "VerificationToken"));//shorter name?
+
             RouteTable.MapRoute("GET:api/v1/cache", new Route(typeof(ApiController), "Cache"));
             RouteTable.MapRoute("GET:api/v1/combined", new Route(typeof(ApiController), "Combined"));
             RouteTable.MapRoute("GET:api/v1/details", new Route(typeof(ApiController), "Details"));
