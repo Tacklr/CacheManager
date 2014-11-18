@@ -14,13 +14,16 @@ namespace TacklR.CacheManager.Controllers
     //Should every method refresh stats so they are as up-to-date as possible?
     internal class ApiController : DataHandler
     {
-        private bool ValidateTokenHeader(string CookieName = "X-CSRF-Token", string HeaderName = "X-CSRF-Token")
+        private bool ValidateTokenHeader(string cookieName = null, string headerName = "X-CSRF-Token")
         {
+            cookieName = cookieName ?? AntiForgeryConfig.CookieName;//Use the existing cookie if there is one. There may still end up being two (different paths), but this will reduce that chance.
+            //Would we want to delete our own pathed cookie if there is one further up?
+
             var cookieToken = default(string);
-            var cookies = HttpContext.Current.Request.Cookies;//can we get this from actionContext?
-            if (cookies.AllKeys.Contains(CookieName))
+            var cookies = Request.Cookies;//can we get this from actionContext?
+            if (cookies.AllKeys.Contains(cookieName))
             {
-                var cookie = cookies.Get(CookieName);//why does this create a cookie if it doesn't exist...
+                var cookie = cookies.Get(cookieName);//why does this create a cookie if it doesn't exist...
                 if (cookie != null)//blank check?
                     cookieToken = cookie.Value;
             }
@@ -28,7 +31,7 @@ namespace TacklR.CacheManager.Controllers
             if (String.IsNullOrEmpty(cookieToken))
                 return false;
 
-            var headers = Request.Headers.Get(HeaderName);
+            var headers = Request.Headers.Get(headerName);
             if (headers == null)
                 return false;
 
@@ -39,7 +42,6 @@ namespace TacklR.CacheManager.Controllers
 
             try
             {
-                //Depreciated, replace with ValidateAntiForgeryToken and insert token into post body?
                 AntiForgery.Validate(cookieToken, headerToken);
             }
             catch (Exception)

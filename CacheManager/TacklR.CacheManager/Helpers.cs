@@ -107,8 +107,9 @@ namespace TacklR.CacheManager
         }
 
         //Return something better than tuple?
-        internal static Tuple<HttpCookie, string> GetVerificationTokenContent(HttpCookieCollection cookies = null, string valueId = "VerificationToken", string cookieName = "X-CSRF-Token")
+        internal static Tuple<HttpCookie, string> GetVerificationTokenContent(HttpCookieCollection cookies = null, string valueId = "VerificationToken", string cookieName = null)
         {
+            cookieName = cookieName ?? AntiForgeryConfig.CookieName;//Use the default cookie name, do we want to set it against the root path or keep using our own path? (two cookie)
             var oldCookieToken = default(string);
             if (cookies != null)
             {
