@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("TacklR, Inc.")]
 [assembly: AssemblyProduct("TacklR.CacheManager")]
-[assembly: AssemblyCopyright("Copyright ©  2014 TacklR, Inc.  All rights reserved.")]
+[assembly: AssemblyCopyright("Copyright © 2014 TacklR, Inc.  All rights reserved.")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
