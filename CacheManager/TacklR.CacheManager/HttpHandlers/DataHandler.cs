@@ -6,9 +6,9 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web;
-using TacklR.CacheManager.Models.Api;
+using Tacklr.CacheManager.Models.Api;
 
-namespace TacklR.CacheManager.HttpHandlers
+namespace Tacklr.CacheManager.HttpHandlers
 {
     internal abstract class DataHandler : IHttpHandler
     {

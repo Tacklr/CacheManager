@@ -7,10 +7,10 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Caching;
-using TacklR.CacheManager.Caches;
-using TacklR.CacheManager.Interfaces;
+using Tacklr.CacheManager.Caches;
+using Tacklr.CacheManager.Interfaces;
 
-namespace TacklR.CacheManager.Models.Api
+namespace Tacklr.CacheManager.Models.Api
 {
     abstract class BaseViewModel
     {

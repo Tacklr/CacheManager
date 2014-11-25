@@ -7,8 +7,8 @@
     <ProjectGuid>{556EA313-2417-4E5E-86C6-601369C3881A}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>TacklR.CacheManager</RootNamespace>
-    <AssemblyName>TacklR.CacheManager</AssemblyName>
+    <RootNamespace>Tacklr.CacheManager</RootNamespace>
+    <AssemblyName>Tacklr.CacheManager</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>

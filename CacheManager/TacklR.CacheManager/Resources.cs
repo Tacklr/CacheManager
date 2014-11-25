@@ -8,7 +8,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TacklR.CacheManager
+namespace Tacklr.CacheManager
 {
     internal static class Resources
     {

@@ -3,12 +3,12 @@ using System.Linq;
 using System.Net;
 using System.Web;
 using System.Web.Helpers;
-using TacklR.CacheManager.Caches;
-using TacklR.CacheManager.HttpHandlers;
-using TacklR.CacheManager.Interfaces;
-using TacklR.CacheManager.Models.Api;
+using Tacklr.CacheManager.Caches;
+using Tacklr.CacheManager.HttpHandlers;
+using Tacklr.CacheManager.Interfaces;
+using Tacklr.CacheManager.Models.Api;
 
-namespace TacklR.CacheManager.Controllers
+namespace Tacklr.CacheManager.Controllers
 {
     //TODO: Attribute to control GET/POST?
     //Should every method refresh stats so they are as up-to-date as possible?

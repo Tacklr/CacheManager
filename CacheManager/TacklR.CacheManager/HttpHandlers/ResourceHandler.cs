@@ -6,9 +6,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web;
-using TacklR.CacheManager.Controllers;
+using Tacklr.CacheManager.Controllers;
 
-namespace TacklR.CacheManager.HttpHandlers
+namespace Tacklr.CacheManager.HttpHandlers
 {
     //Auto check for .min.?
     internal static class MimeType

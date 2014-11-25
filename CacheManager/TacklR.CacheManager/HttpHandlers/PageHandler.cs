@@ -4,7 +4,7 @@ using System.Net;
 using System.Web;
 using System.Web.UI;
 
-namespace TacklR.CacheManager.HttpHandlers
+namespace Tacklr.CacheManager.HttpHandlers
 {
     //Auto check for .min.?
     //Refactor this.

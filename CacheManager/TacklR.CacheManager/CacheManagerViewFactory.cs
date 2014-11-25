@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Linq;
 using System.Web;
-using TacklR.CacheManager.Controllers;
-using TacklR.CacheManager.HttpHandlers;
+using Tacklr.CacheManager.Controllers;
+using Tacklr.CacheManager.HttpHandlers;
 using System.Collections.Specialized;
 
-namespace TacklR.CacheManager
+namespace Tacklr.CacheManager
 {
     internal static class Startup
     {

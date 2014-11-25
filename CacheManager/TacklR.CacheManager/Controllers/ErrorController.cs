@@ -1,8 +1,8 @@
 ﻿using System.Net;
 using System.Web;
-using TacklR.CacheManager.HttpHandlers;
+using Tacklr.CacheManager.HttpHandlers;
 
-namespace TacklR.CacheManager.Controllers
+namespace Tacklr.CacheManager.Controllers
 {
     internal class ErrorController : PageHandler
     {

@@ -4,9 +4,9 @@ using System.Linq;
 using System.Reflection;
 using System.Web;
 using System.Web.Caching;
-using TacklR.CacheManager.Interfaces;
+using Tacklr.CacheManager.Interfaces;
 
-namespace TacklR.CacheManager.Caches
+namespace Tacklr.CacheManager.Caches
 {
     //Static class?
     internal class HttpCacheShim : ICache

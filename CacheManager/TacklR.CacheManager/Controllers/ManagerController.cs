@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Web;
 using System.Web.Helpers;
-using TacklR.CacheManager.HttpHandlers;
+using Tacklr.CacheManager.HttpHandlers;
 
-namespace TacklR.CacheManager.Controllers
+namespace Tacklr.CacheManager.Controllers
 {
     internal class ManagerController : PageHandler
     {

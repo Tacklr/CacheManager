@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Web.Helpers;
 
-namespace TacklR.CacheManager
+namespace Tacklr.CacheManager
 {
     internal static class Helpers
     {

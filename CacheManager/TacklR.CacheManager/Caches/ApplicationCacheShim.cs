@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using TacklR.CacheManager.Interfaces;
+using Tacklr.CacheManager.Interfaces;
 
-namespace TacklR.CacheManager.Caches
+namespace Tacklr.CacheManager.Caches
 {
     internal class ApplicationCacheShim : ICache
     {

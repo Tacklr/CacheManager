@@ -9,7 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TacklR.CacheManager
+namespace Tacklr.CacheManager
 {
     internal static class Configuration
     {
