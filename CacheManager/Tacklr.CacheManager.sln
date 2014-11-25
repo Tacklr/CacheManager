@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
 VisualStudioVersion = 12.0.30723.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TacklR.CacheManager", "TacklR.CacheManager\TacklR.CacheManager.csproj", "{556EA313-2417-4E5E-86C6-601369C3881A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tacklr.CacheManager", "Tacklr.CacheManager\Tacklr.CacheManager.csproj", "{556EA313-2417-4E5E-86C6-601369C3881A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestMvc", "TestMvc\TestMvc.csproj", "{0F1C6ED0-F48E-4197-ADC5-16DE5D104C9D}"
 EndProject
