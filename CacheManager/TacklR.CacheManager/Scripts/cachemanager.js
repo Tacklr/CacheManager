@@ -6,7 +6,7 @@
 //Keep open state on data change/reload?
 //TODO: Put wrappers around ajax so we can do things like error handling, busy indicator (tokens?)
 /*!
- * Copyright 2014 Tacklr, Inc.
+ * Copyright 2014 Tacklr, LLC
  */
 ; (function (base, $, undefined) {
     //#region Initalize
