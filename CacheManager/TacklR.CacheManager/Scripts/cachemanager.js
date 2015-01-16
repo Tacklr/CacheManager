@@ -405,7 +405,7 @@
                 if (data.ValueError) {
                     data.Value = data.ValueError || 'Unknown error serializing data.';
                 } else {
-                    data.Value = JSON.stringify(JSON.parse(data.Value), null, '    ');//eww, but the only way we can catch serialization errors without killing the wholer response is to serialize on the server.
+                    data.Value = JSON.stringify(JSON.parse(data.Value), null, 4);//eww, but the only way we can catch serialization errors without killing the wholer response is to serialize on the server. Make space count configurable?
                     data.ValueHtml = Prism.highlight(data.Value, Prism.languages.json);
                 }
 
@@ -448,7 +448,7 @@
     //    return function () {
     //        Ajax.Get('api/v1/info', { data: { Key: key, Prefix: op_prefix } })
     //        .done(function (data) {
-    //            data.Values = JSON.stringify(data.Values, null, '    ');
+    //            data.Values = JSON.stringify(data.Values, null, 4);
 
     //            //show serialized data
     //            //Make seperate modal methods? right now this the only usage.
