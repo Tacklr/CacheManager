@@ -9,11 +9,10 @@
 html {
     position: relative;
     min-height: 100%;
-}
 
-html[class^="busy-"],
-html[class*=" busy-"] {
-    cursor: wait !important;
+    &.busy {
+        cursor: wait !important;
+    }
 }
 
 html,
@@ -246,7 +245,7 @@ input[type=checkbox] {
         text-rendering: auto;
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
-        content: @fa-var-circle-o-notch;
+        content: @fa-var-gear;
         -webkit-animation: fa-spin 2s infinite linear;
         -moz-animation: fa-spin 2s infinite linear;
         -o-animation: fa-spin 2s infinite linear;
