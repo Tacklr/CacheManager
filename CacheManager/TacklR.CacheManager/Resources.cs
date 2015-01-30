@@ -35,10 +35,44 @@ namespace Tacklr.CacheManager
                     using (SHA1Managed sha1 = new SHA1Managed())
                     {
                         var hash = sha1.ComputeHash(Encoding.UTF8.GetBytes(Properties.Resources.BuildTime));
-                        return hash.ToHex();
+                        s_BundleToken = hash.ToHex();
                     }
                 }
                 return s_BundleToken;
+            }
+        }
+
+        private static string s_CssBundleToken { get; set; }
+        internal static string CssBundleToken
+        {
+            get
+            {
+                if (String.IsNullOrEmpty(s_CssBundleToken))
+                {
+                    using (SHA1Managed sha1 = new SHA1Managed())
+                    {
+                        var hash = sha1.ComputeHash(Resources.GetResourceBytes("combined.min.css"));
+                        s_CssBundleToken = hash.ToHex();
+                    }
+                }
+                return s_CssBundleToken;
+            }
+        }
+
+        private static string s_JsBundleToken { get; set; }
+        internal static string JsBundleToken
+        {
+            get
+            {
+                if (String.IsNullOrEmpty(s_JsBundleToken))
+                {
+                    using (SHA1Managed sha1 = new SHA1Managed())
+                    {
+                        var hash = sha1.ComputeHash(Resources.GetResourceBytes("combined.min.js"));
+                        s_JsBundleToken = hash.ToHex();
+                    }
+                }
+                return s_JsBundleToken;
             }
         }
 

@@ -59,7 +59,7 @@ namespace Tacklr.CacheManager.HttpHandlers
         {
             //Output cache?
             var _Layout = Resources.GetResourceString("_Layout.min.html");
-            BodyContent = String.Format(_Layout, content, BaseUrl, Resources.BundleToken);
+            BodyContent = String.Format(_Layout, content, BaseUrl, Resources.CssBundleToken, Resources.JsBundleToken);
             Status = status;
             MaxAge = maxAge;//get better max-age, move this up to controller level so it's per-page?
             return this;
@@ -70,7 +70,7 @@ namespace Tacklr.CacheManager.HttpHandlers
             var _Layout = Resources.GetResourceString("_Layout.min.html");
             var body = Resources.GetResourceString(viewName);
 
-            BodyContent = String.Format(_Layout, body, BaseUrl, Resources.BundleToken);
+            BodyContent = String.Format(_Layout, body, BaseUrl, Resources.CssBundleToken, Resources.JsBundleToken);
             Status = status;
             MaxAge = maxAge;//get better max-age, move this up to controller level so it's per-page?
             return this;
