@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Web.Caching;
 
 namespace Tacklr.CacheManager.Interfaces
 {
@@ -18,9 +17,9 @@ namespace Tacklr.CacheManager.Interfaces
         bool TryGet<T>(string key, out T value) where T : class;
 
         //Make these specific to the HttpCache? I'm not sure if this is applicable to other types of caches we may want.
+        IDictionary<string, ICacheEntry> GetAllEntries(string key = null, bool prefix = false);
         ICacheEntry GetEntry(string key);
         ICacheEntry<T> GetEntry<T>(string key) where T : class;
-        IDictionary<string, ICacheEntry> GetAllEntries(string key = null, bool prefix = false);
         bool TryGetEntry<T>(string key, out ICacheEntry<T> value) where T : class;
     }
 }

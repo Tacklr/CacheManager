@@ -1,5 +1,4 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Net;
 using System.Web;
 using System.Web.UI;
@@ -10,8 +9,14 @@ namespace Tacklr.CacheManager.HttpHandlers
     //Refactor this.
     internal abstract class PageHandler : Page, IHttpHandler//Do we want to use Page at all?
     {
+        internal PageHandler()
+        {
+            Status = HttpStatusCode.InternalServerError;
+            BaseUrl = Configuration.BaseUrl;
+        }
+
         //Are these already in Page? I get an out of context exception when I use the Page versions.
-        internal HttpContext Context
+        new internal HttpContext Context
         {
             get
             {
@@ -19,7 +24,7 @@ namespace Tacklr.CacheManager.HttpHandlers
             }
         }
 
-        internal HttpRequest Request
+        new internal HttpRequest Request
         {
             get
             {
@@ -27,7 +32,7 @@ namespace Tacklr.CacheManager.HttpHandlers
             }
         }
 
-        internal HttpResponse Response
+        new internal HttpResponse Response
         {
             get
             {
@@ -35,46 +40,10 @@ namespace Tacklr.CacheManager.HttpHandlers
             }
         }
 
-        private string BodyContent { get; set; }
-        private HttpStatusCode Status { get; set; }
-        private TimeSpan? MaxAge { get; set; }
         private string BaseUrl { get; set; }
-
-        internal PageHandler()
-        {
-            Status = HttpStatusCode.InternalServerError;
-            BaseUrl = Configuration.BaseUrl;
-        }
-
-        internal IHttpHandler Content(string content, HttpStatusCode status = HttpStatusCode.OK, TimeSpan? maxAge = null)
-        {
-            //Output cache?
-            BodyContent = content;
-            Status = status;
-            MaxAge = maxAge;//get better max-age, move this up to controller level so it's per-page?
-            return this;
-        }
-
-        internal IHttpHandler ViewContent(string content, HttpStatusCode status = HttpStatusCode.OK, TimeSpan? maxAge = null)
-        {
-            //Output cache?
-            var _Layout = Resources.GetResourceString("_Layout.min.html");
-            BodyContent = String.Format(_Layout, content, BaseUrl, Resources.CssBundleToken, Resources.JsBundleToken);
-            Status = status;
-            MaxAge = maxAge;//get better max-age, move this up to controller level so it's per-page?
-            return this;
-        }
-
-        internal IHttpHandler View(string viewName, HttpStatusCode status = HttpStatusCode.OK, TimeSpan? maxAge = null)
-        {
-            var _Layout = Resources.GetResourceString("_Layout.min.html");
-            var body = Resources.GetResourceString(viewName);
-
-            BodyContent = String.Format(_Layout, body, BaseUrl, Resources.CssBundleToken, Resources.JsBundleToken);
-            Status = status;
-            MaxAge = maxAge;//get better max-age, move this up to controller level so it's per-page?
-            return this;
-        }
+        private string BodyContent { get; set; }
+        private TimeSpan? MaxAge { get; set; }
+        private HttpStatusCode Status { get; set; }
 
         public override void ProcessRequest(HttpContext context)
         {
@@ -95,6 +64,36 @@ namespace Tacklr.CacheManager.HttpHandlers
             }
 
             base.ProcessRequest(context);
+        }
+
+        internal IHttpHandler Content(string content, HttpStatusCode status = HttpStatusCode.OK, TimeSpan? maxAge = null)
+        {
+            //Output cache?
+            BodyContent = content;
+            Status = status;
+            MaxAge = maxAge;//get better max-age, move this up to controller level so it's per-page?
+            return this;
+        }
+
+        internal IHttpHandler View(string viewName, HttpStatusCode status = HttpStatusCode.OK, TimeSpan? maxAge = null)
+        {
+            var _Layout = Resources.GetResourceString("_Layout.min.html");
+            var body = Resources.GetResourceString(viewName);
+
+            BodyContent = String.Format(_Layout, body, BaseUrl, Resources.CssBundleToken, Resources.JsBundleToken);
+            Status = status;
+            MaxAge = maxAge;//get better max-age, move this up to controller level so it's per-page?
+            return this;
+        }
+
+        internal IHttpHandler ViewContent(string content, HttpStatusCode status = HttpStatusCode.OK, TimeSpan? maxAge = null)
+        {
+            //Output cache?
+            var _Layout = Resources.GetResourceString("_Layout.min.html");
+            BodyContent = String.Format(_Layout, content, BaseUrl, Resources.CssBundleToken, Resources.JsBundleToken);
+            Status = status;
+            MaxAge = maxAge;//get better max-age, move this up to controller level so it's per-page?
+            return this;
         }
 
         protected override void Render(HtmlTextWriter writer)

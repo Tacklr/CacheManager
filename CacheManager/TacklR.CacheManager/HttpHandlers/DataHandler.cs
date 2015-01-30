@@ -1,17 +1,21 @@
-﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System;
 using System.Net;
-using System.Text;
-using System.Threading.Tasks;
 using System.Web;
+using Newtonsoft.Json;
 using Tacklr.CacheManager.Models.Api;
 
 namespace Tacklr.CacheManager.HttpHandlers
 {
     internal abstract class DataHandler : IHttpHandler
     {
+        public bool IsReusable
+        {
+            get
+            {
+                return false;
+            }
+        }
+
         internal HttpContext Context
         {
             get
@@ -33,14 +37,6 @@ namespace Tacklr.CacheManager.HttpHandlers
             get
             {
                 return HttpContext.Current.Response;
-            }
-        }
-
-        public bool IsReusable
-        {
-            get
-            {
-                return false;
             }
         }
 

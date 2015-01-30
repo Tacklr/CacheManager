@@ -14,43 +14,6 @@ namespace Tacklr.CacheManager.Controllers
     //Should every method refresh stats so they are as up-to-date as possible?
     internal class ApiController : DataHandler
     {
-        private bool ValidateTokenHeader(string cookieName = null, string headerName = "X-CSRF-Token")
-        {
-            cookieName = cookieName ?? AntiForgeryConfig.CookieName;//Use the existing cookie if there is one. There may still end up being two (different paths), but this will reduce that chance.
-            //Would we want to delete our own pathed cookie if there is one further up?
-
-            var cookieToken = default(string);
-            var cookies = Request.Cookies;//can we get this from actionContext?
-            if (cookies.AllKeys.Contains(cookieName))
-            {
-                var cookie = cookies.Get(cookieName);//why does this create a cookie if it doesn't exist...
-                if (cookie != null)//blank check?
-                    cookieToken = cookie.Value;
-            }
-
-            if (String.IsNullOrEmpty(cookieToken))
-                return false;
-
-            var headers = Request.Headers.Get(headerName);
-            if (headers == null)
-                return false;
-
-            var values = headers.Split(new char[] {','}, StringSplitOptions.RemoveEmptyEntries);
-            var headerToken = values.FirstOrDefault();
-            if (String.IsNullOrWhiteSpace(headerToken))
-                return false;
-
-            try
-            {
-                AntiForgery.Validate(cookieToken, headerToken);
-            }
-            catch (Exception)
-            {
-                return false;
-            }
-            return true;
-        }
-
         internal IHttpHandler Cache()
         {
             var cache = new HttpCacheShim();
@@ -117,6 +80,43 @@ namespace Tacklr.CacheManager.Controllers
 
             HttpResponse.RemoveOutputCacheItem(url);
             return base.Json(new PageViewModel { Success = true });
+        }
+
+        private bool ValidateTokenHeader(string cookieName = null, string headerName = "X-CSRF-Token")
+        {
+            cookieName = cookieName ?? AntiForgeryConfig.CookieName;//Use the existing cookie if there is one. There may still end up being two (different paths), but this will reduce that chance.
+            //Would we want to delete our own pathed cookie if there is one further up?
+
+            var cookieToken = default(string);
+            var cookies = Request.Cookies;//can we get this from actionContext?
+            if (cookies.AllKeys.Contains(cookieName))
+            {
+                var cookie = cookies.Get(cookieName);//why does this create a cookie if it doesn't exist...
+                if (cookie != null)//blank check?
+                    cookieToken = cookie.Value;
+            }
+
+            if (String.IsNullOrEmpty(cookieToken))
+                return false;
+
+            var headers = Request.Headers.Get(headerName);
+            if (headers == null)
+                return false;
+
+            var values = headers.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+            var headerToken = values.FirstOrDefault();
+            if (String.IsNullOrWhiteSpace(headerToken))
+                return false;
+
+            try
+            {
+                AntiForgery.Validate(cookieToken, headerToken);
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+            return true;
         }
 
         //internal IHttpHandler Serialize(string key, bool prefix = false)

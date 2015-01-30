@@ -1,23 +1,27 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Web;
-using Tacklr.CacheManager.Controllers;
 
 namespace Tacklr.CacheManager.HttpHandlers
 {
     //Auto check for .min.?
     internal static class MimeType
     {
+        internal static string Css = "text/css";
+        internal static string Default = "text/plain";
+        internal static string Eot = "application/vnd.ms-fontobject";
+        internal static string Js = "text/javascript";
+        internal static string Json = "application/json";
+        internal static string Otf = "font/opentype";
+        internal static string Svg = "image/svg+xml";
+        internal static string Ttf = "application/octet-stream";
+        internal static string Woff = "font/x-woff";
         private static Dictionary<string, string> ExtensionMap = new Dictionary<string, string>();
 
         static MimeType()
         {
-            ExtensionMap.Add(".css", MimeType.Css); 
+            ExtensionMap.Add(".css", MimeType.Css);
             ExtensionMap.Add(".eot", MimeType.Eot);
             ExtensionMap.Add(".js", MimeType.Js);
             ExtensionMap.Add(".json", MimeType.Json);
@@ -33,21 +37,18 @@ namespace Tacklr.CacheManager.HttpHandlers
             extension = extension.ToLowerInvariant();
             return ExtensionMap.TryGetValue(extension, out mimeType);
         }
-
-        internal static string Default = "text/plain";
-
-        internal static string Css = "text/css";
-        internal static string Eot = "application/vnd.ms-fontobject";
-        internal static string Js = "text/javascript";
-        internal static string Json = "application/json";
-        internal static string Otf = "font/opentype";
-        internal static string Svg = "image/svg+xml";
-        internal static string Ttf = "application/octet-stream";
-        internal static string Woff = "font/x-woff";
     }
 
     internal class ResourceHandler : IHttpHandler
     {
+        public bool IsReusable
+        {
+            get
+            {
+                return false;
+            }
+        }
+
         internal HttpContext Context
         {
             get
@@ -72,17 +73,9 @@ namespace Tacklr.CacheManager.HttpHandlers
             }
         }
 
-        public bool IsReusable
-        {
-            get
-            {
-                return false;
-            }
-        }
-
         private string ContentType { get; set; }
-        private string Name { get; set; }
         private TimeSpan? MaxAge { get; set; }
+        private string Name { get; set; }
 
         public void ProcessRequest(HttpContext context)
         {
@@ -96,7 +89,7 @@ namespace Tacklr.CacheManager.HttpHandlers
             context.Response.Cache.SetCacheability(HttpCacheability.Public);
             context.Response.Cache.SetLastModified(Resources.BuildTime);
             context.Response.Cache.SetMaxAge(MaxAge ?? TimeSpan.FromDays(365));
-           
+
             context.Response.ContentType = ContentType;
             context.Response.BinaryWrite(Resources.GetResourceBytes(Name));
             context.Response.End();

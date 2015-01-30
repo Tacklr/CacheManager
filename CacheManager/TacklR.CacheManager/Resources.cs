@@ -3,10 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Reflection;
-using System.Security.Cryptography;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Tacklr.CacheManager
 {
@@ -31,13 +28,7 @@ namespace Tacklr.CacheManager
             get
             {
                 if (String.IsNullOrEmpty(s_BundleToken))
-                {
-                    using (SHA1Managed sha1 = new SHA1Managed())
-                    {
-                        var hash = sha1.ComputeHash(Encoding.UTF8.GetBytes(Properties.Resources.BuildTime));
-                        s_BundleToken = hash.ToHex();
-                    }
-                }
+                    s_BundleToken = Helpers.Sha1Hex(Encoding.UTF8.GetBytes(Properties.Resources.BuildTime));
                 return s_BundleToken;
             }
         }
@@ -48,13 +39,7 @@ namespace Tacklr.CacheManager
             get
             {
                 if (String.IsNullOrEmpty(s_CssBundleToken))
-                {
-                    using (SHA1Managed sha1 = new SHA1Managed())
-                    {
-                        var hash = sha1.ComputeHash(Resources.GetResourceBytes("combined.min.css"));
-                        s_CssBundleToken = hash.ToHex();
-                    }
-                }
+                    s_CssBundleToken = Helpers.Sha1Hex(Resources.GetResourceBytes("combined.min.css"));
                 return s_CssBundleToken;
             }
         }
@@ -65,13 +50,7 @@ namespace Tacklr.CacheManager
             get
             {
                 if (String.IsNullOrEmpty(s_JsBundleToken))
-                {
-                    using (SHA1Managed sha1 = new SHA1Managed())
-                    {
-                        var hash = sha1.ComputeHash(Resources.GetResourceBytes("combined.min.js"));
-                        s_JsBundleToken = hash.ToHex();
-                    }
-                }
+                    s_JsBundleToken = Helpers.Sha1Hex(Resources.GetResourceBytes("combined.min.js"));
                 return s_JsBundleToken;
             }
         }

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Web;
-using System.Web.Helpers;
 using Tacklr.CacheManager.HttpHandlers;
 
 namespace Tacklr.CacheManager.Controllers

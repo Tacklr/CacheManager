@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Tacklr.CacheManager.Interfaces;
 
 namespace Tacklr.CacheManager.Caches
@@ -51,12 +48,7 @@ namespace Tacklr.CacheManager.Caches
             throw new NotImplementedException();
         }
 
-        public IList<string> Keys()
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool TryGet<T>(string key, out T value) where T : class
+        public IDictionary<string, ICacheEntry> GetAllEntries(string key = null, bool prefix = false)
         {
             throw new NotImplementedException();
         }
@@ -72,7 +64,12 @@ namespace Tacklr.CacheManager.Caches
             throw new NotImplementedException();
         }
 
-        public IDictionary<string, ICacheEntry> GetAllEntries(string key = null, bool prefix = false)
+        public IList<string> Keys()
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool TryGet<T>(string key, out T value) where T : class
         {
             throw new NotImplementedException();
         }

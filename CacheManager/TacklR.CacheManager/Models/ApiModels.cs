@@ -1,25 +1,96 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Web;
 using System.Web.Caching;
+using Newtonsoft.Json;
 using Tacklr.CacheManager.Caches;
 using Tacklr.CacheManager.Interfaces;
 
 namespace Tacklr.CacheManager.Models.Api
 {
-    abstract class BaseViewModel
+    internal abstract class BaseViewModel
     {
-        public bool Success { get; set; }
         public string Message { get; set; }
+        public bool Success { get; set; }
     }
 
-    internal class JsonErrorViewModel : BaseViewModel
+    internal class CacheViewModel : BaseViewModel
     {
+        internal CacheViewModel(ICache cache)
+        {
+            //Refresh other stats?
+            Count = cache.Count;
+            Entries = cache.GetAll().Select(e => new Entry(e)).ToList();
+        }
+
+        public int Count { get; set; }
+        public IList<Entry> Entries { get; set; }
+
+        internal class Entry
+        {
+            internal Entry(KeyValuePair<string, object> entry)
+            {
+                Key = entry.Key;
+                Type = entry.Value.GetType().ToString();
+            }
+
+            public string Key { get; set; }
+            public string Type { get; set; }
+        }
+    }
+
+    internal class ClearViewModel : BaseViewModel
+    {
+    }
+
+    internal class CombinedViewModel : BaseViewModel
+    {
+        internal CombinedViewModel(ICache cache, HttpContext context)
+        {
+            Delimiter = Configuration.Delimiter;
+            DetailView = Configuration.DetailView;
+            ConfirmDeleteKey = Configuration.ConfirmDeleteKey;
+            ConfirmDeletePrefix = Configuration.ConfirmDeletePrefix;
+            ExpandSingleBranches = Configuration.ExpandSingleBranches;
+
+            Count = cache.Count;
+            MemoryFree = Helpers.GetAvailableMemory();//this was in the AspAlliance version, not sure if it's really any help to report.
+
+            //Will other shims have this?
+            if (cache is HttpCacheShim)
+            {
+                var httpCache = cache as HttpCacheShim;
+                MemoryLimitPercent = httpCache.EffectivePercentagePhysicalMemoryLimit;
+                var memoryLimitKB = httpCache.EffectivePrivateBytesLimit;
+                MemoryLimit = memoryLimitKB == -1 ? -1 : memoryLimitKB / 1024f;
+            }
+
+            Entries = DetailView == ViewType.Defer ? new List<Entry>() : cache.GetAll().Select(e => new Entry(e)).ToList();
+        }
+
+        public bool ConfirmDeleteKey { get; set; }
+        public bool ConfirmDeletePrefix { get; set; }
+        public int Count { get; set; }
+        public string Delimiter { get; set; }
+        public ViewType DetailView { get; set; }
+        public IList<Entry> Entries { get; set; }
+        public bool ExpandSingleBranches { get; set; }
+        public float? MemoryFree { get; set; }
+        public float? MemoryLimit { get; set; }
+        public long? MemoryLimitPercent { get; set; }
+
+        internal class Entry
+        {
+            internal Entry(KeyValuePair<string, object> entry)
+            {
+                Key = entry.Key;
+                Type = entry.Value.GetType().ToString();
+            }
+
+            public string Key { get; set; }
+            public string Type { get; set; }
+        }
     }
 
     internal class DeleteViewModel : BaseViewModel
@@ -31,26 +102,6 @@ namespace Tacklr.CacheManager.Models.Api
 
         public int Count { get; set; }
     }
-
-    internal class ClearViewModel : BaseViewModel
-    {
-    }
-
-    internal class PageViewModel : BaseViewModel
-    {
-    }
-
-    //internal class SerializeViewModel : BaseViewModel
-    //{
-    //    internal SerializeViewModel(ICache cache, string key, bool prefix)
-    //    {
-    //        Key = key;
-    //        Values = cache.GetAll(key, prefix);//custom serializer?
-    //    }
-
-    //    public string Key { get; set; }
-    //    public IDictionary<string, object> Values { get; set; }
-    //}
 
     internal class DetailsViewModel : BaseViewModel
     {
@@ -83,93 +134,53 @@ namespace Tacklr.CacheManager.Models.Api
             }
         }
 
-        public string Key { get; set; }
-        public string Type { get; set; }
         public long? AbsoluteExpiration { get; set; }
         public long Created { get; set; }
-        public long? SlidingExpiration { get; set; }
+        public string Key { get; set; }
         public CacheItemPriority Priority { get; set; }
-
+        public long? SlidingExpiration { get; set; }
+        public string Type { get; set; }
         public string Value { get; set; }
         public string ValueError { get; set; }
     }
 
-    internal class CombinedViewModel : BaseViewModel
+    internal class JsonErrorViewModel : BaseViewModel
     {
-        internal CombinedViewModel(ICache cache, HttpContext context)
+    }
+
+    internal class PageViewModel : BaseViewModel
+    {
+    }
+
+    //internal class SerializeViewModel : BaseViewModel
+    //{
+    //    internal SerializeViewModel(ICache cache, string key, bool prefix)
+    //    {
+    //        Key = key;
+    //        Values = cache.GetAll(key, prefix);//custom serializer?
+    //    }
+
+    internal class SettingsViewModel : BaseViewModel
+    {
+        internal SettingsViewModel()
         {
             Delimiter = Configuration.Delimiter;
             DetailView = Configuration.DetailView;
             ConfirmDeleteKey = Configuration.ConfirmDeleteKey;
             ConfirmDeletePrefix = Configuration.ConfirmDeletePrefix;
             ExpandSingleBranches = Configuration.ExpandSingleBranches;
-
-            Count = cache.Count;
-            MemoryFree = Helpers.GetAvailableMemory();//this was in the AspAlliance version, not sure if it's really any help to report.
-
-            //Will other shims have this?
-            if (cache is HttpCacheShim)
-            {
-                var httpCache = cache as HttpCacheShim;
-                MemoryLimitPercent = httpCache.EffectivePercentagePhysicalMemoryLimit;
-                var memoryLimitKB = httpCache.EffectivePrivateBytesLimit;
-                MemoryLimit = memoryLimitKB == -1 ? -1 : memoryLimitKB / 1024f;
-            }
-
-            Entries =  DetailView == ViewType.Defer ? new List<Entry>() : cache.GetAll().Select(e => new Entry(e)).ToList();
         }
 
-        public string Delimiter { get; set; }
-        public ViewType DetailView { get; set; }
         public bool ConfirmDeleteKey { get; set; }
         public bool ConfirmDeletePrefix { get; set; }
+        public string Delimiter { get; set; }
+        public ViewType DetailView { get; set; }
         public bool ExpandSingleBranches { get; set; }
-
-        public int Count { get; set; }
-        public float? MemoryFree { get; set; }
-        public float? MemoryLimit { get; set; }
-        public long? MemoryLimitPercent { get; set; }
-
-        public IList<Entry> Entries { get; set; }
-
-        internal class Entry
-        {
-            internal Entry(KeyValuePair<string, object> entry)
-            {
-                Key = entry.Key;
-                Type = entry.Value.GetType().ToString();
-            }
-
-            public string Key { get; set; }
-            public string Type { get; set; }
-        }
     }
 
-    internal class CacheViewModel : BaseViewModel
-    {
-        internal CacheViewModel(ICache cache)
-        {
-            //Refresh other stats?
-            Count = cache.Count;
-            Entries = cache.GetAll().Select(e => new Entry(e)).ToList();
-        }
-
-        public int Count { get; set; }
-        public IList<Entry> Entries { get; set; }
-
-        internal class Entry
-        {
-            internal Entry(KeyValuePair<string, object> entry)
-            {
-                Key = entry.Key;
-                Type = entry.Value.GetType().ToString();
-            }
-
-            public string Key { get; set; }
-            public string Type { get; set; }
-        }
-    }
-
+    //    public string Key { get; set; }
+    //    public IDictionary<string, object> Values { get; set; }
+    //}
     internal class StatsViewModel : BaseViewModel
     {
         internal StatsViewModel(ICache cache, HttpContext context)
@@ -191,24 +202,6 @@ namespace Tacklr.CacheManager.Models.Api
         public float? MemoryFree { get; set; }
         public float? MemoryLimit { get; set; }
         public long? MemoryLimitPercent { get; set; }
-    }
-
-    internal class SettingsViewModel : BaseViewModel
-    {
-        internal SettingsViewModel()
-        {
-            Delimiter = Configuration.Delimiter;
-            DetailView = Configuration.DetailView;
-            ConfirmDeleteKey = Configuration.ConfirmDeleteKey;
-            ConfirmDeletePrefix = Configuration.ConfirmDeletePrefix;
-            ExpandSingleBranches = Configuration.ExpandSingleBranches;
-        }
-
-        public string Delimiter { get; set; }
-        public ViewType DetailView { get; set; }
-        public bool ConfirmDeleteKey { get; set; }
-        public bool ConfirmDeletePrefix { get; set; }
-        public bool ExpandSingleBranches { get; set; }
     }
 
     //internal class CombinedViewModel : BaseViewModel

@@ -1,20 +1,23 @@
-﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Collections.Specialized;
+﻿using System;
 using System.Configuration;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
 namespace Tacklr.CacheManager
 {
+    //Move this someplace else?
+    [JsonConverter(typeof(StringEnumConverter))]
+    internal enum ViewType
+    {
+        None,
+        Defer,//special case
+        Tree,
+        //List,
+    }
+
     internal static class Configuration
     {
         private const string SectionName = "cachemanager";
-        private static CacheManagerConfigSection CacheManagerConfig { get; set; }
 
         static Configuration()
         {
@@ -37,14 +40,6 @@ namespace Tacklr.CacheManager
             }
         }
 
-        internal static string Delimiter
-        {
-            get
-            {
-                return CacheManagerConfig.Settings.Delimiter;
-            }
-        }
-
         internal static bool ConfirmDeleteKey
         {
             get
@@ -61,11 +56,11 @@ namespace Tacklr.CacheManager
             }
         }
 
-        internal static bool ExpandSingleBranches
+        internal static string Delimiter
         {
             get
             {
-                return CacheManagerConfig.Settings.ExpandSingleBranches;
+                return CacheManagerConfig.Settings.Delimiter;
             }
         }
 
@@ -76,6 +71,16 @@ namespace Tacklr.CacheManager
                 return CacheManagerConfig.Settings.DetailView;
             }
         }
+
+        internal static bool ExpandSingleBranches
+        {
+            get
+            {
+                return CacheManagerConfig.Settings.ExpandSingleBranches;
+            }
+        }
+
+        private static CacheManagerConfigSection CacheManagerConfig { get; set; }
     }
 
     internal class CacheManagerConfigSection : ConfigurationSection
@@ -139,20 +144,6 @@ namespace Tacklr.CacheManager
 
     internal class SettingsConfigElement : ConfigurationElement
     {
-        //Required value?
-        [ConfigurationProperty("delimiter", IsKey = false, IsRequired = false, DefaultValue = "/")]
-        internal string Delimiter
-        {
-            get
-            {
-                return (string)base["delimiter"];
-            }
-            set
-            {
-                base["delimiter"] = value;
-            }
-        }
-
         [ConfigurationProperty("confirmDeleteKey", IsKey = false, IsRequired = false, DefaultValue = true)]
         internal bool ConfirmDeleteKey
         {
@@ -179,16 +170,17 @@ namespace Tacklr.CacheManager
             }
         }
 
-        [ConfigurationProperty("expandSingleBranches", IsKey = false, IsRequired = false, DefaultValue = false)]
-        internal bool ExpandSingleBranches
+        //Required value?
+        [ConfigurationProperty("delimiter", IsKey = false, IsRequired = false, DefaultValue = "/")]
+        internal string Delimiter
         {
             get
             {
-                return (bool)base["expandSingleBranches"];
+                return (string)base["delimiter"];
             }
             set
             {
-                base["expandSingleBranches"] = value;
+                base["delimiter"] = value;
             }
         }
 
@@ -204,15 +196,18 @@ namespace Tacklr.CacheManager
                 base["detailView"] = value;//check value?
             }
         }
-    }
 
-    //Move this someplace else?
-    [JsonConverter(typeof(StringEnumConverter))]
-    internal enum ViewType
-    {
-        None,
-        Defer,//special case
-        Tree,
-        //List,
+        [ConfigurationProperty("expandSingleBranches", IsKey = false, IsRequired = false, DefaultValue = false)]
+        internal bool ExpandSingleBranches
+        {
+            get
+            {
+                return (bool)base["expandSingleBranches"];
+            }
+            set
+            {
+                base["expandSingleBranches"] = value;
+            }
+        }
     }
 }

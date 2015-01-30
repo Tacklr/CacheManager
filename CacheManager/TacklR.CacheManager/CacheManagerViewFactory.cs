@@ -1,19 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Reflection;
 using System.Linq;
+using System.Reflection;
 using System.Web;
 using Tacklr.CacheManager.Controllers;
 using Tacklr.CacheManager.HttpHandlers;
-using System.Collections.Specialized;
 
 namespace Tacklr.CacheManager
 {
     internal static class Startup
     {
-        internal static Assembly Assembly { get; set; }
-        internal static RouteTable RouteTable { get; set; }//hold this someplace else? case sensitivity of urls/params?
-
         static Startup()
         {
             Assembly = typeof(Startup).Assembly;
@@ -57,53 +53,12 @@ namespace Tacklr.CacheManager
             RouteTable.MapRoute("GET:content/fonts/OpenSans.woff", new Route(typeof(ResourceHandler), "Resource", Tuple.Create<string, object>("name", "OpenSans.woff")));
         }
 
+        internal static Assembly Assembly { get; set; }
+        internal static RouteTable RouteTable { get; set; }//hold this someplace else? case sensitivity of urls/params?
+
         //internal static void Init()
         //{
         //}
-    }
-
-    internal class Route
-    {
-        internal Route(Type controller, string action, params Tuple<string, object>[] parameters)
-        {
-            Controller = controller;
-            Action = action;
-            Parameters = parameters.ToDictionary(p => p.Item1, p => p.Item2);
-        }
-
-        //internal Route(Type controller, string action, params KeyValuePair<string, object>[] parameters)
-        //{
-        //    Controller = controller;
-        //    Action = action;
-        //    //Parameters = parameters.ToList();//default?
-        //    Parameters = parameters.ToDictionary(p => p.Key, p => p.Value);
-        //}
-
-        internal Type Controller { get; set; }
-        internal string Action { get; set; }
-        internal IDictionary<string, object> Parameters { get; set; }
-    }
-
-    internal class RouteTable
-    {
-        private static Dictionary<string, Route> Routes { get; set; }
-
-        internal RouteTable()
-        {
-            Routes = new Dictionary<string, Route>();
-        }
-
-        internal void MapRoute(string url, Route route)
-        {
-            Routes.Add(url.ToLowerInvariant(), route);
-        }
-
-        internal bool TryGetRoute(HttpRequest request, out Route route)
-        {
-            var type = request.RequestType;
-            var path = (request.PathInfo ?? String.Empty).TrimStart('/');
-            return Routes.TryGetValue((type + ":" + path).ToLowerInvariant(), out route);
-        }
     }
 
     internal class CacheManagerViewFactory : IHttpHandlerFactory
@@ -165,6 +120,50 @@ namespace Tacklr.CacheManager
 
         public void ReleaseHandler(IHttpHandler handler)
         {
+        }
+    }
+
+    internal class Route
+    {
+        internal Route(Type controller, string action, params Tuple<string, object>[] parameters)
+        {
+            Controller = controller;
+            Action = action;
+            Parameters = parameters.ToDictionary(p => p.Item1, p => p.Item2);
+        }
+
+        //internal Route(Type controller, string action, params KeyValuePair<string, object>[] parameters)
+        //{
+        //    Controller = controller;
+        //    Action = action;
+        //    //Parameters = parameters.ToList();//default?
+        //    Parameters = parameters.ToDictionary(p => p.Key, p => p.Value);
+        //}
+
+        internal string Action { get; set; }
+        internal Type Controller { get; set; }
+        internal IDictionary<string, object> Parameters { get; set; }
+    }
+
+    internal class RouteTable
+    {
+        internal RouteTable()
+        {
+            Routes = new Dictionary<string, Route>();
+        }
+
+        private static Dictionary<string, Route> Routes { get; set; }
+
+        internal void MapRoute(string url, Route route)
+        {
+            Routes.Add(url.ToLowerInvariant(), route);
+        }
+
+        internal bool TryGetRoute(HttpRequest request, out Route route)
+        {
+            var type = request.RequestType;
+            var path = (request.PathInfo ?? String.Empty).TrimStart('/');
+            return Routes.TryGetValue((type + ":" + path).ToLowerInvariant(), out route);
         }
     }
 }

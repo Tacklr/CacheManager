@@ -11,14 +11,6 @@ namespace Tacklr.CacheManager.Caches
     //Static class?
     internal class HttpCacheShim : ICache
     {
-        private Cache Cache
-        {
-            get
-            {
-                return HttpRuntime.Cache;
-            }
-        }
-
         public int Count
         {
             get
@@ -40,6 +32,14 @@ namespace Tacklr.CacheManager.Caches
             get
             {
                 return Cache.EffectivePrivateBytesLimit;
+            }
+        }
+
+        private Cache Cache
+        {
+            get
+            {
+                return HttpRuntime.Cache;
             }
         }
 
@@ -91,6 +91,35 @@ namespace Tacklr.CacheManager.Caches
             return cacheEntries;
         }
 
+        public IDictionary<string, ICacheEntry> GetAllEntries(string key = null, bool prefix = false)
+        {
+            var cacheEntries = new Dictionary<string, ICacheEntry>();
+            var cacheKeys = Keys().Where(k => (!prefix && (String.IsNullOrEmpty(key) || k == key)) || (prefix && k.StartsWith(key)));
+            foreach (var cacheKey in cacheKeys)
+            {
+                //Should we just die on exceptions?
+                try
+                {
+                    cacheEntries.Add(cacheKey, CacheInfo.GetCacheEntry(cacheKey));
+                }
+                catch (Exception)
+                {
+                }
+            }
+            return cacheEntries;
+        }
+
+        //???
+        public ICacheEntry GetEntry(string key)
+        {
+            return CacheInfo.GetCacheEntry(key);
+        }
+
+        public ICacheEntry<T> GetEntry<T>(string key) where T : class
+        {
+            return CacheInfo.GetCacheEntry<T>(key);
+        }
+
         public IList<string> Keys()
         {
             var cacheKeys = new List<string>();
@@ -116,35 +145,6 @@ namespace Tacklr.CacheManager.Caches
             }
         }
 
-        //???
-        public ICacheEntry GetEntry(string key)
-        {
-            return CacheInfo.GetCacheEntry(key);
-        }
-
-        public ICacheEntry<T> GetEntry<T>(string key) where T : class
-        {
-            return CacheInfo.GetCacheEntry<T>(key);
-        }
-
-        public IDictionary<string, ICacheEntry> GetAllEntries(string key = null, bool prefix = false)
-        {
-            var cacheEntries = new Dictionary<string, ICacheEntry>();
-            var cacheKeys = Keys().Where(k => (!prefix && (String.IsNullOrEmpty(key) || k == key)) || (prefix && k.StartsWith(key)));
-            foreach (var cacheKey in cacheKeys)
-            {
-                //Should we just die on exceptions?
-                try
-                {
-                    cacheEntries.Add(cacheKey, CacheInfo.GetCacheEntry(cacheKey));
-                }
-                catch (Exception)
-                {
-                }
-            }
-            return cacheEntries;
-        }
-
         public bool TryGetEntry<T>(string key, out ICacheEntry<T> value) where T : class
         {
             try
@@ -159,29 +159,14 @@ namespace Tacklr.CacheManager.Caches
             }
         }
 
-
-
-
-
-
-
         internal static class CacheInfo
         {
-            //Can we pass the Cache object in somehow?
-            private static Cache Cache
-            {
-                get
-                {
-                    return HttpRuntime.Cache;
-                }
-            }
-
             private static readonly MethodInfo CacheGet = Cache.GetType().GetMethod("Get", BindingFlags.Instance | BindingFlags.NonPublic);
-            private static readonly PropertyInfo UtcCreated;
-            private static readonly PropertyInfo UtcExpires;
+            private static readonly PropertyInfo Dependency;
             private static readonly PropertyInfo SlidingExpiration;
             private static readonly PropertyInfo UsageBucket;
-            private static readonly PropertyInfo Dependency;
+            private static readonly PropertyInfo UtcCreated;
+            private static readonly PropertyInfo UtcExpires;
 
             static CacheInfo()
             {
@@ -197,6 +182,15 @@ namespace Tacklr.CacheManager.Caches
                 Dependency = cacheEntryType.GetProperty("Dependency", BindingFlags.NonPublic | BindingFlags.Instance);
 
                 HttpRuntime.Cache.Remove(testKey);
+            }
+
+            //Can we pass the Cache object in somehow?
+            private static Cache Cache
+            {
+                get
+                {
+                    return HttpRuntime.Cache;
+                }
             }
 
             internal static CacheEntry GetCacheEntry(string key)

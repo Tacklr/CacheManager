@@ -1,29 +1,30 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Web.Caching;
 
 namespace Tacklr.CacheManager.Interfaces
 {
     internal interface ICacheEntry
     {
-        string Key { get; set; }
-        object Value { get; set; }
-        DateTime Created { get; set; }
         DateTime AbsoluteExpiration { get; set; }
-        TimeSpan SlidingExpiration { get; set; }
+        DateTime Created { get; set; }
+        string Key { get; set; }
         CacheItemPriority Priority { get; set; }
+        TimeSpan SlidingExpiration { get; set; }
+        object Value { get; set; }
+
         //Dependencies?
         //Entry state?
     }
 
     internal interface ICacheEntry<T>// : ICacheEntry
     {
-        string Key { get; set; }
-        T Value { get; set; }
-        DateTime Created { get; set; }
         DateTime AbsoluteExpiration { get; set; }
-        TimeSpan SlidingExpiration { get; set; }
+        DateTime Created { get; set; }
+        string Key { get; set; }
         CacheItemPriority Priority { get; set; }
+        TimeSpan SlidingExpiration { get; set; }
+        T Value { get; set; }
+
         //Dependencies?
         //Entry state?
     }
@@ -31,12 +32,12 @@ namespace Tacklr.CacheManager.Interfaces
     //TODO: Move these someplace else.
     internal class CacheEntry : ICacheEntry
     {
-        public string Key { get; set; }
-        public object Value { get; set; }
-        public DateTime Created { get; set; }
         public DateTime AbsoluteExpiration { get; set; }
-        public TimeSpan SlidingExpiration { get; set; }
+        public DateTime Created { get; set; }
+        public string Key { get; set; }
         public CacheItemPriority Priority { get; set; }
+        public TimeSpan SlidingExpiration { get; set; }
+        public object Value { get; set; }
     }
 
     internal class CacheEntry<T> : ICacheEntry<T>
@@ -55,11 +56,11 @@ namespace Tacklr.CacheManager.Interfaces
             Priority = entry.Priority;
         }
 
-        public string Key { get; set; }
-        public T Value { get; set; }
-        public DateTime Created { get; set; }
         public DateTime AbsoluteExpiration { get; set; }
-        public TimeSpan SlidingExpiration { get; set; }
+        public DateTime Created { get; set; }
+        public string Key { get; set; }
         public CacheItemPriority Priority { get; set; }
+        public TimeSpan SlidingExpiration { get; set; }
+        public T Value { get; set; }
     }
 }
