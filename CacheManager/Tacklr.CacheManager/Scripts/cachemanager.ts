@@ -4,6 +4,8 @@
 /* tslint:disable:quotemark */
 
 //Fixed for old version of typescript VS2013 uses.
+//https://github.com/borisyankov/DefinitelyTyped/issues/3031
+//https://github.com/borisyankov/DefinitelyTyped/issues/3532
 /// <reference path="typescript/jquery-fix.d.ts" /> 
 /// <reference path="typescript/bootstrap-fix.d.ts" />
 /// <reference path="typescript/knockout-fix.d.ts" />
