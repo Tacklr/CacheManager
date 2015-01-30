@@ -160,7 +160,6 @@
     <None Include="Content\fonts.less" />
     <None Include="Content\font-awesome\bordered-pulled.less" />
     <None Include="Content\font-awesome\core.less" />
-    <None Include="Content\font-awesome\extras.less" />
     <None Include="Content\font-awesome\fixed-width.less" />
     <None Include="Content\font-awesome.less" />
     <None Include="Content\font-awesome\icons.less" />
@@ -169,7 +168,6 @@
     <None Include="Content\font-awesome\mixins.less" />
     <None Include="Content\font-awesome\path.less" />
     <None Include="Content\font-awesome\rotated-flipped.less" />
-    <None Include="Content\font-awesome\spinning.less" />
     <None Include="Content\font-awesome\stacked.less" />
     <None Include="Content\font-awesome\variables.less" />
     <EmbeddedResource Include="Content\fonts\fontawesome-webfont.eot" />
