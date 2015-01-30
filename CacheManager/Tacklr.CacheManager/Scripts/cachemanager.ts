@@ -34,6 +34,11 @@ interface Window {
     Prism: any;
 }
 
+interface JQueryStatic {
+    active: number;//internal
+    event: any;//internal
+}
+
 /* tslint:disable:interface-name */
 interface KnockoutStatic {
 /* tslint:enable:interface-name */
@@ -50,83 +55,6 @@ interface KnockoutStatic {
     $(docReady.resolve);
 
     var checkedState: Object = {};
-
-    $.when($.get('api/v1/combined'), docReady)
-    .done(function (combined: any): void {
-        //var params = parseQuery(true);//save in local storage instead?
-        var data: any = combined[0];
-
-        //TODO: Escape non-printable character?
-        //data.Delimiter = params['delimiter'] || data.Delimiter || delimiter;
-
-        //Better way to do these transforms?
-        data.MemoryLimit = data.MemoryLimit === null ? 'Unknown' : data.MemoryLimit === -1 ? 'Unlimited' : data.MemoryLimit;
-        data.MemoryLimitPercent = data.MemoryLimitPercent === null ? 'Unknown' : data.MemoryLimitPercent;
-        data.ob_Count = ko.observable(data.Count);
-        data.ob_Delimiter = ko.observable(data.Delimiter);
-        data.ob_DetailView = ko.observable(data.DetailView);
-        data.ob_Entries = ko.observableArray(data.Entries);
-        data.ob_EntryTree = ko.computed(function (): any {
-            //Can we template directly off the array somehow instead of building our tree here?
-            //TODO: need to somehow keep checked state
-            var CacheRoot: any = {
-                Children: {},
-                Values: [],
-                isEmpty: function (): boolean {
-                    return this.Values.length === 0 && $.isEmptyObject(this.Children);
-                }
-            };
-
-            var id_i: number = 0;//need hash function or something
-            var delimiter: string = data.ob_Delimiter();
-            //Build our tree, any advantage to doing it server side?
-            $.each(data.ob_Entries(), function (i: number, cache: any): void {
-                var key: string = cache.Key;
-                var keyParts: string[] = key.split(delimiter || null).reverse();
-                var current: any = CacheRoot;
-                var currentKeyParts: string[] = [];
-                while (keyParts.length > 1) {
-                    var keyPart: string = keyParts.pop();
-                    currentKeyParts.push(keyPart);
-                    if (current.Children[keyPart] === undefined) {
-                        var currentKey: string = currentKeyParts.join(delimiter) + delimiter;//Tacking the delimiter on the end should also prevent collisions for different delimiters on checked state (I think). (actually this may not work if set to no delimiter in certain cases (key ending with delimiter))
-                        //Can this be done more cleanly?
-                        if (checkedState[currentKey] === undefined) {
-                            checkedState[currentKey] = ko.observable(false);
-                        }
-
-                        current.Children[keyPart] = new CacheNode(currentKey, keyPart, checkedState[currentKey], 'item-' + id_i++);//need to get the subkey up to this point
-                    }
-                    current = current.Children[keyPart];
-                }
-                current.Values.push(new CacheValue(cache, keyParts.pop(), 'item-' + id_i++));//TODO: Prevent duplicates
-            });
-
-            return CacheRoot;
-        });
-
-        var deferred: boolean = data.DetailView === 'Defer';//data.Deferred or view?
-        if (deferred) {
-            $('#collapse-tree').one('show.bs.collapse', function (): void {//Can we do this with knockout?
-                //just trigger refresh button?
-                $('.refresh-loading').removeClass('hidden');
-
-                Ajax.Get('api/v1/cache')//'refresh' url? include freemem/other stats?
-                .done(function (response: any): void {
-                    data.ob_Entries(response.Entries);
-                });
-            });
-        }
-
-        ko.applyBindings(data);//Tree parts lose open state on delete, need to save the state somehow.
-        cacheData = data;
-        //window.DERP = data;
-
-        //Clear loading indiciator
-        $('.content-loading').fadeOut(function (): void {
-            $(this).remove();
-        });
-    });
 
     toastr.options = {
         closeButton: true,
@@ -324,7 +252,7 @@ interface KnockoutStatic {
 
     CM.ClearCache = function (): void {
         if (confirm('Are you sure you want to clear the cache?')) {
-            Ajax.Post('api/v1/clear')
+            API.Post('/clear')
             .done(function (data: any): void {
                 cacheData.ob_Entries([]);
                 cacheData.ob_Count(0);
@@ -337,7 +265,7 @@ interface KnockoutStatic {
         //Modal?
         var url: string = prompt('Enter the relative url (e.g. /foo/bar) to remove all output cache entries.');
         if (url.indexOf('/') === 0) {
-            Ajax.Post('api/v1/page', { data: { Url: url } })
+            API.Post('/page', { data: { Url: url } })
             .done(function (data: any): void {
                 cacheData.ob_Entries([]);
                 toastr.success('Output cache cleared.');
@@ -379,7 +307,7 @@ interface KnockoutStatic {
     CM.Refresh = function (): void {
         $('.refresh-loading').removeClass('hidden');
 
-        Ajax.Get('api/v1/cache')//'refresh' url? include freemem/other stats?
+        API.Get('/cache')//'refresh' url? include freemem/other stats?
         .done(function (data: any): void {
             cacheData.ob_Count(data.Count);
             cacheData.ob_Entries(data.Entries);
@@ -412,13 +340,13 @@ interface KnockoutStatic {
         return function (): void {
             //TODO: Combine these calls, I don't want to seperate ones.
             if (!op_prefix && (!cacheData.ConfirmDeleteKey || confirm('Are you sure you want to delete this cache value?\n\n' + key))) {
-                Ajax.Post('api/v1/delete', { data: { Key: key } })
+                API.Post('/delete', { data: { Key: key } })
                 .done(function (data: any): void {
                     cacheData.ob_Count(data.Count);
                     cacheData.ob_Entries.remove(CM.FindCacheKey(key));
                 });
             } else if (op_prefix && (!cacheData.ConfirmDeletePrefix || confirm('Are you sure you want to delete everything with this prefix?\n\n' + key))) {
-                Ajax.Post('api/v1/delete', { data: { Key: key, Prefix: true } })
+                API.Post('/delete', { data: { Key: key, Prefix: true } })
                 .done(function (data: any): void {
                     cacheData.ob_Count(data.Count);
                     cacheData.ob_Entries.remove(CM.FindCacheKey(key, true));
@@ -430,7 +358,7 @@ interface KnockoutStatic {
     //Store the response data against the key object for later? or JIT every time?
     CM.EntryDetails = function (key: string): Function {
         return function (): void {
-            Ajax.Get('api/v1/details', { data: { Key: key } })
+            API.Get('/details', { data: { Key: key } })
             .done(function (data: any): void {
                 //better data transformer? viewmodel constructor?
                 //data.Value = '{"Alerts":[{"AlertId":16,"Headline":"AlertWire Launching Soon!","Message":"We are happy to announce the imminent launch of AlertWire, the easiest way to get the word out to your web sites\' visitors.","Url":"http://www.alertwi.re/","UrlText":"Click Here to Learn More","BackgroundColor":"D0E0E3","IconColor":"FF0000","TextColor":"000000","Icon":"alert-system-i-spam","Closing":1,"Method":0},{"AlertId":26,"Headline":"HONESTY IN PET FOOD.","Message":"Purina believes that honesty is the most important ingredient in the relationship between pet owners and pet food manufacturers. Please visit www.petfoodhonesty.com to learn more about actions we are taking to stop false advertising aimed at pet owners.","Url":"http://www.petfoodhonesty.com","UrlText":"Click Here to Learn More","BackgroundColor":"85C569","IconColor":"F1C232","TextColor":"000000","Icon":"alert-system-i-search","Closing":1,"Method":0}],"CssNamespace":"alert-system","CssUrl":"http://api.dev.noticegiver.com/Core/core-wip.min.css?_=D251D0443E84D050CD56F43363DD0D3785FA7F7E","Preview":false,"Audit":false,"Success":true,"Errors":{},"Message":null}';
@@ -479,7 +407,7 @@ interface KnockoutStatic {
     //    op_prefix = op_prefix || false;
 
     //    return function () {
-    //        Ajax.Get('api/v1/info', { data: { Key: key, Prefix: op_prefix } })
+    //        API.Get('/info', { data: { Key: key, Prefix: op_prefix } })
     //        .done(function (data): void {
     //            data.Values = JSON.stringify(data.Values, null, 4);
 
@@ -576,15 +504,7 @@ interface KnockoutStatic {
         return $modalContainer;
     };
 
-    var Ajax: any = {
-        //Change to loader bar like on AlertWire?
-        BusyClass: function (): Function {
-            var i: number = 0;
-            return function (): string {
-                return 'busy-' + i++;
-            };
-        }()
-    };
+    var Ajax: any = {};
 
     var handleDataError: Function = function (response: any): void {//, textStatus, jqXHR) {
         var message: string = response.Message || "An unknown error has occured.";
@@ -610,31 +530,34 @@ interface KnockoutStatic {
         return Ajax.Request(url, opts);
     };
 
-    Ajax.VerificationTokens = {};//Make caching optional?
-    Ajax.GetVerificationToken = function (url: string, timeout: number): JQueryPromise<any> {
-        var delay: number = timeout || 30 * 1000;//default? (30 seconds right now)
+    var promiseCache = {};//Make caching optional?
+    var getVerificationToken = function (url: string, op_timeout?: number): JQueryPromise<any> {
+        var promise = promiseCache[url];
+        if (promise) {
+            return promise;
+        }
+
+        var delay: number = op_timeout || 30 * 1000;//default? (30 seconds right now)
         var src: string = url + (url.indexOf('?') > -1 ? "&" : "?") + "_=" + nonce();
         var dfd: JQueryDeferred<{}> = $.Deferred();
-        var busyClass: string = Ajax.BusyClass();
 
-        if (!Ajax.VerificationTokens[url]) {
-            $('html').addClass(busyClass);
-            var $iframe: JQuery = $('<iframe src="' + src + '" style="height: 0; width: 0; border: 0;">')//pass token name? callback name? better hiding?
-                .on('load', function (): void {
-                    var token: string = $(this).contents().find('#VerificationToken').val();
-                    if (token) {
-                        Ajax.VerificationTokens[url] = token;
-                        dfd.resolve(token);
-                    } else {
-                        dfd.reject();
-                    }
-
-                    $iframe.remove();
-                })
-                .appendTo('body');
-        } else {
-            dfd.resolve(Ajax.VerificationTokens[url]);
+        if ($.active++ === 0) {//from jquery/src/ajax.js
+            $.event.trigger('ajaxStart');
         }
+
+        var $iframe: JQuery = $('<iframe src="' + src + '" style="height: 0; width: 0; border: 0;">')//pass token name? callback name? better hiding?
+        .on('load', function (): void {
+            var token: string = $(this).contents().find('#VerificationToken').val();
+            if (token) {
+                Ajax.VerificationTokens[url] = token;
+                dfd.resolve(token);
+            } else {
+                dfd.reject();
+            }
+
+            $iframe.remove();
+        })
+        .appendTo('body');
 
         setTimeout(function (): void {
             if (dfd.state() === 'pending') {
@@ -643,16 +566,25 @@ interface KnockoutStatic {
             }
         }, delay);
 
-        return dfd.promise().always(function (): void {
-            $('html').removeClass(busyClass);
-        });
+        promise = promiseCache[url] = dfd.promise()
+            .fail(function () {
+                promiseCache[url] = null;
+                toastr.error('Error loading verification token.');
+            })
+            .always(function () {
+                if (!(--$.active)) {//from jquery/src/ajax.js //Will this call multiple times?
+                    $.event.trigger('ajaxStop');
+                }
+            });
+
+        return promise;
     };
 
     //Really messy chaining of deferreds but there is no way to block.
     Ajax.Post = function (url: string, options: any): JQueryPromise<any> {
         var dfd: JQueryDeferred<{}> = $.Deferred();
 
-        Ajax.GetVerificationToken('VerificationToken')
+        getVerificationToken('VerificationToken')
         .always(function (token: string): void {
             var opts: any = $.extend({}, { type: 'POST', headers: { 'X-CSRF-Token': token } }, options);
             Ajax.Request(url, opts)
@@ -675,7 +607,6 @@ interface KnockoutStatic {
     var busyCounter: number = 0;
     Ajax.Request = function (url: string, options: any): JQueryPromise<any> {
         var dfd: JQueryDeferred<{}> = $.Deferred();
-        var busyClass: string = Ajax.BusyClass();
 
         var defaults: Object = {
             type: 'POST',
@@ -696,7 +627,6 @@ interface KnockoutStatic {
 
         var opts: any = $.extend({}, defaults, options);
 
-        $('html').addClass(busyClass);
         return $.ajax(url, opts)
         .done(function (response: any): void {
             if (response.Success) {
@@ -709,14 +639,32 @@ interface KnockoutStatic {
         .fail(function (jqXHR: JQueryXHR, textStatus: string, errorThrown: string): void {
             handleFailError(jqXHR, textStatus, errorThrown);//Use status code specific errors when applicable?
             dfd.rejectWith(this, arguments);//proper context?
-        })
-        .always(function (): void {
-            $('html').removeClass(busyClass);
         });
     };
 
+    var API: any = {};
+
+    API.Get = function (url, options) {
+        return Ajax.Get('api/v1' + url, options);
+    };
+
+    API.Post = function (url, options) {
+        return Ajax.Post('api/v1' + url, options);
+    };
+
+    //Add loader bar like on AlertWire?
+    $(document)
+    .ajaxStart(function () {
+        $('html').addClass('busy');
+        //NProgress.start();
+    })
+    .ajaxStop(function () {
+        $('html').removeClass('busy');
+        //NProgress.done();
+    });
+
     //$('#collapseOne, #collapseTwo').on('show.bs.collapse', function () {
-    //    Ajax.Get('api/v1/cache')//'refresh' url? include freemem/other stats?
+    //    API.Get('/cache')//'refresh' url? include freemem/other stats?
     //    .done(function (data) {
     //        cacheData.ob_Entries(data.Entries);
     //    });
@@ -727,7 +675,7 @@ interface KnockoutStatic {
     //Ajax.Post = function (url, options) {
     //    var dfd = $.Deferred();
     //
-    //    Ajax.GetVerificationToken('/VerificationToken')
+    //    getVerificationToken('/VerificationToken')
     //    .always(function (token) {
     //        var opts = $.extend({}, { type: 'POST', headers: { 'VerificationToken': token } }, options);
     //        Ajax.Request(url, opts)
@@ -768,4 +716,85 @@ interface KnockoutStatic {
     //};
 
     //#endregion Private Methods
+
+    //#region Start
+
+    $.when(API.Get('/combined'), docReady)
+    .done(function (combined: any): void {
+        //var params = parseQuery(true);//save in local storage instead?
+        var data: any = combined[0];
+
+        //TODO: Escape non-printable character?
+        //data.Delimiter = params['delimiter'] || data.Delimiter || delimiter;
+
+        //Better way to do these transforms?
+        data.MemoryLimit = data.MemoryLimit === null ? 'Unknown' : data.MemoryLimit === -1 ? 'Unlimited' : data.MemoryLimit;
+        data.MemoryLimitPercent = data.MemoryLimitPercent === null ? 'Unknown' : data.MemoryLimitPercent;
+        data.ob_Count = ko.observable(data.Count);
+        data.ob_Delimiter = ko.observable(data.Delimiter);
+        data.ob_DetailView = ko.observable(data.DetailView);
+        data.ob_Entries = ko.observableArray(data.Entries);
+        data.ob_EntryTree = ko.computed(function (): any {
+            //Can we template directly off the array somehow instead of building our tree here?
+            //TODO: need to somehow keep checked state
+            var CacheRoot: any = {
+                Children: {},
+                Values: [],
+                isEmpty: function (): boolean {
+                    return this.Values.length === 0 && $.isEmptyObject(this.Children);
+                }
+            };
+
+            var id_i: number = 0;//need hash function or something
+            var delimiter: string = data.ob_Delimiter();
+            //Build our tree, any advantage to doing it server side?
+            $.each(data.ob_Entries(), function (i: number, cache: any): void {
+                var key: string = cache.Key;
+                var keyParts: string[] = key.split(delimiter || null).reverse();
+                var current: any = CacheRoot;
+                var currentKeyParts: string[] = [];
+                while (keyParts.length > 1) {
+                    var keyPart: string = keyParts.pop();
+                    currentKeyParts.push(keyPart);
+                    if (current.Children[keyPart] === undefined) {
+                        var currentKey: string = currentKeyParts.join(delimiter) + delimiter;//Tacking the delimiter on the end should also prevent collisions for different delimiters on checked state (I think). (actually this may not work if set to no delimiter in certain cases (key ending with delimiter))
+                        //Can this be done more cleanly?
+                        if (checkedState[currentKey] === undefined) {
+                            checkedState[currentKey] = ko.observable(false);
+                        }
+
+                        current.Children[keyPart] = new CacheNode(currentKey, keyPart, checkedState[currentKey], 'item-' + id_i++);//need to get the subkey up to this point
+                    }
+                    current = current.Children[keyPart];
+                }
+                current.Values.push(new CacheValue(cache, keyParts.pop(), 'item-' + id_i++));//TODO: Prevent duplicates
+            });
+
+            return CacheRoot;
+        });
+
+        var deferred: boolean = data.DetailView === 'Defer';//data.Deferred or view?
+        if (deferred) {
+            $('#collapse-tree').one('show.bs.collapse', function (): void {//Can we do this with knockout?
+                //just trigger refresh button?
+                $('.refresh-loading').removeClass('hidden');
+
+                API.Get('/cache')//'refresh' url? include freemem/other stats?
+                    .done(function (response: any): void {
+                        data.ob_Entries(response.Entries);
+                    });
+            });
+        }
+
+        ko.applyBindings(data);//Tree parts lose open state on delete, need to save the state somehow.
+        cacheData = data;
+        //window.DERP = data;
+
+        //Clear loading indiciator
+        $('.content-loading').fadeOut(function (): void {
+            $(this).remove();
+        });
+    });
+
+    //#endregion Start
 }(window, window.jQuery, window.ko, window.toastr, window.Prism));
