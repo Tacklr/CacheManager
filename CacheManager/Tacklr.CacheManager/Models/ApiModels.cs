@@ -159,6 +159,9 @@ namespace Tacklr.CacheManager.Models.Api
     //        Key = key;
     //        Values = cache.GetAll(key, prefix);//custom serializer?
     //    }
+    //    public string Key { get; set; }
+    //    public IDictionary<string, object> Values { get; set; }
+    //}
 
     internal class SettingsViewModel : BaseViewModel
     {
@@ -178,9 +181,6 @@ namespace Tacklr.CacheManager.Models.Api
         public bool ExpandSingleBranches { get; set; }
     }
 
-    //    public string Key { get; set; }
-    //    public IDictionary<string, object> Values { get; set; }
-    //}
     internal class StatsViewModel : BaseViewModel
     {
         internal StatsViewModel(ICache cache, HttpContext context)

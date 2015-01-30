@@ -32,7 +32,7 @@
   <ItemGroup>
     <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Newtonsoft.Json.6.0.5\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\packages\Newtonsoft.Json.6.0.8\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
@@ -176,15 +176,16 @@
     <EmbeddedResource Include="Content\fonts\fontawesome-webfont.ttf" />
     <EmbeddedResource Include="Content\fonts\fontawesome-webfont.woff" />
     <None Include="Bundles\combined.css.bundle" />
+    <EmbeddedResource Include="Content\fonts\fontawesome-webfont.woff2" />
     <None Include="Content\prism.less" />
     <None Include="Content\theme.less" />
     <None Include="Content\toastr.less" />
-    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="packages.config" />
     <None Include="Views\Shared\_Layout.html" />
   </ItemGroup>
   <ItemGroup>
@@ -201,11 +202,11 @@
     <Content Include="Bundles\combined.js">
       <DependentUpon>combined.js.bundle</DependentUpon>
     </Content>
-    <EmbeddedResource Include="Bundles\combined.min.css">
-      <DependentUpon>combined.css</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Bundles\combined.min.js">
       <DependentUpon>combined.js</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Bundles\combined.min.css">
+      <DependentUpon>combined.css</DependentUpon>
     </EmbeddedResource>
     <Content Include="Content\prism.css">
       <DependentUpon>prism.less</DependentUpon>

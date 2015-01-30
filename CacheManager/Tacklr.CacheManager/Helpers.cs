@@ -52,7 +52,7 @@ namespace Tacklr.CacheManager
                 {
                     //What if the header is already set?
                     s_SecurityHeaders = new NameValueCollection {
-                        { "X-Frame-Options", "SameOrigin" },
+                        { "X-Frame-Options", "SAMEORIGIN" },
                         { "X-Content-Type-Options", "nosniff" },
                         { "X-XSS-Protection", "1; mode=block" }
                     };

@@ -16,7 +16,8 @@ namespace Tacklr.CacheManager.HttpHandlers
         internal static string Otf = "font/opentype";
         internal static string Svg = "image/svg+xml";
         internal static string Ttf = "application/octet-stream";
-        internal static string Woff = "font/x-woff";
+        internal static string Woff = "application/font-woff";
+        internal static string Woff2 = "application/font-woff2";
         private static Dictionary<string, string> ExtensionMap = new Dictionary<string, string>();
 
         static MimeType()
@@ -29,6 +30,7 @@ namespace Tacklr.CacheManager.HttpHandlers
             ExtensionMap.Add(".svg", MimeType.Svg);
             ExtensionMap.Add(".ttf", MimeType.Ttf);
             ExtensionMap.Add(".woff", MimeType.Woff);
+            ExtensionMap.Add(".woff2", MimeType.Woff2);
         }
 
         internal static bool TryFromExtension(string extension, out string mimeType)
