@@ -32,7 +32,7 @@ interface KnockoutStatic {
     templates: string[];
 }
 
-; (function (window: Window, $: JQueryStatic, ko: KnockoutStatic, toastr: Toastr, Prism: any) {//, undefined: any
+; (function (window: Window, $: JQueryStatic, ko: KnockoutStatic, toastr: Toastr, Prism: any, undefined?: void) {
     //#region Initalize
 
     window.CM = window.CM || {};

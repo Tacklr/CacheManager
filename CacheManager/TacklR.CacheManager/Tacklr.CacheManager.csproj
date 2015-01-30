@@ -232,6 +232,9 @@
     <Content Include="Scripts\bootstrap\tab.js" />
     <Content Include="Scripts\bootstrap\tooltip.js" />
     <Content Include="Scripts\bootstrap\transition.js" />
+    <Content Include="Scripts\cachemanager-ts.js">
+      <DependentUpon>cachemanager-ts.ts</DependentUpon>
+    </Content>
     <Content Include="Scripts\prism.language.json.js" />
     <Content Include="Scripts\prism.js" />
     <Content Include="Scripts\stringTemplateEngine.js" />

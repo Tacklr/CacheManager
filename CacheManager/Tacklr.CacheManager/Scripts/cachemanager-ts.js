@@ -14,7 +14,7 @@
 /// <reference path="typescript/toastr-fix.d.ts" />
 
 ;
-(function (window, $, ko, toastr, Prism) {
+(function (window, $, ko, toastr, Prism, undefined) {
     //#region Initalize
     window.CM = window.CM || {};
     var CM = window.CM;
