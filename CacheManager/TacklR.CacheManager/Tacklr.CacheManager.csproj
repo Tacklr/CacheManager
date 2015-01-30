@@ -219,6 +219,7 @@
     <Content Include="Content\toastr.min.css">
       <DependentUpon>toastr.css</DependentUpon>
     </Content>
+    <TypeScriptCompile Include="Scripts\cachemanager-ts.ts" />
     <Content Include="Scripts\prism.language.json.js" />
     <Content Include="Scripts\prism.js" />
     <Content Include="Scripts\stringTemplateEngine.js" />
@@ -243,7 +244,7 @@
     <EmbeddedResource Include="Views\Shared\_Layout.min.html">
       <DependentUpon>_Layout.html</DependentUpon>
     </EmbeddedResource>
-    <None Include="Scripts\jquery-2.1.1.js" />
+    <None Include="Scripts\jquery-2.1.3.js" />
     <None Include="Scripts\bootstrap.js" />
     <None Include="Content\fonts.css">
       <DependentUpon>fonts.less</DependentUpon>
