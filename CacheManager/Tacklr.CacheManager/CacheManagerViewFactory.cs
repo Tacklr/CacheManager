@@ -44,6 +44,7 @@ namespace Tacklr.CacheManager
             RouteTable.MapRoute("GET:content/fonts/fontawesome-webfont.svg", new Route(typeof(ResourceHandler), "Resource", Tuple.Create<string, object>("name", "fontawesome-webfont.svg")));
             RouteTable.MapRoute("GET:content/fonts/fontawesome-webfont.ttf", new Route(typeof(ResourceHandler), "Resource", Tuple.Create<string, object>("name", "fontawesome-webfont.ttf")));
             RouteTable.MapRoute("GET:content/fonts/fontawesome-webfont.woff", new Route(typeof(ResourceHandler), "Resource", Tuple.Create<string, object>("name", "fontawesome-webfont.woff")));
+            RouteTable.MapRoute("GET:content/fonts/fontawesome-webfont.woff2", new Route(typeof(ResourceHandler), "Resource", Tuple.Create<string, object>("name", "fontawesome-webfont.woff2")));
 
             RouteTable.MapRoute("GET:content/fonts/OpenSans-Bold.woff", new Route(typeof(ResourceHandler), "Resource", Tuple.Create<string, object>("name", "OpenSans-Bold.woff")));
             RouteTable.MapRoute("GET:content/fonts/OpenSans-Extrabold.woff", new Route(typeof(ResourceHandler), "Resource", Tuple.Create<string, object>("name", "OpenSans-Extrabold.woff")));
