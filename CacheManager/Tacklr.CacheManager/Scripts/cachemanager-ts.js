@@ -6,35 +6,16 @@
 //Keep open state on data change/reload?
 //TODO: Put wrappers around ajax so we can do things like error handling, busy indicator (tokens?)
 /*!
- * Copyright 2014-2015 Tacklr, LLC
- */
-
-//Fixed for old version of typescript VS2013 uses.
-/// <reference path="typescript/jquery-fix.d.ts" /> 
+* Copyright 2014-2015 Tacklr, LLC
+*/
+/// <reference path="typescript/jquery-fix.d.ts" />
 /// <reference path="typescript/bootstrap-fix.d.ts" />
 /// <reference path="typescript/knockout-fix.d.ts" />
 /// <reference path="typescript/toastr-fix.d.ts" />
 
-interface Window {
-    /* tslint:enable:interface-name */
-    //JSON: JSON;
-    //encodeURIComponent(value: string): string;
-    //decodeURIComponent(value: string): string;
-    //Array: Function;
-    CM: any;
-    jQuery: JQueryStatic;
-    ko: KnockoutStatic;
-    toastr: Toastr;
-    Prism: any;
-}
-
-interface KnockoutStatic {
-    templates: string[];
-}
-
-; (function (window: Window, $: JQueryStatic, ko: KnockoutStatic, toastr: Toastr, Prism: any) {//, undefined: any
+;
+(function (window, $, ko, toastr, Prism) {
     //#region Initalize
-
     window.CM = window.CM || {};
     var CM = window.CM;
 
@@ -43,14 +24,12 @@ interface KnockoutStatic {
 
     var checkedState = {};
 
-    $.when($.get('api/v1/combined'), docReady)
-    .done(function (combined) {
+    $.when($.get('api/v1/combined'), docReady).done(function (combined) {
         //var params = parseQuery(true);//save in local storage instead?
         var data = combined[0];
 
         //TODO: Escape non-printable character?
         //data.Delimiter = params['delimiter'] || data.Delimiter || delimiter;
-
         //Better way to do these transforms?
         data.MemoryLimit = data.MemoryLimit === null ? 'Unknown' : data.MemoryLimit === -1 ? 'Unlimited' : data.MemoryLimit;
         data.MemoryLimitPercent = data.MemoryLimitPercent === null ? 'Unknown' : data.MemoryLimitPercent;
@@ -69,8 +48,9 @@ interface KnockoutStatic {
                 }
             };
 
-            var id_i = 0;//need hash function or something
+            var id_i = 0;
             var delimiter = data.ob_Delimiter();
+
             //Build our tree, any advantage to doing it server side?
             $.each(data.ob_Entries(), function (i, cache) {
                 var key = cache.Key;
@@ -81,38 +61,38 @@ interface KnockoutStatic {
                     var keyPart = keyParts.pop();
                     currentKeyParts.push(keyPart);
                     if (current.Children[keyPart] === undefined) {
-                        var currentKey = currentKeyParts.join(delimiter) + delimiter;//Tacking the delimiter on the end should also prevent collisions for different delimiters on checked state (I think). (actually this may not work if set to no delimiter in certain cases (key ending with delimiter))
+                        var currentKey = currentKeyParts.join(delimiter) + delimiter;
+
                         //Can this be done more cleanly?
                         if (checkedState[currentKey] === undefined)
                             checkedState[currentKey] = ko.observable(false);
 
-                        current.Children[keyPart] = new CacheNode(currentKey, keyPart, checkedState[currentKey], 'item-' + id_i++);//need to get the subkey up to this point
+                        current.Children[keyPart] = new CacheNode(currentKey, keyPart, checkedState[currentKey], 'item-' + id_i++); //need to get the subkey up to this point
                     }
                     current = current.Children[keyPart];
                 }
-                current.Values.push(new CacheValue(cache, keyParts.pop(), 'item-' + id_i++));//TODO: Prevent duplicates
+                current.Values.push(new CacheValue(cache, keyParts.pop(), 'item-' + id_i++)); //TODO: Prevent duplicates
             });
 
             return CacheRoot;
         });
 
-        var deferred = data.DetailView === 'Defer';//data.Deferred or view?
+        var deferred = data.DetailView === 'Defer';
         if (deferred) {
-            $('#collapse-tree').one('show.bs.collapse', function () {//Can we do this with knockout?
+            $('#collapse-tree').one('show.bs.collapse', function () {
                 //just trigger refresh button?
                 $('.refresh-loading').removeClass('hidden');
 
-                Ajax.Get('api/v1/cache')//'refresh' url? include freemem/other stats?
-                .done(function (response) {
+                Ajax.Get('api/v1/cache').done(function (response) {
                     data.ob_Entries(response.Entries);
                 });
             });
         }
 
-        ko.applyBindings(data);//Tree parts lose open state on delete, need to save the state somehow.
+        ko.applyBindings(data); //Tree parts lose open state on delete, need to save the state somehow.
         cacheData = data;
-        //window.DERP = data;
 
+        //window.DERP = data;
         //Clear loading indiciator
         $('.content-loading').fadeOut(function () {
             $(this).remove();
@@ -130,24 +110,20 @@ interface KnockoutStatic {
         //timeOut: 5000,//default
         //extendedTimeOut: 1000,//default
         //showEasing: 'swing',//default
-        hideEasing: 'linear',
-        //showMethod: 'fadeIn',//default
-        //hideMethod: 'fadeOut'//default
+        hideEasing: 'linear'
     };
 
     //#endregion Initalize
-
     //#region Properties
-
     var canResize = 'resize' in window.document.body.style;
-    var cacheData: any = {};
-    var delimiter = '/';//because we are using it later, we must always have one. Apparenly we can even have null keys, so use \x00 if we don't want a delimiter? I don't know if a c# key can contain a null.
+    var cacheData = {};
+    var delimiter = '/';
 
     //From System.Web.Caching.CacheItemPriority (unlikely to change, probably doesn't need to be dynamic.)
     var cachePriority = {
         '1': 'Low',
         '2': 'Below Normal',
-        '3': 'Normal',//Also 'Default'
+        '3': 'Normal',
         '4': 'Above Normal',
         '5': 'High',
         '6': 'Not Removable'
@@ -158,11 +134,8 @@ interface KnockoutStatic {
     //        return { controlsDescendantBindings: true };
     //    }
     //};
-
     //#endregion Properties
-
     //#region Templates
-
     //We would want the details info for these to start with.
     //ko.templates['CacheListTemplate'] =
     //    '<tr>' +
@@ -176,102 +149,9 @@ interface KnockoutStatic {
     //        '<td data-bind="text: Type"></td>' +
     //        //other info
     //    '</tr>';
+    ko.templates['CacheTreeTemplate'] = '<!-- ko if: !$data.isEmpty() -->' + '<ul>' + '<!-- ko foreach: CM.Sort(CM.ObjectAsArray($data.Children), CM.SortCacheKey) -->' + '<li>' + '<button type="button" title="Delete Prefix" class="btn btn-xs btn-link" data-bind="click: CM.DeleteNode(Key, true)"><span class="fa fa-lg fa-trash-o"></span></button>' + '<input type="checkbox" class="expand" data-bind="checked: ob_Checked, attr: { id: Id }, click: CM.BranchExpand" />' + '<label data-bind="attr: { for: Id }"><span data-bind="text: Text"></span> <span class="delimiter" data-bind="text: $root.Delimiter"></span></label>' + '<!-- ko template: { name: "CacheTreeTemplate", data: $data } --><!-- /ko -->' + '</li>' + '<!-- /ko -->' + '<!-- ko foreach: CM.Sort($data.Values, CM.SortCacheKey) -->' + '<li>' + '<button type="button" title="Delete Entry" class="btn btn-xs btn-link" data-bind="click: CM.DeleteNode(Key)"><span class="fa fa-lg fa-trash-o"></span></button>' + '<button type="button" title="View Entry Details" class="btn btn-xs btn-link" data-bind="click: CM.EntryDetails(Key)"><span class="fa fa-lg fa-info-circle"></span></button>' + '<span data-bind="text: Text, attr: { title: Key }"></span>' + '</li>' + '<!-- /ko -->' + '</ul>' + '<!-- /ko -->';
 
-    ko.templates['CacheTreeTemplate'] =
-        '<!-- ko if: !$data.isEmpty() -->' +//better check? make it a method of the node/root?
-        '<ul>' +
-            '<!-- ko foreach: CM.Sort(CM.ObjectAsArray($data.Children), CM.SortCacheKey) -->' +//eww
-            '<li>' +
-                '<button type="button" title="Delete Prefix" class="btn btn-xs btn-link" data-bind="click: CM.DeleteNode(Key, true)"><span class="fa fa-lg fa-trash-o"></span></button>' +
-                //'<button type="button" title="Serialize Prefix" class="btn btn-xs btn-link" data-bind="click: CM.SerializeNode(Key, true)"><span class="fa fa-lg fa-code"></span></button>' +
-                '<input type="checkbox" class="expand" data-bind="checked: ob_Checked, attr: { id: Id }, click: CM.BranchExpand" />' +
-                '<label data-bind="attr: { for: Id }"><span data-bind="text: Text"></span> <span class="delimiter" data-bind="text: $root.Delimiter"></span></label>' +
-                '<!-- ko template: { name: "CacheTreeTemplate", data: $data } --><!-- /ko -->' +
-            '</li>' +
-            '<!-- /ko -->' +
-            '<!-- ko foreach: CM.Sort($data.Values, CM.SortCacheKey) -->' +//eww
-            '<li>' +//Make delete button last tab index?
-                '<button type="button" title="Delete Entry" class="btn btn-xs btn-link" data-bind="click: CM.DeleteNode(Key)"><span class="fa fa-lg fa-trash-o"></span></button>' +
-                '<button type="button" title="View Entry Details" class="btn btn-xs btn-link" data-bind="click: CM.EntryDetails(Key)"><span class="fa fa-lg fa-info-circle"></span></button>' +
-                '<span data-bind="text: Text, attr: { title: Key }"></span>' +// <span class="text-muted">(<span data-bind="text: Type"></span>)</span>
-            '</li>' +
-            '<!-- /ko -->' +
-        '</ul>' +
-        '<!-- /ko -->';
-
-    ko.templates['EntryDetailsTemplate'] =
-        '<div class="modal-header" tabindex="-1">' +
-            '<button type="button" class="close" data-dismiss="modal" aria-hidden="true"><span class="fa fa-times fa-fw"></span></button>' +//styled ×?
-            '<h4 class="modal-title" id="modal-title">Entry Details</h4>' +
-        '</div>' +
-        '<div class="modal-body">' +
-            '<div class="row">' +
-                '<div class="col-xs-12">' +
-                    //Would a <dl> list be better?
-                    //'<dl class="dl-horizontal">' +
-                    //    '<dt>Key</dt>' +
-                    //    '<dd data-bind="text: Key"></dd>' +
-                    //    '<dt>Type</dt>' +
-                    //    '<dd data-bind="text: Type"></dd>' +
-                    //    '<dt>Priority</dt>' +
-                    //    '<dd data-bind="text: Priority"></dd>' +
-                    //    '<dt>Created</dt>' +
-                    //    '<dd data-bind="text: Created"></dd>' +
-                    //    '<dt>Absolute Expiration</dt>' +
-                    //    '<dd data-bind="text: AbsoluteExpiration"></dd>' +
-                    //    '<dt>Sliding Expiration</dt>' +
-                    //    '<dd data-bind="text: SlidingExpiration"></dd>' +
-                    //'</dl>' +
-                    '<div class="panel panel-default">'+
-                        '<div class="table-responsive">' +
-                            '<table class="table table-bordered table-condensed">' +//Better way to display this? independent columns? collapsable?
-                                '<tbody>' +
-                                    '<tr>' +
-                                        '<th class="col-fit text-right">Key</th>' +
-                                        '<td class="break-all" data-bind="text: Key"></td>' +
-                                    '</tr>' +
-                                    '<tr>' +
-                                        '<th class="col-fit text-right">Type</th>' +
-                                        '<td class="break-all" data-bind="text: Type"></td>' +
-                                    '</tr>' +
-                                    '<tr>' +
-                                        '<th class="col-fit text-right">Priority</th>' +
-                                        '<td data-bind="text: Priority"></td>' +
-                                    '</tr>' +
-                                    '<tr>' +
-                                        '<th class="col-fit text-right">Created</th>' +
-                                        '<td data-bind="text: Created"></td>' +
-                                    '</tr>' +
-                                    '<tr>' +
-                                        '<th class="col-fit text-right">Absolute Expiration</th>' +
-                                        '<td data-bind="text: AbsoluteExpiration"></td>' +
-                                    '</tr>' +
-                                    '<tr>' +
-                                        '<th class="col-fit text-right">Sliding Expiration</th>' +
-                                        '<td data-bind="text: SlidingExpiration"></td>' +
-                                    '</tr>' +
-                                '</tbody>' +
-                            '</table>' +
-                        '</div>' +
-                    '</div>' +
-                '</div>' +
-            '</div>' +
-            '<div class="row">' +
-                '<div class="col-xs-12">' +
-                    (!canResize ?//TODO: resizable pre that works with IE, replace pre with textarea on focus? (it seems to work okay but the sizes will be different, need to keep them synced)
-                    '<textarea class="serialized-data" data-bind="text: Value" wrap="off" readonly></textarea>' ://better formatting? syntax highlight?
-                    '<pre class="serialized-data" data-bind="html: ValueHtml"></pre>') +
-                    //(!canResize ?//TODO: resizable pre that works with IE, replace pre with textarea on focus? (it seems to work okay but the sizes will be different, need to keep them synced)
-                    //'<textarea class="serialized-data" data-bind="text: Value" wrap="off" readonly></textarea>' :
-                    //'<textarea class="serialized-data" style="display: none;" data-bind="text: Value, event: { blur: act_DataBlur }" wrap="off" readonly></textarea>' +//better formatting? syntax highlight?
-                    //'<pre class="serialized-data" data-bind="html: ValueHtml, click: act_DataFocus"></pre>') +
-                '</div>' +
-            '</div>' +
-        '</div>' +
-        '<div class="modal-footer">' +
-            '<button type="button" class="btn btn-danger pull-left" data-bind="click: CM.DeleteNode(Key)">Delete</button>' +//format, download, other buttons/actions?
-            '<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>' +
-        '</div>';
+    ko.templates['EntryDetailsTemplate'] = '<div class="modal-header" tabindex="-1">' + '<button type="button" class="close" data-dismiss="modal" aria-hidden="true"><span class="fa fa-times fa-fw"></span></button>' + '<h4 class="modal-title" id="modal-title">Entry Details</h4>' + '</div>' + '<div class="modal-body">' + '<div class="row">' + '<div class="col-xs-12">' + '<div class="panel panel-default">' + '<div class="table-responsive">' + '<table class="table table-bordered table-condensed">' + '<tbody>' + '<tr>' + '<th class="col-fit text-right">Key</th>' + '<td class="break-all" data-bind="text: Key"></td>' + '</tr>' + '<tr>' + '<th class="col-fit text-right">Type</th>' + '<td class="break-all" data-bind="text: Type"></td>' + '</tr>' + '<tr>' + '<th class="col-fit text-right">Priority</th>' + '<td data-bind="text: Priority"></td>' + '</tr>' + '<tr>' + '<th class="col-fit text-right">Created</th>' + '<td data-bind="text: Created"></td>' + '</tr>' + '<tr>' + '<th class="col-fit text-right">Absolute Expiration</th>' + '<td data-bind="text: AbsoluteExpiration"></td>' + '</tr>' + '<tr>' + '<th class="col-fit text-right">Sliding Expiration</th>' + '<td data-bind="text: SlidingExpiration"></td>' + '</tr>' + '</tbody>' + '</table>' + '</div>' + '</div>' + '</div>' + '</div>' + '<div class="row">' + '<div class="col-xs-12">' + (!canResize ? '<textarea class="serialized-data" data-bind="text: Value" wrap="off" readonly></textarea>' : '<pre class="serialized-data" data-bind="html: ValueHtml"></pre>') + '</div>' + '</div>' + '</div>' + '<div class="modal-footer">' + '<button type="button" class="btn btn-danger pull-left" data-bind="click: CM.DeleteNode(Key)">Delete</button>' + '<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>' + '</div>';
 
     //ko.templates['SerializeNodeTemplate'] =
     //    '<div class="modal-header" tabindex="-1">' +
@@ -285,16 +165,13 @@ interface KnockoutStatic {
     //        //'<a href="#" class="btn btn-default">Format</a>' +//format, download, other buttons/actions?
     //        '<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>' +
     //    '</div>';
-
     //#endregion Templates
-
     //#region Classes
-
-    var CacheNode = function (key, text, ob_Checked, id) {//, ob_checked
+    var CacheNode = function (key, text, ob_Checked, id) {
         this.Key = key;
         this.Text = text;
-        this.Children = {};//Nodes
-        this.Values = [];//Values
+        this.Children = {}; //Nodes
+        this.Values = []; //Values
         this.Id = id;
         this.ob_Checked = ob_Checked;
         this.isEmpty = function () {
@@ -310,13 +187,10 @@ interface KnockoutStatic {
     };
 
     //#endregion Classes
-
     //#region Public Methods
-
     CM.ClearCache = function () {
         if (confirm('Are you sure you want to clear the cache?')) {
-            Ajax.Post('api/v1/clear')
-            .done(function (data) {
+            Ajax.Post('api/v1/clear').done(function (data) {
                 cacheData.ob_Entries([]);
                 cacheData.ob_Count(0);
                 toastr.success('Cache has been cleared.');
@@ -328,8 +202,7 @@ interface KnockoutStatic {
         //Modal?
         var url = prompt('Enter the relative url (e.g. /foo/bar) to remove all output cache entries.');
         if (url.indexOf('/') === 0) {
-            Ajax.Post('api/v1/page', { data: { Url: url } })
-            .done(function (data) {
+            Ajax.Post('api/v1/page', { data: { Url: url } }).done(function (data) {
                 cacheData.ob_Entries([]);
                 toastr.success('Output cache cleared.');
             });
@@ -343,8 +216,10 @@ interface KnockoutStatic {
         var key2 = node2.Key;
 
         //What order do we want?
-        if (key1 < key2) return -1;
-        if (key1 > key2) return 1;
+        if (key1 < key2)
+            return -1;
+        if (key1 > key2)
+            return 1;
         return 0;
     };
 
@@ -370,14 +245,13 @@ interface KnockoutStatic {
     CM.Refresh = function () {
         $('.refresh-loading').removeClass('hidden');
 
-        Ajax.Get('api/v1/cache')//'refresh' url? include freemem/other stats?
-        .done(function (data) {
+        Ajax.Get('api/v1/cache').done(function (data) {
             cacheData.ob_Count(data.Count);
             cacheData.ob_Entries(data.Entries);
         });
     };
 
-    CM.AfterRenderDetailView = function () {//elements
+    CM.AfterRenderDetailView = function () {
         $('.refresh-loading').addClass('hidden');
         //other stuff?
     };
@@ -403,16 +277,14 @@ interface KnockoutStatic {
         return function () {
             //TODO: Combine these calls, I don't want to seperate ones.
             if (!op_prefix && (!cacheData.ConfirmDeleteKey || confirm('Are you sure you want to delete this cache value?\n\n' + key))) {
-                Ajax.Post('api/v1/delete', { data: { Key: key } })
-                .done(function (data) {
+                Ajax.Post('api/v1/delete', { data: { Key: key } }).done(function (data) {
                     cacheData.ob_Count(data.Count);
-                    cacheData.ob_Entries.remove(CM.FindCacheKey(key))
+                    cacheData.ob_Entries.remove(CM.FindCacheKey(key));
                 });
             } else if (op_prefix && (!cacheData.ConfirmDeletePrefix || confirm('Are you sure you want to delete everything with this prefix?\n\n' + key))) {
-                Ajax.Post('api/v1/delete', { data: { Key: key, Prefix: true } })
-                .done(function (data) {
+                Ajax.Post('api/v1/delete', { data: { Key: key, Prefix: true } }).done(function (data) {
                     cacheData.ob_Count(data.Count);
-                    cacheData.ob_Entries.remove(CM.FindCacheKey(key, true))
+                    cacheData.ob_Entries.remove(CM.FindCacheKey(key, true));
                 });
             }
         };
@@ -421,23 +293,22 @@ interface KnockoutStatic {
     //Store the response data against the key object for later? or JIT every time?
     CM.EntryDetails = function (key) {
         return function () {
-            Ajax.Get('api/v1/details', { data: { Key: key } })
-            .done(function (data) {
+            Ajax.Get('api/v1/details', { data: { Key: key } }).done(function (data) {
                 //better data transformer? viewmodel constructor?
                 //data.Value = '{"Alerts":[{"AlertId":16,"Headline":"AlertWire Launching Soon!","Message":"We are happy to announce the imminent launch of AlertWire, the easiest way to get the word out to your web sites\' visitors.","Url":"http://www.alertwi.re/","UrlText":"Click Here to Learn More","BackgroundColor":"D0E0E3","IconColor":"FF0000","TextColor":"000000","Icon":"alert-system-i-spam","Closing":1,"Method":0},{"AlertId":26,"Headline":"HONESTY IN PET FOOD.","Message":"Purina believes that honesty is the most important ingredient in the relationship between pet owners and pet food manufacturers. Please visit www.petfoodhonesty.com to learn more about actions we are taking to stop false advertising aimed at pet owners.","Url":"http://www.petfoodhonesty.com","UrlText":"Click Here to Learn More","BackgroundColor":"85C569","IconColor":"F1C232","TextColor":"000000","Icon":"alert-system-i-search","Closing":1,"Method":0}],"CssNamespace":"alert-system","CssUrl":"http://api.dev.noticegiver.com/Core/core-wip.min.css?_=D251D0443E84D050CD56F43363DD0D3785FA7F7E","Preview":false,"Audit":false,"Success":true,"Errors":{},"Message":null}';
-
                 if (data.ValueError) {
                     data.Value = data.ValueError || 'Unknown error serializing data.';
                 } else {
-                    data.Value = JSON.stringify(JSON.parse(data.Value), null, 4);//eww, but the only way we can catch serialization errors without killing the wholer response is to serialize on the server. Make space count configurable?
+                    data.Value = JSON.stringify(JSON.parse(data.Value), null, 4); //eww, but the only way we can catch serialization errors without killing the wholer response is to serialize on the server. Make space count configurable?
                     data.ValueHtml = Prism.highlight(data.Value, Prism.languages.json);
                 }
 
                 data.Priority = cachePriority[data.Priority] || 'Unknown';
+
                 //moment.js? config setting? change to date format at binding level?
                 data.AbsoluteExpiration = data.AbsoluteExpiration === null ? 'None' : new Date(data.AbsoluteExpiration).toLocaleString();
                 data.Created = new Date(data.Created).toLocaleString();
-                data.SlidingExpiration = data.SlidingExpiration === null ? 'None' : (data.SlidingExpiration / 1000) + " Seconds";//Need better timespan formatting.
+                data.SlidingExpiration = data.SlidingExpiration === null ? 'None' : (data.SlidingExpiration / 1000) + " Seconds"; //Need better timespan formatting.
 
                 //data.act_DataBlur = function (model, e) {
                 //    var $this = $(e.target);
@@ -455,10 +326,8 @@ interface KnockoutStatic {
                 //        $sibling.show().focus();
                 //    }
                 //};
-
                 //show serialized data
                 //Make seperate modal methods? right now this the only usage.
-
                 var modal = Modal.Generate('EntryDetailsTemplate');
                 ko.applyBindings($.extend({}, data), modal[0]);
                 modal.modal('show');
@@ -468,12 +337,10 @@ interface KnockoutStatic {
 
     //CM.SerializeNode = function (key, op_prefix) {
     //    op_prefix = op_prefix || false;
-
     //    return function () {
     //        Ajax.Get('api/v1/info', { data: { Key: key, Prefix: op_prefix } })
     //        .done(function (data) {
     //            data.Values = JSON.stringify(data.Values, null, 4);
-
     //            //show serialized data
     //            //Make seperate modal methods? right now this the only usage.
     //            var $container = $('#modal-container');
@@ -485,7 +352,6 @@ interface KnockoutStatic {
     //        });
     //    };
     //};
-
     CM.ObjectAsArray = function (object) {
         var properties = [];
 
@@ -523,70 +389,62 @@ interface KnockoutStatic {
     //    }
     //    return hash;
     //}
-
     //$.wait = function (ms) {
     //    var dfd = $.Deferred();
     //    setTimeout(function () { dfd.resolve(); }, ms);
     //    return dfd;
     //};
-
     //#endregion Public Methods
-
     //#region Private Methods
+    var Modal = {};
 
-    var Modal: any = {};
-
-    Modal.Generate = function (template: string, options: any): JQuery {
+    Modal.Generate = function (template, options) {
         //Deferred?
         var defaults = {
-            Size: '',//modal-lg for large or modal-sm for small, otherwise default.
+            Size: '',
             Animate: true
         };
         var opts = $.extend({}, defaults, options);
 
         //Right now we only allow one modal to be open by closing any previous. Should we allow stacking? Should we fail the new one?
         var $existing = $('#modal-container');
-        if ($existing.hasClass('in')) {//Should we bother doing this check?
+        if ($existing.hasClass('in')) {
             $existing.modal('hide');
         } else {
             $existing.remove();
         }
 
-        var $modalContainer = $(
-            '<div id="modal-container" class="modal ' + (opts.Animate ? 'fade' : '') + '" tabindex="-1" role="dialog" aria-hidden="true" aria-labelledby="modal-title">' +
-                '<div class="modal-dialog' + (opts.Size ? ' ' + opts.Size : '') + '">' +
-                    '<div class="modal-content" data-bind="template: { name: \'' + template + '\' }"></div>' +
-                '</div>' +
-            '</div>')
-            .one('hidden.bs.modal', function () {
-                $(this).remove();
-            });
+        var $modalContainer = $('<div id="modal-container" class="modal ' + (opts.Animate ? 'fade' : '') + '" tabindex="-1" role="dialog" aria-hidden="true" aria-labelledby="modal-title">' + '<div class="modal-dialog' + (opts.Size ? ' ' + opts.Size : '') + '">' + '<div class="modal-content" data-bind="template: { name: \'' + template + '\' }"></div>' + '</div>' + '</div>').one('hidden.bs.modal', function () {
+            $(this).remove();
+        });
         return $modalContainer;
     };
 
-    var Ajax: any = {
-        BusyClass: function(){
+    var Ajax = {
+        BusyClass: function () {
             var i = 0;
-            return function(){
+            return function () {
                 return 'busy-' + i++;
             };
         }()
     };
 
-    var handleDataError = function (response) {//, textStatus, jqXHR) {
-        var message = response.Message || "An unknown error has occured."
+    var handleDataError = function (response) {
+        var message = response.Message || "An unknown error has occured.";
+
         //messageHandler(message);//toastr?
         toastr.error(message);
     };
 
     var handleFailError = function (jqXHR, textStatus, errorThrown) {
         var response = jqXHR.responseJSON || {};
-        var message = response.Message || errorThrown || "An unknown error has occured."
+        var message = response.Message || errorThrown || "An unknown error has occured.";
+
         //messageHandler(message);//toastr?
         toastr.error(message);
     };
 
-    var nonce = function (): string {
+    var nonce = function () {
         return parseInt(new Date().getTime().toString() + ((Math.random() * 1e5) | 0), 10).toString(36);
     };
 
@@ -595,35 +453,31 @@ interface KnockoutStatic {
         return Ajax.Request(url, opts);
     };
 
-    Ajax.VerificationTokens = {};//Make caching optional?
+    Ajax.VerificationTokens = {}; //Make caching optional?
     Ajax.GetVerificationToken = function (url, timeout) {
-        var delay = timeout || 30 * 1000;//default? (30 seconds right now)
+        var delay = timeout || 30 * 1000;
         var src = url + (url.indexOf('?') > -1 ? "&" : "?") + "_=" + nonce();
         var dfd = $.Deferred();
         var busyClass = Ajax.BusyClass();
 
         if (!Ajax.VerificationTokens[url]) {
             $('html').addClass(busyClass);
-            var $iframe = $('<iframe src="' + src + '" style="height: 0; width: 0; border: 0;">')//pass token name? callback name? better hiding?
-            .on('load', function () {
+            var $iframe = $('<iframe src="' + src + '" style="height: 0; width: 0; border: 0;">').on('load', function () {
                 var token = $(this).contents().find('#VerificationToken').val();
                 if (token) {
                     Ajax.VerificationTokens[url] = token;
                     dfd.resolve(token);
-                }
-                else
+                } else
                     dfd.reject();
 
                 $iframe.remove();
-            })
-            .appendTo('body');
-        }
-        else
+            }).appendTo('body');
+        } else
             dfd.resolve(Ajax.VerificationTokens[url]);
 
         setTimeout(function () {
             if (dfd.state() === 'pending') {
-                dfd.reject();//timeout
+                dfd.reject(); //timeout
                 $iframe.remove();
             }
         }, delay);
@@ -631,24 +485,21 @@ interface KnockoutStatic {
         return dfd.promise().always(function () {
             $('html').removeClass(busyClass);
         });
-    }
+    };
 
     //Really messy chaining of deferreds but there is no way to block.
     Ajax.Post = function (url, options) {
         var dfd = $.Deferred();
-    
-        Ajax.GetVerificationToken('VerificationToken')
-        .always(function (token) {
+
+        Ajax.GetVerificationToken('VerificationToken').always(function (token) {
             var opts = $.extend({}, { type: 'POST', headers: { 'X-CSRF-Token': token } }, options);
-            Ajax.Request(url, opts)
-            .done(function () {
-                dfd.resolveWith(this, arguments);//proper context?
-            })
-            .fail(function () {
-                dfd.rejectWith(this, arguments);//proper context?
+            Ajax.Request(url, opts).done(function () {
+                dfd.resolveWith(this, arguments); //proper context?
+            }).fail(function () {
+                dfd.rejectWith(this, arguments); //proper context?
             });
         });
-    
+
         return dfd.promise();
     };
 
@@ -665,41 +516,26 @@ interface KnockoutStatic {
         var defaults = {
             type: 'POST',
             dataType: 'json',
-            data: null,
-            //traditional: true,// lets us post arrays as foo=1&foo=2 instead of foo[]=1&foo[]=2, which makes MVC happier
-            //contentType: "application/x-www-form-urlencoded; charset=UTF-8",
-
-            //messageHandler: function (message) { /*if (console && console.log) console.log(message);*/ Alerts.Messaging.Error(message); },
-            //statusCode: {
-            //    //Can we insert the options object into the jqXHR response somehow so we don't have to do this?
-            //    400: function (jqXHR, textStatus, errorThrown) { handleServerError(jqXHR, textStatus, errorThrown, this.messageHandler, options.validator); },
-            //    401: function (jqXHR, textStatus, errorThrown) { handleServerAuthorization(jqXHR, textStatus, errorThrown, this.messageHandler); },
-            //    500: function (jqXHR, textStatus, errorThrown) { handleServerException(jqXHR, textStatus, errorThrown, this.messageHandler); }
-            //},
-            //handle client side error?
+            data: null
         };
 
         var opts = $.extend({}, defaults, options);
 
         $('html').addClass(busyClass);
-        return $.ajax(url, opts)
-        .done(function (response) {
+        return $.ajax(url, opts).done(function (response) {
             if (response.Success) {
-                dfd.resolveWith(this, arguments);//proper context?
+                dfd.resolveWith(this, arguments); //proper context?
             } else {
                 handleDataError(response);
-                dfd.rejectWith(this, arguments);//proper context?
+                dfd.rejectWith(this, arguments); //proper context?
             }
-        })
-        .fail(function (jqXHR, textStatus, errorThrown) {
-            handleFailError(jqXHR, textStatus, errorThrown);//Use status code specific errors when applicable?
-            dfd.rejectWith(this, arguments);//proper context?
-        })
-        .always(function () {
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+            handleFailError(jqXHR, textStatus, errorThrown); //Use status code specific errors when applicable?
+            dfd.rejectWith(this, arguments); //proper context?
+        }).always(function () {
             $('html').removeClass(busyClass);
         });
     };
-
     //$('#collapseOne, #collapseTwo').on('show.bs.collapse', function () {
     //    Ajax.Get('api/v1/cache')//'refresh' url? include freemem/other stats?
     //    .done(function (data) {
@@ -707,7 +543,6 @@ interface KnockoutStatic {
     //    });
     //    return false;
     //});
-
     //Really messy chaining of deferreds but there is no way to block.
     //Ajax.Post = function (url, options) {
     //    var dfd = $.Deferred();
@@ -732,7 +567,6 @@ interface KnockoutStatic {
     //    //var opts = $.extend({}, { type: 'POST', headers: { 'VerificationToken': token } }, options);
     //    //return Ajax.Request(url, opts);
     //};
-
     //var parseQuery = function (op_lowercase) {
     //    op_lowercase = op_lowercase || false;
     //    var query = document.location.search.substr(1);
@@ -743,14 +577,11 @@ interface KnockoutStatic {
     //        var param = parts[i].split('=');
     //        var key = param.shift();
     //        var value = param.join('=');
-
     //        if (op_lowercase)
     //            key = key.toLowerCase();
-
     //        parameters[key] = value;
     //    }
     //    return parameters;
     //};
-
     //#endregion Private Methods
 }(window, window.jQuery, window.ko, window.toastr, window.Prism));

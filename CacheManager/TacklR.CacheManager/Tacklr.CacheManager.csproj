@@ -300,8 +300,13 @@
     <None Include="Content\theme.min.css">
       <DependentUpon>theme.css</DependentUpon>
     </None>
+    <TypeScriptCompile Include="Scripts\typescript\bootstrap-fix.d.ts" />
+    <TypeScriptCompile Include="Scripts\typescript\jquery-fix.d.ts" />
+    <TypeScriptCompile Include="Scripts\typescript\knockout-fix.d.ts" />
+    <TypeScriptCompile Include="Scripts\typescript\toastr-fix.d.ts" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.targets" Condition="Exists('$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.targets')" />
   <PropertyGroup>
     <PreBuildEvent>powershell -ExecutionPolicy Bypass -File "$(SolutionDir)SetBuildTime.ps1" $(SolutionDir)
 </PreBuildEvent>
