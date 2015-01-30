@@ -1,17 +1,12 @@
-﻿//TODO: Test for large trees
-//integrate https://square.github.io/crossfilter/ or similar for working with large data? not sure how tree generation/reading would work with it.
-//TODO:
-//what about empties , e.g. blah//blah
-//or keys that end with the delimiter?
-//Keep open state on data change/reload?
-//TODO: Put wrappers around ajax so we can do things like error handling, busy indicator (tokens?)
-/*!
-* Copyright 2014-2015 Tacklr, LLC
-*/
+﻿/*! Copyright 2014-2015 Tacklr, LLC */
+/* tslint:disable:max-line-length */
+/* tslint:disable:comment-format */
+/* tslint:disable:quotemark */
 /// <reference path="typescript/jquery-fix.d.ts" />
 /// <reference path="typescript/bootstrap-fix.d.ts" />
 /// <reference path="typescript/knockout-fix.d.ts" />
 /// <reference path="typescript/toastr-fix.d.ts" />
+
 
 ;
 (function (window, $, ko, toastr, Prism, undefined) {
@@ -64,8 +59,9 @@
                         var currentKey = currentKeyParts.join(delimiter) + delimiter;
 
                         //Can this be done more cleanly?
-                        if (checkedState[currentKey] === undefined)
+                        if (checkedState[currentKey] === undefined) {
                             checkedState[currentKey] = ko.observable(false);
+                        }
 
                         current.Children[keyPart] = new CacheNode(currentKey, keyPart, checkedState[currentKey], 'item-' + id_i++); //need to get the subkey up to this point
                     }
@@ -216,18 +212,15 @@
         var key2 = node2.Key;
 
         //What order do we want?
-        if (key1 < key2)
-            return -1;
-        if (key1 > key2)
-            return 1;
-        return 0;
+        return (key1 < key2) ? -1 : (key1 > key2) ? 1 : 0;
     };
 
     CM.FindCacheKey = function (key, op_prefix) {
         op_prefix = op_prefix || false;
         return function (node) {
-            if (op_prefix)
+            if (op_prefix) {
                 return node.Key.indexOf(key) === 0;
+            }
             return node.Key === key;
         };
     };
@@ -237,8 +230,9 @@
     };
 
     CM.Sort = function (array, op_sorter) {
-        if ($.isFunction(op_sorter))
+        if ($.isFunction(op_sorter)) {
             return array.sort(op_sorter);
+        }
         return array.sort();
     };
 
@@ -339,7 +333,7 @@
     //    op_prefix = op_prefix || false;
     //    return function () {
     //        Ajax.Get('api/v1/info', { data: { Key: key, Prefix: op_prefix } })
-    //        .done(function (data) {
+    //        .done(function (data): void {
     //            data.Values = JSON.stringify(data.Values, null, 4);
     //            //show serialized data
     //            //Make seperate modal methods? right now this the only usage.
@@ -356,6 +350,7 @@
         var properties = [];
 
         for (var child in object) {
+            /* tslint:enable:typedef */
             if (object.hasOwnProperty(child)) {
                 properties.push(object[child]);
             }
@@ -371,8 +366,9 @@
             while (children.length === 1) {
                 current = current.Children[children[0]];
                 children = Object.keys(current.Children);
-                if (!current.ob_Checked())
+                if (!current.ob_Checked()) {
                     current.ob_Checked(true);
+                }
             }
         }
         return true;
@@ -421,6 +417,7 @@
     };
 
     var Ajax = {
+        //Change to loader bar like on AlertWire?
         BusyClass: function () {
             var i = 0;
             return function () {
@@ -445,7 +442,9 @@
     };
 
     var nonce = function () {
+        /* tslint:disable:no-bitwise */
         return parseInt(new Date().getTime().toString() + ((Math.random() * 1e5) | 0), 10).toString(36);
+        /* tslint:enable:no-bitwise */
     };
 
     Ajax.Post = function (url, options) {
@@ -467,13 +466,15 @@
                 if (token) {
                     Ajax.VerificationTokens[url] = token;
                     dfd.resolve(token);
-                } else
+                } else {
                     dfd.reject();
+                }
 
                 $iframe.remove();
             }).appendTo('body');
-        } else
+        } else {
             dfd.resolve(Ajax.VerificationTokens[url]);
+        }
 
         setTimeout(function () {
             if (dfd.state() === 'pending') {

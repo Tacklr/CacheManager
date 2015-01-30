@@ -219,7 +219,7 @@
     <Content Include="Content\toastr.min.css">
       <DependentUpon>toastr.css</DependentUpon>
     </Content>
-    <TypeScriptCompile Include="Scripts\cachemanager-ts.ts" />
+    <TypeScriptCompile Include="Scripts\cachemanager.ts" />
     <Content Include="Scripts\bootstrap\affix.js" />
     <Content Include="Scripts\bootstrap\alert.js" />
     <Content Include="Scripts\bootstrap\button.js" />
@@ -232,8 +232,8 @@
     <Content Include="Scripts\bootstrap\tab.js" />
     <Content Include="Scripts\bootstrap\tooltip.js" />
     <Content Include="Scripts\bootstrap\transition.js" />
-    <Content Include="Scripts\cachemanager-ts.js">
-      <DependentUpon>cachemanager-ts.ts</DependentUpon>
+    <Content Include="Scripts\cachemanager.js">
+      <DependentUpon>cachemanager.ts</DependentUpon>
     </Content>
     <Content Include="Scripts\prism.language.json.js" />
     <Content Include="Scripts\prism.js" />
@@ -273,7 +273,6 @@
     </None>
     <None Include="Views\Shared\Error500.html" />
     <None Include="Views\Manager\Index.html" />
-    <None Include="Scripts\cachemanager.js" />
     <None Include="Content\bootstrap.min.css">
       <DependentUpon>bootstrap.css</DependentUpon>
     </None>

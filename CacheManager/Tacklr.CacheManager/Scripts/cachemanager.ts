@@ -1,13 +1,7 @@
-﻿//TODO: Test for large trees
-//integrate https://square.github.io/crossfilter/ or similar for working with large data? not sure how tree generation/reading would work with it.
-//TODO:
-//what about empties , e.g. blah//blah
-//or keys that end with the delimiter?
-//Keep open state on data change/reload?
-//TODO: Put wrappers around ajax so we can do things like error handling, busy indicator (tokens?)
-/*!
- * Copyright 2014-2015 Tacklr, LLC
- */
+﻿/*! Copyright 2014-2015 Tacklr, LLC */
+/* tslint:disable:max-line-length */
+/* tslint:disable:comment-format */
+/* tslint:disable:quotemark */
 
 //Fixed for old version of typescript VS2013 uses.
 /// <reference path="typescript/jquery-fix.d.ts" /> 
@@ -15,8 +9,18 @@
 /// <reference path="typescript/knockout-fix.d.ts" />
 /// <reference path="typescript/toastr-fix.d.ts" />
 
+//TODO: Test for large trees
+//integrate https://square.github.io/crossfilter/ or similar for working with large data? not sure how tree generation/reading would work with it.
+//TODO:
+//what about empties , e.g. blah//blah
+//or keys that end with the delimiter?
+//Keep open state on data change/reload?
+//TODO: Put wrappers around ajax so we can do things like error handling, busy indicator (tokens?)
+//TODO: Replace any and Object, etc with proper types
+
+/* tslint:disable:interface-name */
 interface Window {
-    /* tslint:enable:interface-name */
+/* tslint:enable:interface-name */
     //JSON: JSON;
     //encodeURIComponent(value: string): string;
     //decodeURIComponent(value: string): string;
@@ -28,25 +32,27 @@ interface Window {
     Prism: any;
 }
 
+/* tslint:disable:interface-name */
 interface KnockoutStatic {
+/* tslint:enable:interface-name */
     templates: string[];
 }
 
-; (function (window: Window, $: JQueryStatic, ko: KnockoutStatic, toastr: Toastr, Prism: any, undefined?: void) {
+; (function (window: Window, $: JQueryStatic, ko: KnockoutStatic, toastr: Toastr, Prism: any, undefined?: void): void {
     //#region Initalize
 
     window.CM = window.CM || {};
-    var CM = window.CM;
+    var CM: any = window.CM;
 
-    var docReady = $.Deferred();
+    var docReady: JQueryDeferred<{}> = $.Deferred();
     $(docReady.resolve);
 
-    var checkedState = {};
+    var checkedState: Object = {};
 
     $.when($.get('api/v1/combined'), docReady)
-    .done(function (combined) {
+    .done(function (combined: any): void {
         //var params = parseQuery(true);//save in local storage instead?
-        var data = combined[0];
+        var data: any = combined[0];
 
         //TODO: Escape non-printable character?
         //data.Delimiter = params['delimiter'] || data.Delimiter || delimiter;
@@ -58,33 +64,34 @@ interface KnockoutStatic {
         data.ob_Delimiter = ko.observable(data.Delimiter);
         data.ob_DetailView = ko.observable(data.DetailView);
         data.ob_Entries = ko.observableArray(data.Entries);
-        data.ob_EntryTree = ko.computed(function () {
+        data.ob_EntryTree = ko.computed(function (): any {
             //Can we template directly off the array somehow instead of building our tree here?
             //TODO: need to somehow keep checked state
-            var CacheRoot = {
+            var CacheRoot: any = {
                 Children: {},
                 Values: [],
-                isEmpty: function () {
+                isEmpty: function (): boolean {
                     return this.Values.length === 0 && $.isEmptyObject(this.Children);
                 }
             };
 
-            var id_i = 0;//need hash function or something
-            var delimiter = data.ob_Delimiter();
+            var id_i: number = 0;//need hash function or something
+            var delimiter: string = data.ob_Delimiter();
             //Build our tree, any advantage to doing it server side?
-            $.each(data.ob_Entries(), function (i, cache) {
-                var key = cache.Key;
-                var keyParts = key.split(delimiter || null).reverse();
-                var current = CacheRoot;
-                var currentKeyParts = [];
+            $.each(data.ob_Entries(), function (i: number, cache: any): void {
+                var key: string = cache.Key;
+                var keyParts: string[] = key.split(delimiter || null).reverse();
+                var current: any = CacheRoot;
+                var currentKeyParts: string[] = [];
                 while (keyParts.length > 1) {
-                    var keyPart = keyParts.pop();
+                    var keyPart: string = keyParts.pop();
                     currentKeyParts.push(keyPart);
                     if (current.Children[keyPart] === undefined) {
-                        var currentKey = currentKeyParts.join(delimiter) + delimiter;//Tacking the delimiter on the end should also prevent collisions for different delimiters on checked state (I think). (actually this may not work if set to no delimiter in certain cases (key ending with delimiter))
+                        var currentKey: string = currentKeyParts.join(delimiter) + delimiter;//Tacking the delimiter on the end should also prevent collisions for different delimiters on checked state (I think). (actually this may not work if set to no delimiter in certain cases (key ending with delimiter))
                         //Can this be done more cleanly?
-                        if (checkedState[currentKey] === undefined)
+                        if (checkedState[currentKey] === undefined) {
                             checkedState[currentKey] = ko.observable(false);
+                        }
 
                         current.Children[keyPart] = new CacheNode(currentKey, keyPart, checkedState[currentKey], 'item-' + id_i++);//need to get the subkey up to this point
                     }
@@ -96,14 +103,14 @@ interface KnockoutStatic {
             return CacheRoot;
         });
 
-        var deferred = data.DetailView === 'Defer';//data.Deferred or view?
+        var deferred: boolean = data.DetailView === 'Defer';//data.Deferred or view?
         if (deferred) {
-            $('#collapse-tree').one('show.bs.collapse', function () {//Can we do this with knockout?
+            $('#collapse-tree').one('show.bs.collapse', function (): void {//Can we do this with knockout?
                 //just trigger refresh button?
                 $('.refresh-loading').removeClass('hidden');
 
                 Ajax.Get('api/v1/cache')//'refresh' url? include freemem/other stats?
-                .done(function (response) {
+                .done(function (response: any): void {
                     data.ob_Entries(response.Entries);
                 });
             });
@@ -114,7 +121,7 @@ interface KnockoutStatic {
         //window.DERP = data;
 
         //Clear loading indiciator
-        $('.content-loading').fadeOut(function () {
+        $('.content-loading').fadeOut(function (): void {
             $(this).remove();
         });
     });
@@ -130,7 +137,7 @@ interface KnockoutStatic {
         //timeOut: 5000,//default
         //extendedTimeOut: 1000,//default
         //showEasing: 'swing',//default
-        hideEasing: 'linear',
+        hideEasing: 'linear'
         //showMethod: 'fadeIn',//default
         //hideMethod: 'fadeOut'//default
     };
@@ -139,12 +146,12 @@ interface KnockoutStatic {
 
     //#region Properties
 
-    var canResize = 'resize' in window.document.body.style;
+    var canResize: boolean = 'resize' in window.document.body.style;
     var cacheData: any = {};
-    var delimiter = '/';//because we are using it later, we must always have one. Apparenly we can even have null keys, so use \x00 if we don't want a delimiter? I don't know if a c# key can contain a null.
+    var delimiter: string = '/';//because we are using it later, we must always have one. Apparenly we can even have null keys, so use \x00 if we don't want a delimiter? I don't know if a c# key can contain a null.
 
     //From System.Web.Caching.CacheItemPriority (unlikely to change, probably doesn't need to be dynamic.)
-    var cachePriority = {
+    var cachePriority: Object = {
         '1': 'Low',
         '2': 'Below Normal',
         '3': 'Normal',//Also 'Default'
@@ -290,19 +297,19 @@ interface KnockoutStatic {
 
     //#region Classes
 
-    var CacheNode = function (key, text, ob_Checked, id) {//, ob_checked
+    var CacheNode: any = function (key: string, text: string, ob_Checked: KnockoutObservable<boolean>, id: string): void {//, ob_checked
         this.Key = key;
         this.Text = text;
         this.Children = {};//Nodes
         this.Values = [];//Values
         this.Id = id;
         this.ob_Checked = ob_Checked;
-        this.isEmpty = function () {
+        this.isEmpty = function (): boolean {
             return this.Values.length === 0 && $.isEmptyObject(this.Children);
         };
     };
 
-    var CacheValue = function (cache, text, id) {
+    var CacheValue: any = function (cache: any, text: string, id: string): void {
         this.Key = cache.Key;
         this.Text = text;
         this.Type = cache.Type;
@@ -313,10 +320,10 @@ interface KnockoutStatic {
 
     //#region Public Methods
 
-    CM.ClearCache = function () {
+    CM.ClearCache = function (): void {
         if (confirm('Are you sure you want to clear the cache?')) {
             Ajax.Post('api/v1/clear')
-            .done(function (data) {
+            .done(function (data: any): void {
                 cacheData.ob_Entries([]);
                 cacheData.ob_Count(0);
                 toastr.success('Cache has been cleared.');
@@ -324,12 +331,12 @@ interface KnockoutStatic {
         }
     };
 
-    CM.PageCache = function () {
+    CM.PageCache = function (): void {
         //Modal?
-        var url = prompt('Enter the relative url (e.g. /foo/bar) to remove all output cache entries.');
+        var url: string = prompt('Enter the relative url (e.g. /foo/bar) to remove all output cache entries.');
         if (url.indexOf('/') === 0) {
             Ajax.Post('api/v1/page', { data: { Url: url } })
-            .done(function (data) {
+            .done(function (data: any): void {
                 cacheData.ob_Entries([]);
                 toastr.success('Output cache cleared.');
             });
@@ -338,91 +345,91 @@ interface KnockoutStatic {
         }
     };
 
-    CM.SortCacheKey = function (node1, node2) {
-        var key1 = node1.Key;
-        var key2 = node2.Key;
+    CM.SortCacheKey = function (node1: any, node2: any): number {
+        var key1: string = node1.Key;
+        var key2: string = node2.Key;
 
         //What order do we want?
-        if (key1 < key2) return -1;
-        if (key1 > key2) return 1;
-        return 0;
+        return (key1 < key2) ? -1 : (key1 > key2) ? 1 : 0;
     };
 
-    CM.FindCacheKey = function (key, op_prefix) {
+    CM.FindCacheKey = function (key: string, op_prefix?: boolean): Function {
         op_prefix = op_prefix || false;
-        return function (node) {
-            if (op_prefix)
+        return function (node: any): boolean {
+            if (op_prefix) {
                 return node.Key.indexOf(key) === 0;
+            }
             return node.Key === key;
         };
     };
 
-    CM.CopyrightYear = function () {
+    CM.CopyrightYear = function (): number {
         return new Date().getUTCFullYear();
     };
 
-    CM.Sort = function (array, op_sorter) {
-        if ($.isFunction(op_sorter))
+    CM.Sort = function (array: any[], op_sorter?: (a: any, b: any) => number): any[] {//proper sorter type?
+        if ($.isFunction(op_sorter)) {
             return array.sort(op_sorter);
+        }
         return array.sort();
     };
 
-    CM.Refresh = function () {
+    CM.Refresh = function (): void {
         $('.refresh-loading').removeClass('hidden');
 
         Ajax.Get('api/v1/cache')//'refresh' url? include freemem/other stats?
-        .done(function (data) {
+        .done(function (data: any): void {
             cacheData.ob_Count(data.Count);
             cacheData.ob_Entries(data.Entries);
         });
     };
 
-    CM.AfterRenderDetailView = function () {//elements
+    CM.AfterRenderDetailView = function (): void {//elements
         $('.refresh-loading').addClass('hidden');
         //other stuff?
     };
 
-    CM.SetDelimiter = function (data) {
+    CM.SetDelimiter = function (data: any): void {
         //delimiter will already be set via two way input binding, this would also be caused by a refresh (use same button text?)
         //trigger re-draw of tree
         cacheData.ob_Delimiter(data.Delimiter);
     };
 
-    CM.EnterDelimiter = function (data, e) {
+    CM.EnterDelimiter = function (data: any, e: KeyboardEvent): boolean {
         if (e.which === 13) {
             cacheData.ob_Delimiter(data.Delimiter);
         }
         return true;
     };
 
-    CM.DeleteNode = function (key, op_prefix) {
+    CM.DeleteNode = function (key: string, op_prefix: boolean): Function {
         op_prefix = op_prefix || false;
 
         //Need to somehow keep checked state on redraw
         //Not sure how much I like spawning a new function for each one. Make each level a seperate observable? eww
-        return function () {
+        return function (): void {
             //TODO: Combine these calls, I don't want to seperate ones.
             if (!op_prefix && (!cacheData.ConfirmDeleteKey || confirm('Are you sure you want to delete this cache value?\n\n' + key))) {
                 Ajax.Post('api/v1/delete', { data: { Key: key } })
-                .done(function (data) {
+                .done(function (data: any): void {
                     cacheData.ob_Count(data.Count);
-                    cacheData.ob_Entries.remove(CM.FindCacheKey(key))
+                    cacheData.ob_Entries.remove(CM.FindCacheKey(key));
                 });
             } else if (op_prefix && (!cacheData.ConfirmDeletePrefix || confirm('Are you sure you want to delete everything with this prefix?\n\n' + key))) {
                 Ajax.Post('api/v1/delete', { data: { Key: key, Prefix: true } })
-                .done(function (data) {
+                .done(function (data: any): void {
                     cacheData.ob_Count(data.Count);
-                    cacheData.ob_Entries.remove(CM.FindCacheKey(key, true))
+                    cacheData.ob_Entries.remove(CM.FindCacheKey(key, true));
                 });
             }
         };
     };
 
     //Store the response data against the key object for later? or JIT every time?
-    CM.EntryDetails = function (key) {
-        return function () {
+    CM.EntryDetails = function (key: string): Function {
+        return function (): void {
             Ajax.Get('api/v1/details', { data: { Key: key } })
-            .done(function (data) {
+            .done(function (data: any): void {
                 //better data transformer? viewmodel constructor?
                 //data.Value = '{"Alerts":[{"AlertId":16,"Headline":"AlertWire Launching Soon!","Message":"We are happy to announce the imminent launch of AlertWire, the easiest way to get the word out to your web sites\' visitors.","Url":"http://www.alertwi.re/","UrlText":"Click Here to Learn More","BackgroundColor":"D0E0E3","IconColor":"FF0000","TextColor":"000000","Icon":"alert-system-i-spam","Closing":1,"Method":0},{"AlertId":26,"Headline":"HONESTY IN PET FOOD.","Message":"Purina believes that honesty is the most important ingredient in the relationship between pet owners and pet food manufacturers. Please visit www.petfoodhonesty.com to learn more about actions we are taking to stop false advertising aimed at pet owners.","Url":"http://www.petfoodhonesty.com","UrlText":"Click Here to Learn More","BackgroundColor":"85C569","IconColor":"F1C232","TextColor":"000000","Icon":"alert-system-i-search","Closing":1,"Method":0}],"CssNamespace":"alert-system","CssUrl":"http://api.dev.noticegiver.com/Core/core-wip.min.css?_=D251D0443E84D050CD56F43363DD0D3785FA7F7E","Preview":false,"Audit":false,"Success":true,"Errors":{},"Message":null}';
 
@@ -459,7 +466,7 @@ interface KnockoutStatic {
                 //show serialized data
                 //Make seperate modal methods? right now this the only usage.
 
-                var modal = Modal.Generate('EntryDetailsTemplate');
+                var modal: JQuery = Modal.Generate('EntryDetailsTemplate');
                 ko.applyBindings($.extend({}, data), modal[0]);
                 modal.modal('show');
             });
@@ -471,7 +478,7 @@ interface KnockoutStatic {
 
     //    return function () {
     //        Ajax.Get('api/v1/info', { data: { Key: key, Prefix: op_prefix } })
-    //        .done(function (data) {
+    //        .done(function (data): void {
     //            data.Values = JSON.stringify(data.Values, null, 4);
 
     //            //show serialized data
@@ -486,10 +493,12 @@ interface KnockoutStatic {
     //    };
     //};
 
-    CM.ObjectAsArray = function (object) {
-        var properties = [];
+    CM.ObjectAsArray = function (object: Object): any[] {
+        var properties: any[] = [];
 
+        /* tslint:disable:typedef */
         for (var child in object) {
+        /* tslint:enable:typedef */
             if (object.hasOwnProperty(child)) {
                 properties.push(object[child]);
             }
@@ -498,15 +507,16 @@ interface KnockoutStatic {
         return properties;
     };
 
-    CM.BranchExpand = function (branch) {
+    CM.BranchExpand = function (branch: any): boolean {
         if (branch.ob_Checked() && cacheData.ExpandSingleBranches) {
-            var current = branch;
-            var children = Object.keys(current.Children);
+            var current: any = branch;
+            var children: string[] = Object.keys(current.Children);
             while (children.length === 1) {
                 current = current.Children[children[0]];
                 children = Object.keys(current.Children);
-                if (!current.ob_Checked())
+                if (!current.ob_Checked()) {
                     current.ob_Checked(true);
+                }
             }
         }
         return true;
@@ -538,134 +548,137 @@ interface KnockoutStatic {
 
     Modal.Generate = function (template: string, options: any): JQuery {
         //Deferred?
-        var defaults = {
+        var defaults: Object = {
             Size: '',//modal-lg for large or modal-sm for small, otherwise default.
             Animate: true
         };
-        var opts = $.extend({}, defaults, options);
+        var opts: any = $.extend({}, defaults, options);
 
         //Right now we only allow one modal to be open by closing any previous. Should we allow stacking? Should we fail the new one?
-        var $existing = $('#modal-container');
+        var $existing: JQuery = $('#modal-container');
         if ($existing.hasClass('in')) {//Should we bother doing this check?
             $existing.modal('hide');
         } else {
             $existing.remove();
         }
 
-        var $modalContainer = $(
+        var $modalContainer: JQuery = $(
             '<div id="modal-container" class="modal ' + (opts.Animate ? 'fade' : '') + '" tabindex="-1" role="dialog" aria-hidden="true" aria-labelledby="modal-title">' +
                 '<div class="modal-dialog' + (opts.Size ? ' ' + opts.Size : '') + '">' +
                     '<div class="modal-content" data-bind="template: { name: \'' + template + '\' }"></div>' +
                 '</div>' +
             '</div>')
-            .one('hidden.bs.modal', function () {
+            .one('hidden.bs.modal', function (): void {
                 $(this).remove();
             });
         return $modalContainer;
     };
 
     var Ajax: any = {
-        BusyClass: function(){
-            var i = 0;
-            return function(){
+        //Change to loader bar like on AlertWire?
+        BusyClass: function (): Function {
+            var i: number = 0;
+            return function (): string {
                 return 'busy-' + i++;
             };
         }()
     };
 
-    var handleDataError = function (response) {//, textStatus, jqXHR) {
-        var message = response.Message || "An unknown error has occured.";
+    var handleDataError: Function = function (response: any): void {//, textStatus, jqXHR) {
+        var message: string = response.Message || "An unknown error has occured.";
         //messageHandler(message);//toastr?
         toastr.error(message);
     };
 
-    var handleFailError = function (jqXHR, textStatus, errorThrown) {
-        var response = jqXHR.responseJSON || {};
-        var message = response.Message || errorThrown || "An unknown error has occured.";
+    var handleFailError: Function = function (jqXHR: JQueryXHR, textStatus: string, errorThrown: string): void {
+        var response: any = jqXHR.responseJSON || {};
+        var message: string = response.Message || errorThrown || "An unknown error has occured.";
         //messageHandler(message);//toastr?
         toastr.error(message);
     };
 
-    var nonce = function (): string {
+    var nonce: Function = function (): string {
+        /* tslint:disable:no-bitwise */
         return parseInt(new Date().getTime().toString() + ((Math.random() * 1e5) | 0), 10).toString(36);
+        /* tslint:enable:no-bitwise */
     };
 
-    Ajax.Post = function (url, options) {
-        var opts = $.extend({}, { type: 'POST' }, options);
+    Ajax.Post = function (url: string, options: any): JQueryPromise<any> {
+        var opts: any = $.extend({}, { type: 'POST' }, options);
         return Ajax.Request(url, opts);
     };
 
     Ajax.VerificationTokens = {};//Make caching optional?
-    Ajax.GetVerificationToken = function (url, timeout) {
-        var delay = timeout || 30 * 1000;//default? (30 seconds right now)
-        var src = url + (url.indexOf('?') > -1 ? "&" : "?") + "_=" + nonce();
-        var dfd = $.Deferred();
-        var busyClass = Ajax.BusyClass();
+    Ajax.GetVerificationToken = function (url: string, timeout: number): JQueryPromise<any> {
+        var delay: number = timeout || 30 * 1000;//default? (30 seconds right now)
+        var src: string = url + (url.indexOf('?') > -1 ? "&" : "?") + "_=" + nonce();
+        var dfd: JQueryDeferred<{}> = $.Deferred();
+        var busyClass: string = Ajax.BusyClass();
 
         if (!Ajax.VerificationTokens[url]) {
             $('html').addClass(busyClass);
-            var $iframe = $('<iframe src="' + src + '" style="height: 0; width: 0; border: 0;">')//pass token name? callback name? better hiding?
-            .on('load', function () {
-                var token = $(this).contents().find('#VerificationToken').val();
-                if (token) {
-                    Ajax.VerificationTokens[url] = token;
-                    dfd.resolve(token);
-                }
-                else
-                    dfd.reject();
+            var $iframe: JQuery = $('<iframe src="' + src + '" style="height: 0; width: 0; border: 0;">')//pass token name? callback name? better hiding?
+                .on('load', function (): void {
+                    var token: string = $(this).contents().find('#VerificationToken').val();
+                    if (token) {
+                        Ajax.VerificationTokens[url] = token;
+                        dfd.resolve(token);
+                    } else {
+                        dfd.reject();
+                    }
 
-                $iframe.remove();
-            })
-            .appendTo('body');
-        }
-        else
+                    $iframe.remove();
+                })
+                .appendTo('body');
+        } else {
             dfd.resolve(Ajax.VerificationTokens[url]);
+        }
 
-        setTimeout(function () {
+        setTimeout(function (): void {
             if (dfd.state() === 'pending') {
                 dfd.reject();//timeout
                 $iframe.remove();
             }
         }, delay);
 
-        return dfd.promise().always(function () {
+        return dfd.promise().always(function (): void {
             $('html').removeClass(busyClass);
         });
-    }
+    };
 
     //Really messy chaining of deferreds but there is no way to block.
-    Ajax.Post = function (url, options) {
-        var dfd = $.Deferred();
-    
+    Ajax.Post = function (url: string, options: any): JQueryPromise<any> {
+        var dfd: JQueryDeferred<{}> = $.Deferred();
+
         Ajax.GetVerificationToken('VerificationToken')
-        .always(function (token) {
-            var opts = $.extend({}, { type: 'POST', headers: { 'X-CSRF-Token': token } }, options);
+        .always(function (token: string): void {
+            var opts: any = $.extend({}, { type: 'POST', headers: { 'X-CSRF-Token': token } }, options);
             Ajax.Request(url, opts)
-            .done(function () {
+            .done(function (): void {
                 dfd.resolveWith(this, arguments);//proper context?
             })
-            .fail(function () {
+            .fail(function (): void {
                 dfd.rejectWith(this, arguments);//proper context?
             });
         });
-    
+
         return dfd.promise();
     };
 
-    Ajax.Get = function (url, options) {
-        var opts = $.extend({}, { type: 'GET' }, options);
+    Ajax.Get = function (url: string, options: any): JQueryPromise<any> {
+        var opts: any = $.extend({}, { type: 'GET' }, options);
         return Ajax.Request(url, opts);
     };
 
-    var busyCounter = 0;
-    Ajax.Request = function (url, options) {
-        var dfd = $.Deferred();
-        var busyClass = Ajax.BusyClass();
+    var busyCounter: number = 0;
+    Ajax.Request = function (url: string, options: any): JQueryPromise<any> {
+        var dfd: JQueryDeferred<{}> = $.Deferred();
+        var busyClass: string = Ajax.BusyClass();
 
-        var defaults = {
+        var defaults: Object = {
             type: 'POST',
             dataType: 'json',
-            data: null,
+            data: null
             //traditional: true,// lets us post arrays as foo=1&foo=2 instead of foo[]=1&foo[]=2, which makes MVC happier
             //contentType: "application/x-www-form-urlencoded; charset=UTF-8",
 
@@ -679,11 +692,11 @@ interface KnockoutStatic {
             //handle client side error?
         };
 
-        var opts = $.extend({}, defaults, options);
+        var opts: any = $.extend({}, defaults, options);
 
         $('html').addClass(busyClass);
         return $.ajax(url, opts)
-        .done(function (response) {
+        .done(function (response: any): void {
             if (response.Success) {
                 dfd.resolveWith(this, arguments);//proper context?
             } else {
@@ -691,11 +704,11 @@ interface KnockoutStatic {
                 dfd.rejectWith(this, arguments);//proper context?
             }
         })
-        .fail(function (jqXHR, textStatus, errorThrown) {
+        .fail(function (jqXHR: JQueryXHR, textStatus: string, errorThrown: string): void {
             handleFailError(jqXHR, textStatus, errorThrown);//Use status code specific errors when applicable?
             dfd.rejectWith(this, arguments);//proper context?
         })
-        .always(function () {
+        .always(function (): void {
             $('html').removeClass(busyClass);
         });
     };
