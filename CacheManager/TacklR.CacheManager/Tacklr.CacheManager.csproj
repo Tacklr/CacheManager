@@ -157,6 +157,8 @@
     <EmbeddedResource Include="Content\fonts\OpenSans-Light.woff" />
     <EmbeddedResource Include="Content\fonts\OpenSans-Semibold.woff" />
     <EmbeddedResource Include="Content\fonts\OpenSans.woff" />
+    <None Include="Content\font-awesome\animated.less" />
+    <None Include="Content\font-awesome\font-awesome.less" />
     <None Include="Content\fonts.less" />
     <None Include="Content\font-awesome\bordered-pulled.less" />
     <None Include="Content\font-awesome\core.less" />
@@ -218,6 +220,18 @@
       <DependentUpon>toastr.css</DependentUpon>
     </Content>
     <TypeScriptCompile Include="Scripts\cachemanager-ts.ts" />
+    <Content Include="Scripts\bootstrap\affix.js" />
+    <Content Include="Scripts\bootstrap\alert.js" />
+    <Content Include="Scripts\bootstrap\button.js" />
+    <Content Include="Scripts\bootstrap\carousel.js" />
+    <Content Include="Scripts\bootstrap\collapse.js" />
+    <Content Include="Scripts\bootstrap\dropdown.js" />
+    <Content Include="Scripts\bootstrap\modal.js" />
+    <Content Include="Scripts\bootstrap\popover.js" />
+    <Content Include="Scripts\bootstrap\scrollspy.js" />
+    <Content Include="Scripts\bootstrap\tab.js" />
+    <Content Include="Scripts\bootstrap\tooltip.js" />
+    <Content Include="Scripts\bootstrap\transition.js" />
     <Content Include="Scripts\prism.language.json.js" />
     <Content Include="Scripts\prism.js" />
     <Content Include="Scripts\stringTemplateEngine.js" />
