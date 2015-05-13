@@ -1,0 +1,35 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+    <metadata>
+        <id>$id$</id>
+        <version>$version$</version>
+        <title>CacheManager</title>
+        <authors>Aaron Papp, Marc Brooks</authors>
+        <owners>$author$</owners>
+        <licenseUrl>https://github.com/Tacklr/CacheManager/blob/master/LICENSE.md</licenseUrl>
+        <projectUrl>https://github.com/Tacklr/CacheManager</projectUrl>
+        <iconUrl>https://avatars1.githubusercontent.com/u/7947193?s=128</iconUrl>
+        <requireLicenseAcceptance>true</requireLicenseAcceptance>
+        <description>$description$</description>
+        <copyright>Copyright © 2014-2015 Tacklr, LLC.  All rights reserved.</copyright>
+        <language>en-US</language>
+        <tags>cache cachemanager</tags>
+        <dependencies>
+            <dependency id="Newtonsoft.Json" version="3.0.1" />
+        </dependencies>
+        <frameworkAssemblies>
+            <frameworkAssembly assemblyName="Microsoft.CSharp" />
+            <frameworkAssembly assemblyName="System" />
+            <frameworkAssembly assemblyName="System.Configuration" />
+            <frameworkAssembly assemblyName="System.Core" />
+            <frameworkAssembly assemblyName="System.Data" />
+            <frameworkAssembly assemblyName="System.Data.DataSetExtensions" />
+            <frameworkAssembly assemblyName="System.Web" />
+            <frameworkAssembly assemblyName="System.Web.WebPages" />
+            <frameworkAssembly assemblyName="System.Xml" />
+        </frameworkAssemblies>
+    </metadata>
+    <files>
+        <file src="$targetpath$" target="lib\net45\" />
+    </files>
+</package>

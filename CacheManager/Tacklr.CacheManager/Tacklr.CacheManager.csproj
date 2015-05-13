@@ -39,13 +39,13 @@
     <Reference Include="System.Core" />
     <Reference Include="System.Web" />
     <Reference Include="System.Web.WebPages, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
-    <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Tacklr.CacheManager.nuspec" />
     <Compile Include="CacheManagerViewFactory.cs" />
     <Compile Include="Caches\ApplicationCacheShim.cs" />
     <Compile Include="Caches\HttpCacheShim.cs" />
@@ -313,6 +313,9 @@
   <PropertyGroup>
     <PreBuildEvent>powershell -ExecutionPolicy Bypass -File "$(SolutionDir)SetBuildTime.ps1" $(SolutionDir)
 </PreBuildEvent>
+  </PropertyGroup>
+  <PropertyGroup>
+    <PostBuildEvent>if "$(ConfigurationName)" == "Release" CALL nuget pack "$(ProjectPath)" -Properties Configuration=$(ConfigurationName);TargetPath="$(TargetPath)" -outputdirectory "$(SolutionDir)\"</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
