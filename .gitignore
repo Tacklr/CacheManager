@@ -7,6 +7,7 @@
 *.min.css
 *.min.js
 *.css
+*.nupkg
 
 #################
 ## Eclipse
