@@ -545,7 +545,7 @@ interface KnockoutStatic {
             $.event.trigger('ajaxStart');
         }
 
-        var $iframe: JQuery = $('<iframe src="' + src + '" style="height: 0; width: 0; border: 0;">')//pass token name? callback name? better hiding?
+        var $iframe: JQuery = $('<iframe src="' + src + '" style="height: 0; width: 0; border: 0; padding: 0; margin: 0; position: absolute; top: 0; left: 0;">')//pass token name? callback name? better hiding?
         .on('load', function (): void {
             var token: string = $(this).contents().find('#VerificationToken').val();
             if (token) {
