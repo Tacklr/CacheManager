@@ -1,0 +1,5 @@
+# CacheManager
+A generic IIS cache manager application.
+
+This project adheres to the [Open Code of Conduct][code-of-conduct]. By participating, you are expected to honor this code.
+[code-of-conduct]: http://todogroup.org/opencodeofconduct/#Tacklr/abuse@tacklr.com
