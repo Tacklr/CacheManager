@@ -1,0 +1,58 @@
+[
+  {
+    "outputFileName": "Bundles/combined.css",
+    "inputFiles": [
+      "Content/fonts.css",
+      "Content/font-awesome.css",
+      "Content/bootstrap.css",
+      "Content/theme.css",
+      "Content/css-treeview.css",
+      "Content/toastr.css",
+      "Content/prism.css",
+      "Content/cachemanager.css"
+    ]
+  },
+  {
+    "outputFileName": "Bundles/combined.js",
+    "inputFiles": [
+      "Scripts/jquery-2.1.3.js",
+      "Scripts/bootstrap.js",
+      "Scripts/knockout-3.2.0.js",
+      "Scripts/stringTemplateEngine.js",
+      "Scripts/toastr.js",
+      "Scripts/prism.js",
+      "Scripts/prism.language.json.js",
+      "Scripts/cachemanager.js"
+    ]
+  },
+  {
+    "outputFileName": "Views/Manager/Index.min.html",
+    "inputFiles": [
+      "Views/Manager/Index.html"
+    ]
+  },
+  {
+    "outputFileName": "Views/Shared/Error500.min.html",
+    "inputFiles": [
+      "Views/Shared/Error500.html"
+    ]
+  },
+  {
+    "outputFileName": "Views/Shared/Error404.min.html",
+    "inputFiles": [
+      "Views/Shared/Error404.html"
+    ]
+  },
+  {
+    "outputFileName": "Views/Shared/Error403.min.html",
+    "inputFiles": [
+      "Views/Shared/Error403.html"
+    ]
+  },
+  {
+    "outputFileName": "Views/Shared/_Layout.min.html",
+    "inputFiles": [
+      "Views/Shared/_Layout.html"
+    ]
+  }
+]
