@@ -34,7 +34,7 @@
                     <th class="col-fit text-right">Cache Entries</th>
                     <td>
                         <span data-bind="text: ob_Entries().length">0</span> (of <span data-bind="text: ob_Count()">0</span>)
-                    </td><!--show difference between reported/counted (Count)? should we just refresh stats when we delete?-->
+                    </td>
                 </tr>
             </table>
         </div>
@@ -62,40 +62,16 @@
                     </div>
                 </div>
             </div>
-            <!--<div class="panel panel-default">
-                <div class="panel-heading">
-                    <h3 class="panel-title"><span class="fa fa-lg fa-list"></span> Cache List</h3><!--call it table? --!>
-                    <span class="btn-group btn-group-panel-heading">
-                        <button type="button" class="btn btn-sm btn-default btn-collapse collapsed" data-toggle="collapse" data-parent="#detail-view" data-target="#collapseTwo"></button>
-                        <button type="button" class="btn btn-sm btn-default" data-bind="click: CM.Refresh"><span class="fa fa-lg fa-refresh"></span> Refresh</button>
-                    </span>
-                </div>
-                <div id="collapseTwo" class="panel-collapse collapse table-responsive">
-                    <table class="table table-bordered table-condensed table-view">
-                        <thead>
-                            <tr>
-                                <th style="width: 1px;"></th>
-                                <th>Key</th>
-                                <th>Type</th>
-                            </tr>
-                        </thead>
-                        <tbody data-bind="template: { name: 'CacheListTemplate', foreach: ob_Entries(), afterRender: CM.AfterRenderDetailView }"></tbody>
-                    </table>
-                    <div class="refresh-loading hidden"></div>
-                </div>
-            </div>-->
         </div>
     </div>
 </div>
 <div class="row">
-    <!--different column widths?-->
     <div class="col-sm-offset-6 col-sm-6">
         <div class="panel panel-default">
             <div class="panel-heading">
                 <h3 class="panel-title"><span class="fa fa-lg fa-gears"></span> Settings</h3>
             </div>
             <div class="panel-body">
-                <!--explicit rows?-->
                 <div class="form-group">
                     <div class="input-group">
                         <span class="input-group-addon cursor-default">Delimiter</span>

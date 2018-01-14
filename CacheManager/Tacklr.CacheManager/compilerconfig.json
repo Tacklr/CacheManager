@@ -1,0 +1,34 @@
+﻿[
+  {
+    "outputFile": "Content/bootstrap.css",
+    "inputFile": "Content/bootstrap.less"
+  },
+  {
+    "outputFile": "Content/cachemanager.css",
+    "inputFile": "Content/cachemanager.less"
+  },
+  {
+    "outputFile": "Content/css-treeview.css",
+    "inputFile": "Content/css-treeview.less"
+  },
+  {
+    "outputFile": "Content/font-awesome.css",
+    "inputFile": "Content/font-awesome.less"
+  },
+  {
+    "outputFile": "Content/fonts.css",
+    "inputFile": "Content/fonts.less"
+  },
+  {
+    "outputFile": "Content/prism.css",
+    "inputFile": "Content/prism.less"
+  },
+  {
+    "outputFile": "Content/theme.css",
+    "inputFile": "Content/theme.less"
+  },
+  {
+    "outputFile": "Content/toastr.css",
+    "inputFile": "Content/toastr.less"
+  }
+]
